@@ -31,7 +31,10 @@ class _studentDashboardViewState extends State<studentDashboardView> {
           },
           child: Container(
             // Your container properties here
-            child: const Text('Go Back'),
+            child: const Text(
+              'Go Back',
+              style: TextStyle(fontSize: 15),
+            ),
           ),
         ),
         actions: [IconButton(onPressed: _logout, icon: Icon(Icons.logout))],
@@ -44,12 +47,17 @@ class _studentDashboardViewState extends State<studentDashboardView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
                   const Text(
                     'Current House',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
+                    height: 240,
+                    width: 380,
                     child: Image.asset('assets/images/1_1.jpeg'),
                   ),
                   const Divider(

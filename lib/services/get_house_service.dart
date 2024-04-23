@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 // import 'package:homi_2/services/user_sigin_service.dart';
 
 import 'package:http/http.dart' as http;
@@ -9,7 +10,7 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
-Future fetchHouses(String? authToken) async {
+Future<List<GetHouse>> fetchHouses() async {
   try {
     final headersWithToken = {
       ...headers,
@@ -24,7 +25,7 @@ Future fetchHouses(String? authToken) async {
       final List<dynamic> housesData = json.decode(response.body);
 
       final List<GetHouse> houses =
-          housesData.map((houseData) => GetHouse.fromJSon(houseData)).toList();
+          housesData.map((json) => GetHouse.fromJSon(json)).toList();
 
       return houses;
     } else {

@@ -36,7 +36,7 @@ class LandingPage extends StatelessWidget {
                 height: 5,
                 color: const Color.fromARGB(255, 71, 70, 70),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               MyButton(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/services/get_house_service.dart';
-import 'package:homi_2/services/user_sigin_service.dart';
+
 import 'package:homi_2/views/student_dashboard.dart';
 
 class HomePage extends StatefulWidget {
@@ -289,7 +289,7 @@ class HousesView extends StatelessWidget {
           ),
           InkWell(
             onTap: () async {
-              final house = await fetchHouses(authToken.toString());
+              final house = await fetchHouses();
               print(house);
               if (house != null) {
                 Navigator.pushNamed(context, '/specific', arguments: house);
@@ -331,7 +331,7 @@ class HousesView extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              print("third house");
+              Navigator.pushNamed(context, '/trialAllHouses');
             },
             child: Container(
               height: 240,
