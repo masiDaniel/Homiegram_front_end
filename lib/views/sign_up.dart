@@ -33,11 +33,6 @@ class _SignUpState extends State<SignUp> {
     String email = emailContoller.text.trim();
     String password = passwordController.text.trim();
 
-    print('First name: $first_name');
-    print('last name: $last_name');
-    print('email: $email');
-    print('password: $password');
-
     if (email.isNotEmpty &&
         password.isNotEmpty &&
         first_name.isNotEmpty &&
@@ -45,7 +40,6 @@ class _SignUpState extends State<SignUp> {
       UserSignUp? userSignUp =
           await fetchUserSignUp(first_name, last_name, email, password);
 
-      print(userSignUp);
       if (userSignUp != null) {
         // Sign in successful, navigate to the dignup screen
         Navigator.pushNamed(context, '/signin');
@@ -134,8 +128,8 @@ class _SignUpState extends State<SignUp> {
             MyButton(
               buttonText: "Sign Up",
               onPressed: _signUserUp,
-              width: 130,
-              height: 60,
+              width: 150,
+              height: 40,
               color: const Color.fromARGB(255, 71, 70, 70),
             ),
             const SizedBox(
@@ -156,10 +150,11 @@ class _SignUpState extends State<SignUp> {
               child: const Text(
                 " sign in",
                 style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 10,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w700),
+                  color: Color.fromARGB(255, 8, 254, 4),
+                  fontSize: 15,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

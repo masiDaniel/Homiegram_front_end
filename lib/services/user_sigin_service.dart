@@ -8,6 +8,8 @@ const Map<String, String> headers = {
 };
 
 String? authToken;
+String? firstName;
+String? ImageUrl;
 
 Future fetchUserRegistration(String username, String password) async {
   try {
@@ -23,8 +25,11 @@ Future fetchUserRegistration(String username, String password) async {
     if (response.statusCode == 200) {
       final userData = json.decode(response.body);
       final token = userData['token'];
+      final first_name = userData['first_name'];
+      ImageUrl = userData['profile_pic'];
       authToken = token;
-      print(authToken);
+      firstName = first_name;
+
       return UserRegistration.fromJSon(userData);
     }
   } catch (e) {

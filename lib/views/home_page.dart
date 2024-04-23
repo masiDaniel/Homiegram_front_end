@@ -1,9 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 
 import 'package:homi_2/views/student_dashboard.dart';
 
@@ -21,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // final TextEditingController searchController = TextEditingController();
+    String baseUrl = 'http://127.0.0.1:8000';
+
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 254, 255, 255),
       body: SingleChildScrollView(
@@ -44,16 +49,16 @@ class _HomePageState extends State<HomePage> {
                             builder: (context) => const studentDashboardView()),
                       );
                     },
-                    child: const CircleAvatar(
-                      foregroundImage: AssetImage("assets/images/1_1.jpeg"),
+                    child: CircleAvatar(
+                      foregroundImage: NetworkImage('$baseUrl$ImageUrl'),
                     ),
                   ),
                   const SizedBox(
                     width: 20,
                   ),
-                  const Text(
-                    "Welcome back, Daniel",
-                    style: TextStyle(
+                  Text(
+                    "Welcome back, $firstName",
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 0, 0, 0),
                       fontSize: 12,
                     ),
@@ -347,21 +352,21 @@ class HousesView extends StatelessWidget {
           const SizedBox(
             width: 25.0,
           ),
-          // InkWell(
-          //   onTap: () {
-          //     print("fourth house");
-          //   },
-          //   child: Container(
-          //     height: 240,
-          //     width: 380,
-          //     decoration: const BoxDecoration(
-          //         borderRadius: BorderRadius.all(Radius.circular(24)),
-          //         image: DecorationImage(
-          //           image: AssetImage('assets/images/1_4.jpeg'),
-          //           fit: BoxFit.fill,
-          //         )),
-          //   ),
-          // ),
+          InkWell(
+            onTap: () {
+              print("fourth house");
+            },
+            child: Container(
+              height: 240,
+              width: 380,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(24)),
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/1_4.jpeg'),
+                    fit: BoxFit.fill,
+                  )),
+            ),
+          ),
           const SizedBox(
             width: 25.0,
           ),

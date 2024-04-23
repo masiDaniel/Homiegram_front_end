@@ -65,29 +65,32 @@ class WelcomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, '/signin');
               },
-              width: 130,
-              height: 60,
+              width: 150,
+              height: 40,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
             const SizedBox(
-              height: 10,
+              height: 1,
             ),
             MyButton(
               buttonText: "Sign Up!",
               onPressed: () {
                 Navigator.pushNamed(context, '/signup');
               },
-              width: 130,
-              height: 60,
+              width: 150,
+              height: 40,
               color: const Color.fromARGB(255, 71, 70, 70),
+            ),
+            const SizedBox(
+              height: 15,
             ),
             MyButton(
               buttonText: "About",
               onPressed: () {
                 Navigator.pushNamed(context, '/about');
               },
-              width: 130,
-              height: 60,
+              width: 100,
+              height: 40,
               color: const Color.fromARGB(255, 71, 70, 70),
             ),
           ],

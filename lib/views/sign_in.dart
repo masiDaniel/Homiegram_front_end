@@ -21,9 +21,6 @@ class _SignInState extends State<SignIn> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    print('Email: $email');
-    print('Password: $password');
-
     if (email.isNotEmpty && password.isNotEmpty) {
       UserRegistration? userRegistration =
           await fetchUserRegistration(email, password);
@@ -105,8 +102,8 @@ class _SignInState extends State<SignIn> {
                 MyButton(
                   buttonText: 'Sign In',
                   onPressed: _signIn,
-                  width: 130,
-                  height: 60,
+                  width: 150,
+                  height: 40,
                   color: const Color.fromARGB(255, 71, 70, 70),
                 ),
               ],
