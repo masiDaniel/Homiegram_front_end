@@ -42,6 +42,7 @@ class _SignUpState extends State<SignUp> {
 
       if (userSignUp != null) {
         // Sign in successful, navigate to the dignup screen
+
         Navigator.pushNamed(context, '/signin');
       } else {
         // Show error messageif the sign in was unsuccesful

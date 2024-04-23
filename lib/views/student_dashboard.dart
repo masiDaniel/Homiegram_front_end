@@ -41,7 +41,11 @@ class _studentDashboardViewState extends State<studentDashboardView> {
             ),
           ),
         ),
-        actions: [IconButton(onPressed: _logout, icon: Icon(Icons.logout))],
+        actions: [
+          Tooltip(
+              message: 'Log Out',
+              child: IconButton(onPressed: _logout, icon: Icon(Icons.logout)))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -58,7 +62,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                       children: [
                         CircleAvatar(
                           backgroundImage: NetworkImage('$baseUrl$ImageUrl'),
-                          maxRadius: 50,
+                          maxRadius: 25,
                         ),
                         const SizedBox(
                           width: 20,
@@ -68,7 +72,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                           style: const TextStyle(fontSize: 20),
                         ),
                         const SizedBox(
-                          width: 20,
+                          width: 100,
                         ),
                         Column(
                           children: [

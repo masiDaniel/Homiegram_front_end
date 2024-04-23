@@ -61,6 +61,11 @@ class NotFoundPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("not found"),
       ),
+      body: Container(
+        color: Color(0xFF0b8793),
+        height: 300,
+        width: 300,
+      ),
     );
   }
 }
