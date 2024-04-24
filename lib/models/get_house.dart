@@ -1,6 +1,7 @@
 // import 'package:flutter/widgets.dart';
 
 class GetHouse {
+  final int HouseId;
   final String name;
   final String rent_amount;
   final int rating;
@@ -9,6 +10,7 @@ class GetHouse {
   final List<String> images;
 
   GetHouse({
+    required this.HouseId,
     required this.name,
     required this.rent_amount,
     required this.rating,
@@ -25,6 +27,7 @@ class GetHouse {
     if (json['image_3'] != null) images.add(json['image_3']);
 
     return GetHouse(
+      HouseId: json['id'] ?? '',
       name: json['name'] ?? '',
       rent_amount: json['rent_amount'] ?? '',
       rating: json['rating'] ?? '',
@@ -36,6 +39,7 @@ class GetHouse {
 
   Map<String, dynamic> tojson() {
     return {
+      'id': HouseId,
       'name': name,
       'rent_amount': rent_amount,
       'rating': rating,

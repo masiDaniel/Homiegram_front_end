@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
-import 'package:homi_2/models/comments.dart';
+
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
@@ -16,6 +16,15 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
+}
+
+String _extractInitials(String name) {
+  List<String> nameParts = name.split(' ');
+  if (nameParts.isNotEmpty) {
+    return nameParts[0][0]; // First letter of the first name
+  } else {
+    return ''; // Return empty string if name is empty
+  }
 }
 
 class _HomePageState extends State<HomePage> {
@@ -52,7 +61,16 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     child: CircleAvatar(
-                      foregroundImage: NetworkImage('$baseUrl$ImageUrl'),
+                      foregroundImage: ImageUrl != null
+                          ? NetworkImage('$baseUrl$ImageUrl')
+                          : null,
+                      backgroundColor: Colors.purpleAccent,
+                      child: ImageUrl != null
+                          ? null
+                          : Text(
+                              _extractInitials('$firstName'),
+                              style: TextStyle(color: Colors.white),
+                            ),
                     ),
                   ),
                   const SizedBox(
@@ -189,11 +207,13 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 30,
               ),
-              const sectionHeders(),
+
               const SizedBox(
                 height: 25,
               ),
-              const sectionHeders(),
+              const sectionHeders(
+                headerTitle: "all houses",
+              ),
               // const Divider(
               //   height: 1.0,
               //   thickness: 1.0,
@@ -202,15 +222,21 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 25,
               ),
-              const sectionHeders(),
+              const sectionHeders(
+                headerTitle: "best ranked",
+              ),
               const SizedBox(
                 height: 25,
               ),
-              const sectionHeders(),
+              const sectionHeders(
+                headerTitle: "most viewed",
+              ),
               const SizedBox(
                 height: 25,
               ),
-              const sectionHeders(),
+              const sectionHeders(
+                headerTitle: "closest to you",
+              ),
               const SizedBox(
                 height: 25,
               ),
@@ -236,9 +262,9 @@ class _HomePageState extends State<HomePage> {
 }
 
 class sectionHeders extends StatelessWidget {
-  const sectionHeders({
-    super.key,
-  });
+  final String headerTitle;
+
+  const sectionHeders({super.key, this.headerTitle = "homie Houses"});
 
   @override
   Widget build(BuildContext context) {
@@ -249,9 +275,9 @@ class sectionHeders extends StatelessWidget {
           padding: const EdgeInsets.only(left: 25),
           child: Row(
             children: [
-              const Text(
-                "cheapest rated",
-                style: TextStyle(
+              Text(
+                headerTitle,
+                style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 14,
                   fontWeight: FontWeight.w700,

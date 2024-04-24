@@ -10,6 +10,7 @@ const Map<String, String> headers = {
 String? authToken;
 String? firstName;
 String? ImageUrl;
+int? UserId;
 
 Future fetchUserRegistration(String username, String password) async {
   try {
@@ -26,6 +27,8 @@ Future fetchUserRegistration(String username, String password) async {
       final userData = json.decode(response.body);
       final token = userData['token'];
       final first_name = userData['first_name'];
+      final userId = userData['id'];
+      UserId = userId;
       ImageUrl = userData['profile_pic'];
       authToken = token;
       firstName = first_name;

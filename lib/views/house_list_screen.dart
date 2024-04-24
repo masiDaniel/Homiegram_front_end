@@ -48,12 +48,20 @@ class _HouseListScreenState extends State<HouseListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // for (var imageUrl in snapshot.data![index].images)
-                            Image.network(
-                              '$baseUrl${snapshot.data![index].images[0]}',
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                            if (snapshot.data![index].images.isNotEmpty)
+                              Image.network(
+                                '$baseUrl${snapshot.data![index].images[0]}',
+                                height: 150,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+
+                            if (snapshot.data![index].images.isEmpty)
+                              const Placeholder(
+                                fallbackHeight: 150,
+                                fallbackWidth: double.infinity,
+                              ),
+
                             const SizedBox(
                               height: 8,
                             ),
@@ -65,10 +73,39 @@ class _HouseListScreenState extends State<HouseListScreen> {
                             const SizedBox(
                               height: 4,
                             ),
-                            Text(
-                                'Rent amount: ${snapshot.data![index].rent_amount}'),
-                            Text('rating: ${snapshot.data![index].rating}'),
-                            Text('location: ${snapshot.data![index].location}'),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Rent amount: ${snapshot.data![index].rent_amount}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Rating: ${snapshot.data![index].rating}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Location: ${snapshot.data![index].location}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),

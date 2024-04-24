@@ -23,6 +23,15 @@ class _studentDashboardViewState extends State<studentDashboardView> {
     }
   }
 
+  String _extractInitials(String name) {
+    List<String> nameParts = name.split(' ');
+    if (nameParts.isNotEmpty) {
+      return nameParts[0][0]; // First letter of the first name
+    } else {
+      return ''; // Return empty string if name is empty
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String baseUrl = 'http://127.0.0.1:8000';
@@ -61,8 +70,14 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          backgroundImage: NetworkImage('$baseUrl$ImageUrl'),
+                          backgroundColor: Colors.purpleAccent,
                           maxRadius: 25,
+                          backgroundImage: ImageUrl != null
+                              ? NetworkImage('$baseUrl$ImageUrl')
+                              : null,
+                          child: ImageUrl == null
+                              ? Text(_extractInitials('$firstName'))
+                              : null,
                         ),
                         const SizedBox(
                           width: 20,

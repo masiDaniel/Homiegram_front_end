@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/comments_service.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 
 class HouseDetailsScreen extends StatefulWidget {
   final GetHouse house;
@@ -191,6 +192,7 @@ class _CommentListState extends State<CommentList> {
           itemCount: widget.comments.length,
           itemBuilder: (context, index) {
             final comment = widget.comments[index];
+
             return Container(
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -202,10 +204,13 @@ class _CommentListState extends State<CommentList> {
                 Expanded(
                   child: Text(comment.comment),
                 ),
-                const Icon(
-                  Icons.delete,
-                  color: Colors.black,
-                )
+                if (comment.userId == UserId)
+                  IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.black,
+                      )),
               ]),
             );
           },
