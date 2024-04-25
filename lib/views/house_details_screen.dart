@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/post_comments.dart';
@@ -25,7 +22,7 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _commentsFuture = fetchComments(2);
+    _commentsFuture = fetchComments(widget.house.HouseId);
   }
 
   void addComment(String comment) {
@@ -276,7 +273,6 @@ class _CommentListState extends State<CommentList> {
           itemBuilder: (context, index) {
             final comment = widget.comments[index];
 
-            // if (comment.houseId == widget.house.HouseId) {
             return Container(
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -299,10 +295,6 @@ class _CommentListState extends State<CommentList> {
                       )),
               ]),
             );
-
-            // } else {
-            //   return Container();
-            // }
           },
         ),
       ],

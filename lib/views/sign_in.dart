@@ -45,7 +45,7 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Color(0xFF0F2027),
+      backgroundColor: const Color(0xFF0F2027),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -59,7 +59,7 @@ class _SignInState extends State<SignIn> {
                       fontSize: 50,
                       fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 myTextField(
                   controller: _emailController,
                   hintText: 'Email',
@@ -67,7 +67,7 @@ class _SignInState extends State<SignIn> {
                   suffixIcon: Icons.email,
                   onChanged: (value) {},
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 myTextField(
                   controller: _passwordController,
                   hintText: 'Password',
@@ -75,7 +75,7 @@ class _SignInState extends State<SignIn> {
                   suffixIcon: Icons.password,
                   onChanged: (value) {},
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 const Text(
                   "Dont' have an account?  ",
                   style: TextStyle(
@@ -84,7 +84,7 @@ class _SignInState extends State<SignIn> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/signup');
@@ -98,7 +98,7 @@ class _SignInState extends State<SignIn> {
                         fontWeight: FontWeight.w700),
                   ),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 MyButton(
                   buttonText: 'Sign In',
                   onPressed: _signIn,

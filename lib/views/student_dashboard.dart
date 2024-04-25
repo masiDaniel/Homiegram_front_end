@@ -53,14 +53,15 @@ class _studentDashboardViewState extends State<studentDashboardView> {
         actions: [
           Tooltip(
               message: 'Log Out',
-              child: IconButton(onPressed: _logout, icon: Icon(Icons.logout)))
+              child: IconButton(
+                  onPressed: _logout, icon: const Icon(Icons.logout)))
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -113,7 +114,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
                             height: 240,
                             width: 380,
                             child: ClipRRect(
@@ -140,7 +141,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
                         child: Image.asset('assets/images/1_1.jpeg')),

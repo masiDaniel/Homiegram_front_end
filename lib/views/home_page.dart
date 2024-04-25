@@ -6,7 +6,6 @@ import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-
 import 'package:homi_2/views/section_headers_homepage_view.dart';
 import 'package:homi_2/views/student_dashboard.dart';
 
@@ -54,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     String baseUrl = 'http://127.0.0.1:8000';
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 254, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 254, 255, 255),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 20.0),
@@ -80,12 +79,12 @@ class _HomePageState extends State<HomePage> {
                       foregroundImage: ImageUrl != null
                           ? NetworkImage('$baseUrl$ImageUrl')
                           : null,
-                      backgroundColor: Color.fromARGB(255, 3, 101, 139),
+                      backgroundColor: const Color.fromARGB(255, 3, 101, 139),
                       child: ImageUrl != null
                           ? null
                           : Text(
                               _extractInitials('$firstName'),
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                     ),
                   ),
@@ -115,9 +114,9 @@ class _HomePageState extends State<HomePage> {
                       setState(() {});
                     }),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Wrap(
+                spacing: 10, // Space between adjacent chips.
+                runSpacing: 10, // Space between lines.
                 children: [
                   const Text(
                     "location",
@@ -126,22 +125,20 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                     ),
                   ),
-                  Flexible(
-                    child: DropdownButton<String>(
-                      value: _selectedLocation,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedLocation = newValue!;
-                        });
-                      },
-                      items: _locations
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+                  DropdownButton<String>(
+                    value: _selectedLocation,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedLocation = newValue!;
+                      });
+                    },
+                    items: _locations
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(
                     width: 10,
@@ -161,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                     min: 0,
                     max: 1000,
                     divisions: 100,
-                    labels: RangeLabels('\$$_minPrice', '\$$_maxPrice'),
+                    labels: RangeLabels('\Ksh $_minPrice', '\Ksh $_maxPrice'),
                     onChanged: (RangeValues values) {
                       setState(() {
                         _minPrice = values.start;
@@ -197,7 +194,9 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                     ),
                   ),
-                  Column(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
                     children: _amenities.map((String amenity) {
                       return CheckboxListTile(
                         title: Text(amenity),
@@ -230,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {},
                         width: 100,
                         height: 50,
-                        color: Color.fromARGB(255, 2, 2, 2),
+                        color: const Color.fromARGB(255, 2, 2, 2),
                       ),
                     ]),
               ),

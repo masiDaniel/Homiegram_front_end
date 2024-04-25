@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homi_2/views/about_app.dart';
 import 'package:homi_2/views/all_houses.dart';
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
-          builder: (context) => NotFoundPage(), // Handle unknown routes
+          builder: (context) => const NotFoundPage(), // Handle unknown routes
         );
       },
       // home: SpecificHostel(),
@@ -62,7 +61,7 @@ class NotFoundPage extends StatelessWidget {
         title: const Text("not found"),
       ),
       body: Container(
-        color: Color(0xFF0b8793),
+        color: const Color(0xFF0b8793),
         height: 300,
         width: 300,
       ),

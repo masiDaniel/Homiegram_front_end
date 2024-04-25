@@ -18,16 +18,16 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0F2027),
+      backgroundColor: const Color(0xFF0F2027),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TypewriterAnimatedTextKit(
-              text: ["HomieGram!"],
+              text: const ["HomieGram!"],
               textStyle:
                   GoogleFonts.fugazOne(color: Colors.white, fontSize: 40),
-              speed: Duration(milliseconds: 200),
+              speed: const Duration(milliseconds: 200),
             ),
             const SizedBox(
               height: 20,
@@ -37,7 +37,7 @@ class WelcomePage extends StatelessWidget {
               height: 350,
               width: 350,
               decoration: BoxDecoration(
-                color: Color(0xFF2C5364),
+                color: const Color(0xFF2C5364),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Marquee(
@@ -51,7 +51,7 @@ class WelcomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 blankSpace: 90.0,
                 velocity: 20.0,
-                pauseAfterRound: Duration(seconds: 1),
+                pauseAfterRound: const Duration(seconds: 1),
                 startPadding: 30.0,
                 accelerationCurve: Curves.elasticIn,
                 decelerationCurve: Curves.easeOut,
@@ -67,7 +67,7 @@ class WelcomePage extends StatelessWidget {
               },
               width: 150,
               height: 40,
-              color: Color.fromARGB(255, 0, 0, 0),
+              color: const Color.fromARGB(255, 0, 0, 0),
             ),
             const SizedBox(
               height: 1,

@@ -20,16 +20,35 @@ class PostComments {
     };
 
     final Map<String, dynamic> body = {
-      'house_id': houseId,
-      'user_id': userId,
-      'comment': comment,
-      'nested': nested,
-      'nested_id': nestedId,
+      "house_id": houseId as String,
+      "user_id": userId as String,
+      "comment": comment as String,
+      "nested": nested,
+      "nested_id": nestedId as String,
     };
-    print('Request Body: ${json.encode(body)}');
+    final String requestBody = json.encode(body);
+    print(requestBody);
     try {
-      final response = await http.post(Uri.parse(url),
-          headers: headers, body: jsonEncode(body));
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode({
+          "house_id": houseId,
+          "user_id": userId,
+          "comment": comment,
+          "nested": true,
+          "nested_id": nestedId
+        }),
+      );
+      print(
+        jsonEncode({
+          "house_id": houseId,
+          "user_id": userId,
+          "comment": comment,
+          "nested": true,
+          "nested_id": nestedId
+        }),
+      );
       if (response.statusCode == 200) {
         print('comment posted succesfully!');
       } else {

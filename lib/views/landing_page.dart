@@ -10,7 +10,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 252, 252),
+      backgroundColor: const Color.fromARGB(255, 255, 252, 252),
       body: Column(
         children: <Widget>[
           const Text("find your perfect home,"),

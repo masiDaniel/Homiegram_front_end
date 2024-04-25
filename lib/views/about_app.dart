@@ -56,13 +56,13 @@ class AboutHomiegram extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 31, 70, 87),
+        backgroundColor: const Color.fromARGB(255, 31, 70, 87),
         title: const Text(
           "What HomieGram has to offer",
           style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         ),
       ),
-      backgroundColor: Color(0xFF0F2027),
+      backgroundColor: const Color(0xFF0F2027),
       body: CustomPaint(
         painter: VerticalLinePainter(),
         child: ListView.builder(
