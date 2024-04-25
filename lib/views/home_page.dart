@@ -1,14 +1,13 @@
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
-
+import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
+import 'package:homi_2/views/section_headers_homepage_view.dart';
 import 'package:homi_2/views/student_dashboard.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,8 +28,25 @@ String _extractInitials(String name) {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
+  late Future<List<GetHouse>> futureHouses;
+  String _selectedLocation = 'All Locations';
+  final List<String> _locations = [
+    'All Locations',
+    'Location 1',
+    'Location 2',
+    'Location 3'
+  ];
 
-  // String _searchQuery = '';
+  double _minPrice = 0;
+  double _maxPrice = 1000;
+  final List<String> _selectedAmenities = [];
+  final List<String> _amenities = ['Amenity 1', 'Amenity 2', 'Amenity 3'];
+
+  @override
+  void initState() {
+    super.initState();
+    futureHouses = fetchHouses();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                       foregroundImage: ImageUrl != null
                           ? NetworkImage('$baseUrl$ImageUrl')
                           : null,
-                      backgroundColor: Colors.purpleAccent,
+                      backgroundColor: Color.fromARGB(255, 3, 101, 139),
                       child: ImageUrl != null
                           ? null
                           : Text(
@@ -110,15 +126,21 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                     ),
                   ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      print("button clicked");
-                    },
-                    icon: const Icon(
-                      Icons.arrow_downward_sharp,
-                      size: 15,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                  Flexible(
+                    child: DropdownButton<String>(
+                      value: _selectedLocation,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedLocation = newValue!;
+                        });
+                      },
+                      items: _locations
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
                   ),
                   const SizedBox(
@@ -131,19 +153,21 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                     ),
                   ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      print("button clicked");
-                    },
-                    icon: const Icon(
-                      Icons.arrow_downward_sharp,
-                      size: 15,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ),
                   const SizedBox(
                     width: 10,
+                  ),
+                  RangeSlider(
+                    values: RangeValues(_minPrice, _maxPrice),
+                    min: 0,
+                    max: 1000,
+                    divisions: 100,
+                    labels: RangeLabels('\$$_minPrice', '\$$_maxPrice'),
+                    onChanged: (RangeValues values) {
+                      setState(() {
+                        _minPrice = values.start;
+                        _maxPrice = values.end;
+                      });
+                    },
                   ),
                   const Text(
                     "Rooms",
@@ -173,16 +197,22 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                     ),
                   ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      print("button clicked");
-                    },
-                    icon: const Icon(
-                      Icons.arrow_downward_sharp,
-                      size: 15,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
+                  Column(
+                    children: _amenities.map((String amenity) {
+                      return CheckboxListTile(
+                        title: Text(amenity),
+                        value: _selectedAmenities.contains(amenity),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value!) {
+                              _selectedAmenities.add(amenity);
+                            } else {
+                              _selectedAmenities.remove(amenity);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -207,18 +237,12 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 30,
               ),
-
               const SizedBox(
                 height: 25,
               ),
               const sectionHeders(
                 headerTitle: "all houses",
               ),
-              // const Divider(
-              //   height: 1.0,
-              //   thickness: 1.0,
-              //   color: Colors.black,
-              // ),
               const SizedBox(
                 height: 25,
               ),
@@ -252,153 +276,9 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 25,
               ),
-              const sectionHeders(),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class sectionHeders extends StatelessWidget {
-  final String headerTitle;
-
-  const sectionHeders({super.key, this.headerTitle = "homie Houses"});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 25),
-          child: Row(
-            children: [
-              Text(
-                headerTitle,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  print("button clicked");
-                },
-                icon: const Icon(
-                  Icons.more_horiz,
-                  size: 28,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        const HousesView(),
-      ],
-    );
-  }
-}
-
-class HousesView extends StatelessWidget {
-  const HousesView({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: <Widget>[
-          const SizedBox(
-            width: 25.0,
-          ),
-          InkWell(
-            onTap: () async {
-              final house = await fetchHouses();
-              print(house);
-              if (house != null) {
-                Navigator.pushNamed(context, '/specific', arguments: house);
-              } else {
-                print("first house not accessed");
-              }
-            },
-            child: Container(
-              height: 240,
-              width: 380,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/1_1.jpeg'),
-                    fit: BoxFit.fill,
-                  )),
-            ),
-          ),
-          const SizedBox(
-            width: 25.0,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/allHouses');
-            },
-            child: Container(
-              height: 240,
-              width: 380,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/1_2.jpeg'),
-                    fit: BoxFit.fill,
-                  )),
-            ),
-          ),
-          const SizedBox(
-            width: 25.0,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/trialAllHouses');
-            },
-            child: Container(
-              height: 240,
-              width: 380,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/1_3.jpeg'),
-                    fit: BoxFit.fill,
-                  )),
-            ),
-          ),
-          const SizedBox(
-            width: 25.0,
-          ),
-          InkWell(
-            onTap: () {
-              print("fourth house");
-            },
-            child: Container(
-              height: 240,
-              width: 380,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/1_4.jpeg'),
-                    fit: BoxFit.fill,
-                  )),
-            ),
-          ),
-          const SizedBox(
-            width: 25.0,
-          ),
-        ],
       ),
     );
   }
