@@ -25,7 +25,8 @@ Future<List<getComments>> fetchComments(int houseId) async {
     if (response.statusCode == 200) {
       final List<dynamic> commentData = json.decode(response.body);
       // print(response.body);
-      // print(commentData);
+      print("Fetched Comments");
+      print(commentData);
       final List<getComments> comments =
           commentData.map((json) => getComments.fromJSon(json)).toList();
       // print(comments);

@@ -61,7 +61,6 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                 fallbackHeight: 150,
                                 fallbackWidth: double.infinity,
                               ),
-
                             const SizedBox(
                               height: 8,
                             ),
