@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 // import 'package:homi_2/services/user_signup_service.dart';
 import 'package:http/http.dart' as http;
@@ -48,26 +49,45 @@ class _allHousesState extends State<allHouses> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('all houses'),
+        title: const Text('all houses'),
       ),
       body: ListView.builder(
         itemCount: houses.length,
         itemBuilder: (context, index) {
           final house = houses[index];
-          print('${house['image']}');
+          // print('${house['image']}');
           return ListTile(
             leading: CircleAvatar(
-                backgroundImage:
-                    NetworkImage('http://127.0.0.1:8000${house['image']}')),
-            title: Text(house['name']),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Address: ${house['location']}"),
-                Text('price: ${house['rent_amount']}'),
-                Text('Rating: ${house['rating']}'),
-                Text('description: ${house['description']}'),
-              ],
+              backgroundImage:
+                  NetworkImage('http://127.0.0.1:8000${house['image']}'),
+              maxRadius: 30,
+            ),
+            title: Text(
+              house['name'],
+              style: GoogleFonts.carterOne(
+                fontSize: 20,
+              ),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Address: ${house['location']}"),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text('price: ${house['rent_amount']}'),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text('Rating: ${house['rating']}'),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text('description: ${house['description']}'),
+                ],
+              ),
             ),
           );
         },

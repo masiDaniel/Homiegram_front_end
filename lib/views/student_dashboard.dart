@@ -26,7 +26,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
   String _extractInitials(String name) {
     List<String> nameParts = name.split(' ');
     if (nameParts.isNotEmpty) {
-      return nameParts[0][0]; // First letter of the first name
+      return nameParts[0][0].toUpperCase(); // First letter of the first name
     } else {
       return ''; // Return empty string if name is empty
     }
@@ -71,30 +71,24 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          backgroundColor: Colors.purpleAccent,
+                          backgroundColor: Color.fromARGB(255, 2, 75, 50),
                           maxRadius: 25,
                           backgroundImage: ImageUrl != null
                               ? NetworkImage('$baseUrl$ImageUrl')
                               : null,
                           child: ImageUrl == null
-                              ? Text(_extractInitials('$firstName'))
+                              ? Text(
+                                  _extractInitials('$firstName'),
+                                  style: TextStyle(color: Colors.white),
+                                )
                               : null,
                         ),
                         const SizedBox(
                           width: 20,
                         ),
                         Text(
-                          'hi, $firstName',
+                          'hi, $firstName\n today is  ${DateTime.now().toString().substring(0, 10)}',
                           style: const TextStyle(fontSize: 20),
-                        ),
-                        const SizedBox(
-                          width: 100,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                                'Today is \n ${DateTime.now().toString().substring(0, 10)}'),
-                          ],
                         ),
                       ],
                     ),
@@ -148,7 +142,9 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                   ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: Image.asset('assets/images/1_3.jpeg'),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20.0),
+                        child: Image.asset('assets/images/1_2.jpeg')),
                   ),
                 ],
               ),

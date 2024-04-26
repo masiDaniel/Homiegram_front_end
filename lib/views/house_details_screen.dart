@@ -28,7 +28,7 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
   void addComment(String comment) {
     PostComments.postComment(
       houseId: widget.house.HouseId.toString(),
-      userId: '16',
+      userId: UserId.toString(),
       comment: comment,
       nested: true,
       nestedId: '3',

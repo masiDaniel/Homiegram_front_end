@@ -20,23 +20,23 @@ class PostComments {
     };
 
     final Map<String, dynamic> body = {
-      "house_id": houseId as String,
-      "user_id": userId as String,
-      "comment": comment as String,
+      "house_id": houseId,
+      "user_id": userId,
+      "comment": comment,
       "nested": nested,
-      "nested_id": nestedId as String,
+      "nested_id": nestedId,
     };
     final String requestBody = json.encode(body);
     print(requestBody);
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse("http://127.0.0.1:8000/comments/post/"),
         headers: headers,
         body: jsonEncode({
           "house_id": houseId,
           "user_id": userId,
           "comment": comment,
-          "nested": true,
+          "nested": nested,
           "nested_id": nestedId
         }),
       );
@@ -45,7 +45,7 @@ class PostComments {
           "house_id": houseId,
           "user_id": userId,
           "comment": comment,
-          "nested": true,
+          "nested": nested,
           "nested_id": nestedId
         }),
       );

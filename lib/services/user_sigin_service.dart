@@ -22,12 +22,6 @@ Future fetchUserRegistration(String username, String password) async {
         "password": password,
       }),
     );
-    print(
-      jsonEncode({
-        "email": username,
-        "password": password,
-      }),
-    );
 
     if (response.statusCode == 200) {
       final userData = json.decode(response.body);

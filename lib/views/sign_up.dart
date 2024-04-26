@@ -33,10 +33,16 @@ class _SignUpState extends State<SignUp> {
     String email = emailContoller.text.trim();
     String password = passwordController.text.trim();
 
+    bool isValidEmail(String email) {
+      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      return emailRegex.hasMatch(email);
+    }
+
     if (email.isNotEmpty &&
         password.isNotEmpty &&
         first_name.isNotEmpty &&
-        last_name.isNotEmpty) {
+        last_name.isNotEmpty &&
+        isValidEmail(email)) {
       UserSignUp? userSignUp =
           await fetchUserSignUp(first_name, last_name, email, password);
 
@@ -53,7 +59,7 @@ class _SignUpState extends State<SignUp> {
     } else {
       // Show error message if one or either of the fields in not inputed
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please fill in all the fields'),
+        content: Text('Please fill in all the fields in appropriate format'),
       ));
     }
   }

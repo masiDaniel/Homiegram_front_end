@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 String _extractInitials(String name) {
   List<String> nameParts = name.split(' ');
   if (nameParts.isNotEmpty) {
-    return nameParts[0][0]; // First letter of the first name
+    return nameParts[0][0].toUpperCase(); // First letter of the first name
   } else {
     return ''; // Return empty string if name is empty
   }
@@ -31,15 +31,20 @@ class _HomePageState extends State<HomePage> {
   String _selectedLocation = 'All Locations';
   final List<String> _locations = [
     'All Locations',
-    'Location 1',
-    'Location 2',
-    'Location 3'
+    'Devki',
+    'Nairobi - CBD',
+    'Machakos'
   ];
 
   double _minPrice = 0;
   double _maxPrice = 1000;
   final List<String> _selectedAmenities = [];
-  final List<String> _amenities = ['Amenity 1', 'Amenity 2', 'Amenity 3'];
+  final List<String> _amenities = [
+    'Swimming pool',
+    'Wi-Fi',
+    'Vet',
+    'Generator'
+  ];
 
   @override
   void initState() {
@@ -114,106 +119,116 @@ class _HomePageState extends State<HomePage> {
                       setState(() {});
                     }),
               ),
-              Wrap(
-                spacing: 10, // Space between adjacent chips.
-                runSpacing: 10, // Space between lines.
-                children: [
-                  const Text(
-                    "location",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 6, 6, 6),
-                      fontSize: 12,
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Wrap(
+                  spacing: 10, // Space between adjacent chips.
+                  runSpacing: 10, // Space between lines.
+                  children: [
+                    const SizedBox(
+                      width: 20,
                     ),
-                  ),
-                  DropdownButton<String>(
-                    value: _selectedLocation,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedLocation = newValue!;
-                      });
-                    },
-                    items: _locations
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Text(
-                    "Price",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 12,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            const Text(
+                              "location",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 6, 6, 6),
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(20),
+                              padding: EdgeInsets.all(10),
+                              value: _selectedLocation,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedLocation = newValue!;
+                                });
+                              },
+                              items: _locations.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Column(
+                          children: [
+                            const Text(
+                              "Price",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            RangeSlider(
+                              values: RangeValues(_minPrice, _maxPrice),
+                              min: 0,
+                              max: 100000,
+                              divisions: 100,
+                              labels: RangeLabels(
+                                  '\Ksh $_minPrice', '\Ksh $_maxPrice'),
+                              onChanged: (RangeValues values) {
+                                setState(() {
+                                  // _minPrice = values.start;
+                                  _maxPrice = values.end;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  RangeSlider(
-                    values: RangeValues(_minPrice, _maxPrice),
-                    min: 0,
-                    max: 1000,
-                    divisions: 100,
-                    labels: RangeLabels('\Ksh $_minPrice', '\Ksh $_maxPrice'),
-                    onChanged: (RangeValues values) {
-                      setState(() {
-                        _minPrice = values.start;
-                        _maxPrice = values.end;
-                      });
-                    },
-                  ),
-                  const Text(
-                    "Rooms",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 12,
+                    const SizedBox(
+                      width: 10,
                     ),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      print("button clicked");
-                    },
-                    icon: const Icon(
-                      Icons.arrow_downward_sharp,
-                      size: 15,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                    const SizedBox(
+                      width: 10,
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Text(
-                    "Amenities",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 6, 6, 6),
-                      fontSize: 12,
+                    const Text(
+                      "Amenities",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 6, 6, 6),
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _amenities.map((String amenity) {
-                      return CheckboxListTile(
-                        title: Text(amenity),
-                        value: _selectedAmenities.contains(amenity),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value!) {
-                              _selectedAmenities.add(amenity);
-                            } else {
-                              _selectedAmenities.remove(amenity);
-                            }
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: _amenities.map((String amenity) {
+                        return CheckboxListTile(
+                          title: Text(amenity),
+                          value: _selectedAmenities.contains(amenity),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value!) {
+                                _selectedAmenities.add(amenity);
+                              } else {
+                                _selectedAmenities.remove(amenity);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -246,35 +261,24 @@ class _HomePageState extends State<HomePage> {
                 height: 25,
               ),
               const sectionHeders(
-                headerTitle: "best ranked",
+                headerTitle: "house listings",
               ),
-              const SizedBox(
-                height: 25,
-              ),
-              const sectionHeders(
-                headerTitle: "most viewed",
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              const sectionHeders(
-                headerTitle: "closest to you",
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              const sectionHeders(),
-              const SizedBox(
-                height: 25,
-              ),
-              const sectionHeders(),
-              const SizedBox(
-                height: 25,
-              ),
-              const sectionHeders(),
-              const SizedBox(
-                height: 25,
-              ),
+              // const SizedBox(
+              //   height: 25,
+              // ),
+              // const sectionHeders(
+              //   headerTitle: "most viewed",
+              // ),
+              // const SizedBox(
+              //   height: 25,
+              // ),
+              // const sectionHeders(
+              //   headerTitle: "closest to you",
+              // ),
+              // const SizedBox(
+              //   height: 25,
+              // ),
+              // const sectionHeders(),
             ],
           ),
         ),

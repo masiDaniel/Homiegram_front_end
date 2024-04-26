@@ -102,6 +102,10 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                     'Location: ${snapshot.data![index].location}',
                                     style: const TextStyle(fontSize: 16),
                                   ),
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                          Icons.bookmark_add_outlined))
                                 ],
                               ),
                             ),

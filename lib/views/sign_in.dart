@@ -21,22 +21,27 @@ class _SignInState extends State<SignIn> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    if (email.isNotEmpty && password.isNotEmpty) {
+    bool isValidEmail(String email) {
+      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      return emailRegex.hasMatch(email);
+    }
+
+    if (email.isNotEmpty && password.isNotEmpty && isValidEmail(email)) {
       UserRegistration? userRegistration =
           await fetchUserRegistration(email, password);
       if (userRegistration != null) {
         // Sign in successful, navigate to the homepage screen
         Navigator.pushNamed(context, '/homepage');
       } else {
-        // Show error messageif the sign in was unsuccesful
+        // Show error message if the sign-in was unsuccessful
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Invalid email or password'),
         ));
       }
     } else {
-      // Show error message if one or either of the fields in not inputed
+      // Show error message if one or both of the fields are not inputted or email format is invalid
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please enter email and password'),
+        content: Text('Please enter a valid email and password'),
       ));
     }
   }
