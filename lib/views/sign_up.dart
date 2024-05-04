@@ -9,7 +9,7 @@ import 'package:homi_2/services/user_signup_service.dart';
 class SignUp extends StatefulWidget {
   ///
   /// this page deals with the ui for signing up
-  /// once succesfully signed up the user is redirected to the sign up page
+  /// once succesfully signed up the user is redirected to the sign in page
   /// at the bottom there is the feature of signing up with google
   /// i dont understand the SignUserIn function
   ///
@@ -33,6 +33,7 @@ class _SignUpState extends State<SignUp> {
     String email = emailContoller.text.trim();
     String password = passwordController.text.trim();
 
+    /// method to check if the email structure is valid
     bool isValidEmail(String email) {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
       return emailRegex.hasMatch(email);
@@ -48,7 +49,6 @@ class _SignUpState extends State<SignUp> {
 
       if (userSignUp != null) {
         // Sign in successful, navigate to the dignup screen
-
         Navigator.pushNamed(context, '/signin');
       } else {
         // Show error messageif the sign in was unsuccesful

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:homi_2/services/get_house_service.dart';
+
+/// i want to add functionality ti this class such that the houses can be fitered based on certain parameters and diplayed as results
+/// this should be handled by 10th may
 
 class HousesView extends StatelessWidget {
   const HousesView({
@@ -12,31 +14,6 @@ class HousesView extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: <Widget>[
-          // const SizedBox(
-          //   width: 25.0,
-          // ),
-          // InkWell(
-          //   onTap: () async {
-          //     final house = await fetchHouses();
-
-          //     print(house);
-          //     if (house != null) {
-          //       Navigator.pushNamed(context, '/specific', arguments: house);
-          //     } else {
-          //       print("first house not accessed");
-          //     }
-          //   },
-          //   child: Container(
-          //     height: 240,
-          //     width: 380,
-          //     decoration: const BoxDecoration(
-          //         borderRadius: BorderRadius.all(Radius.circular(24)),
-          //         image: DecorationImage(
-          //           image: AssetImage('assets/images/1_1.jpeg'),
-          //           fit: BoxFit.fill,
-          //         )),
-          //   ),
-          // ),
           const SizedBox(
             width: 25.0,
           ),
@@ -76,24 +53,6 @@ class HousesView extends StatelessWidget {
           const SizedBox(
             width: 25.0,
           ),
-          // InkWell(
-          //   onTap: () {
-          //     print("fourth house");
-          //   },
-          //   child: Container(
-          //     height: 240,
-          //     width: 380,
-          //     decoration: const BoxDecoration(
-          //         borderRadius: BorderRadius.all(Radius.circular(24)),
-          //         image: DecorationImage(
-          //           image: AssetImage('assets/images/1_4.jpeg'),
-          //           fit: BoxFit.fill,
-          //         )),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   width: 25.0,
-          // ),
         ],
       ),
     );

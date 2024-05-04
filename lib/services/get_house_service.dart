@@ -12,6 +12,8 @@ const Map<String, String> headers = {
 
 String? houseId;
 
+// /this is used in the home_page class and the house list page
+
 Future<List<GetHouse>> fetchHouses() async {
   try {
     final headersWithToken = {

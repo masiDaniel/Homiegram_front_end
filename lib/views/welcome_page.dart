@@ -8,8 +8,9 @@ class WelcomePage extends StatelessWidget {
   ///
   /// this page was supposed to be what is displayed as the splash screen
   /// i have not been able to implement this but im keen on doing this
+  /// i will have Homiegram as an animation and a small desciption of what the application has to offer
   /// it has two buttons that will be
-  ///  login which redirects the user to the sign in page
+  /// login which redirects the user to the sign in page
   /// and sign up which will redirect them to the sign up page
   ///
   ///

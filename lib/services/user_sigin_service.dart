@@ -9,10 +9,10 @@ const Map<String, String> headers = {
 
 String? authToken;
 String? firstName;
-String? ImageUrl;
-int? UserId;
+String? imageUrl;
+int? userId;
 
-Future fetchUserRegistration(String username, String password) async {
+Future fetchUserSignIn(String username, String password) async {
   try {
     final response = await http.post(
       Uri.parse("http://127.0.0.1:8000/accounts/login/"),
@@ -27,9 +27,9 @@ Future fetchUserRegistration(String username, String password) async {
       final userData = json.decode(response.body);
       final token = userData['token'];
       final first_name = userData['first_name'];
-      final userId = userData['id'];
-      UserId = userId;
-      ImageUrl = userData['profile_pic'];
+      final currentUserId = userData['id'];
+      userId = currentUserId;
+      imageUrl = userData['profile_pic'];
       authToken = token;
       firstName = first_name;
 

@@ -3,12 +3,7 @@ import 'package:homi_2/views/about_app.dart';
 import 'package:homi_2/views/all_houses.dart';
 import 'package:homi_2/views/home_page.dart';
 import 'package:homi_2/views/house_list_screen.dart';
-
-// import 'package:homi_2/views/home_page.dart';
-// import 'package:homi_2/views/specific_hostel.dart';
 import 'package:homi_2/views/sign_in.dart';
-// import 'package:homi_2/about_app.dart';
-// import 'package:homi_2/landing_page.dart';
 import 'package:homi_2/views/sign_up.dart';
 import 'package:homi_2/views/welcome_page.dart';
 import 'dart:async';
@@ -32,21 +27,15 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => const SignIn(),
         '/signup': (context) => const SignUp(),
         '/about': (context) => AboutHomiegram(),
-        // '/specific': (context) => const SpecificHostel(
-        //       houseId: 1,
-        //     ),
         '/homepage': (context) => const HomePage(),
         '/allHouses': (context) => const allHouses(),
         '/trialAllHouses': (context) => HouseListScreen()
-
-        // '/about': (context) => const AboutHomiegram()
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
           builder: (context) => const NotFoundPage(), // Handle unknown routes
         );
       },
-      // home: SpecificHostel(),
     );
   }
 }

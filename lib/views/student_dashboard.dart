@@ -6,7 +6,10 @@ import 'package:homi_2/services/user_signout_service.dart';
 class studentDashboardView extends StatefulWidget {
   ///
   ///this page handles the page for the specific user
-  ///it will contain the users name, profile, bookmarks and current residence
+  ///it will contain the users name, profile, bookmarks and current residence(this should be handled by 10th may)
+  ///it will have a log out button
+  ///
+
   const studentDashboardView({super.key});
 
   @override
@@ -14,6 +17,7 @@ class studentDashboardView extends StatefulWidget {
 }
 
 class _studentDashboardViewState extends State<studentDashboardView> {
+  //this is a method that calls the logoutUser method and if it is succesfull it redirectts the user to the homepage
   Future<void> _logout() async {
     try {
       await logoutUser();
@@ -23,12 +27,13 @@ class _studentDashboardViewState extends State<studentDashboardView> {
     }
   }
 
+  // this is a function that takes the first letter from the name of the user
   String _extractInitials(String name) {
     List<String> nameParts = name.split(' ');
     if (nameParts.isNotEmpty) {
-      return nameParts[0][0].toUpperCase(); // First letter of the first name
+      return nameParts[0][0].toUpperCase(); //first name, first letter
     } else {
-      return ''; // Return empty string if name is empty
+      return 'HG'; // Return Homiegram initials if name is empty
     }
   }
 
@@ -73,10 +78,10 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                         CircleAvatar(
                           backgroundColor: Color.fromARGB(255, 2, 75, 50),
                           maxRadius: 25,
-                          backgroundImage: ImageUrl != null
-                              ? NetworkImage('$baseUrl$ImageUrl')
+                          backgroundImage: imageUrl != null
+                              ? NetworkImage('$baseUrl$imageUrl')
                               : null,
-                          child: ImageUrl == null
+                          child: imageUrl == null
                               ? Text(
                                   _extractInitials('$firstName'),
                                   style: TextStyle(color: Colors.white),

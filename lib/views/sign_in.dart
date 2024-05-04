@@ -15,8 +15,12 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  // final UserService _userService = UserService();
 
+  /// this is a function that takes the input from the textfields and processes it
+  /// once processed it calls the fetchUserRegistration with email and password as required parameters
+  /// it stores the value returned in the userRegistration object and redirects the user to the homepage if succesful
+  /// questions - (userRegistration class object?  what does the ? mean and do?)
+  ///
   void _signIn() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
@@ -28,9 +32,9 @@ class _SignInState extends State<SignIn> {
 
     if (email.isNotEmpty && password.isNotEmpty && isValidEmail(email)) {
       UserRegistration? userRegistration =
-          await fetchUserRegistration(email, password);
+          await fetchUserSignIn(email, password);
       if (userRegistration != null) {
-        // Sign in successful, navigate to the homepage screen
+        //navigate to the homepage screen if sign in is succesfull
         Navigator.pushNamed(context, '/homepage');
       } else {
         // Show error message if the sign-in was unsuccessful
@@ -46,6 +50,8 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+  /// this part deals with the user interface of the sign in page
+  /// it also  has the custom text fields that take input
   @override
   Widget build(BuildContext context) {
     return Scaffold(

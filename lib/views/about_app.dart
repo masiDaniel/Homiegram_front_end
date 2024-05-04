@@ -28,7 +28,7 @@ class Node {
     required this.title,
     this.color = Colors.grey,
     this.borderRadius = const BorderRadius.all(Radius.circular(8.0)),
-    List<BoxShadow>? boxShadow, // Removed the const keyword
+    List<BoxShadow>? boxShadow,
   }) : boxShadow = boxShadow ??
             [
               BoxShadow(

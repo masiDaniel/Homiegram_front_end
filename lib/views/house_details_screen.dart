@@ -6,16 +6,20 @@ import 'package:homi_2/services/comments_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
-class HouseDetailsScreen extends StatefulWidget {
+/// i dont understand the data flow in this section and it should be reviewed
+/// also the GetHouse houses bit of the code
+/// i wan to understand how setstate works so that the comments can reflect instantly when added or deleted
+
+class specificHouseDetailsScreen extends StatefulWidget {
   final GetHouse house;
 
-  const HouseDetailsScreen({required this.house});
+  const specificHouseDetailsScreen({super.key, required this.house});
 
   @override
-  State<HouseDetailsScreen> createState() => _HouseDetailsScreenState();
+  State<specificHouseDetailsScreen> createState() => _HouseDetailsScreenState();
 }
 
-class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
+class _HouseDetailsScreenState extends State<specificHouseDetailsScreen> {
   late Future<List<getComments>> _commentsFuture;
   List<getComments> _comments = [];
 
@@ -28,12 +32,12 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
   void addComment(String comment) {
     PostComments.postComment(
       houseId: widget.house.HouseId.toString(),
-      userId: UserId.toString(),
+      userId: userId.toString(),
       comment: comment,
       nested: true,
       nestedId: '3',
     );
-    print("Hello I in house id ${widget.house.HouseId.toString()}");
+    //the setstate bellow does not affect anything
     setState(() {
       getComments newComment = getComments(
         commentId: 0,
@@ -71,6 +75,9 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(
+              height: 5,
+            ),
             Container(
                 height: 500,
                 child: ListView(
@@ -91,24 +98,24 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'description: ${widget.house.description}',
+                    'Description: ${widget.house.description}',
                     style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(
                     height: 8,
                   ),
-                  Text('rent amount: ${widget.house.rent_amount}'),
-                  Text('rating: ${widget.house.rating}'),
-                  Text('location: ${widget.house.location}'),
+                  Text('Rent Amount: ${widget.house.rent_amount}'),
+                  Text('Rating: ${widget.house.rating}'),
+                  Text('Location: ${widget.house.location}'),
                 ],
               ),
             ),
             const SizedBox(
               height: 20,
             ),
-            const Text(
-              'add a comment',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              'Tell us about ${widget.house.name}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 10,
@@ -131,11 +138,10 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
                         _submitComment(commentController);
                         setState(() {});
                       },
-                      child: const Text('post comment'))
+                      child: const Text('Post Comment'))
                 ],
               ),
             ),
-            // CommentForm(addComment: addComment),
             const SizedBox(
               height: 10,
             ),
@@ -148,7 +154,6 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
-                  print(widget.house);
                   return CommentList(
                     comments: snapshot.data!,
                   );
@@ -159,52 +164,6 @@ class _HouseDetailsScreenState extends State<HouseDetailsScreen> {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CommentForm extends StatefulWidget {
-  final Function(String) addComment;
-
-  const CommentForm({required this.addComment, Key? key}) : super(key: key);
-
-  @override
-  State<CommentForm> createState() => _CommentFormState();
-}
-
-class _CommentFormState extends State<CommentForm> {
-  final TextEditingController _commentController = TextEditingController();
-
-  void _submitComment() {
-    final String comment = _commentController.text.trim();
-    if (comment.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('comment cannot be empty')),
-      );
-    } else {
-      widget.addComment(comment);
-      _commentController.clear();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          TextField(
-            controller: _commentController,
-            decoration: const InputDecoration(labelText: 'Your comment'),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-              onPressed: _submitComment, child: const Text('post comment'))
-        ],
       ),
     );
   }
@@ -259,9 +218,12 @@ class _CommentListState extends State<CommentList> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'comments',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'Comments',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
         const SizedBox(
           height: 10,
@@ -284,7 +246,7 @@ class _CommentListState extends State<CommentList> {
                 Expanded(
                   child: Text(comment.comment),
                 ),
-                if (comment.userId == UserId)
+                if (comment.userId == userId)
                   IconButton(
                       onPressed: () {
                         deleteComment(comment.commentId);

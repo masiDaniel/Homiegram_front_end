@@ -37,7 +37,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HouseDetailsScreen(
+                            builder: (context) => specificHouseDetailsScreen(
                                 house: snapshot.data![index]),
                           ),
                         );

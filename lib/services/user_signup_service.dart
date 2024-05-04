@@ -6,15 +6,17 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
+/// what is the difference of using Future<UserSignUp?> fetchUserSignIp and just writting Future fetchUserSignUp?
+///
 Future<UserSignUp?> fetchUserSignUp(
-    String first_name, String last_name, String email, String password) async {
+    String firstName, String lastName, String email, String password) async {
   try {
     final response =
         await http.post(Uri.parse("http://127.0.0.1:8000/accounts/signup/"),
             headers: headers,
             body: jsonEncode({
-              "first_name": first_name,
-              "last_name": last_name,
+              "first_name": firstName,
+              "last_name": lastName,
               "email": email,
               "password": password,
             }));

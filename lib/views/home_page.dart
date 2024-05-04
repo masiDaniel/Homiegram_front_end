@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+/// get this into a seperate function that can be used in differenet files
 String _extractInitials(String name) {
   List<String> nameParts = name.split(' ');
   if (nameParts.isNotEmpty) {
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     'Machakos'
   ];
 
-  double _minPrice = 0;
+  final double _minPrice = 0;
   double _maxPrice = 1000;
   final List<String> _selectedAmenities = [];
   final List<String> _amenities = [
@@ -54,7 +55,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final TextEditingController searchController = TextEditingController();
     String baseUrl = 'http://127.0.0.1:8000';
 
     return Scaffold(
@@ -81,11 +81,11 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     child: CircleAvatar(
-                      foregroundImage: ImageUrl != null
-                          ? NetworkImage('$baseUrl$ImageUrl')
+                      foregroundImage: imageUrl != null
+                          ? NetworkImage('$baseUrl$imageUrl')
                           : null,
                       backgroundColor: const Color.fromARGB(255, 3, 101, 139),
-                      child: ImageUrl != null
+                      child: imageUrl != null
                           ? null
                           : Text(
                               _extractInitials('$firstName'),
@@ -179,7 +179,6 @@ class _HomePageState extends State<HomePage> {
                             ),
                             RangeSlider(
                               values: RangeValues(_minPrice, _maxPrice),
-                              min: 0,
                               max: 100000,
                               divisions: 100,
                               labels: RangeLabels(
@@ -196,10 +195,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(
-                      width: 10,
-                    ),
-                    const SizedBox(
-                      width: 10,
+                      width: 30,
                     ),
                     const Text(
                       "Amenities",
@@ -263,22 +259,6 @@ class _HomePageState extends State<HomePage> {
               const sectionHeders(
                 headerTitle: "house listings",
               ),
-              // const SizedBox(
-              //   height: 25,
-              // ),
-              // const sectionHeders(
-              //   headerTitle: "most viewed",
-              // ),
-              // const SizedBox(
-              //   height: 25,
-              // ),
-              // const sectionHeders(
-              //   headerTitle: "closest to you",
-              // ),
-              // const SizedBox(
-              //   height: 25,
-              // ),
-              // const sectionHeders(),
             ],
           ),
         ),
