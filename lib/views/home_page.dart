@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/get_house.dart';
@@ -58,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     String baseUrl = 'http://127.0.0.1:8000';
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 254, 255, 255),
+      backgroundColor: Color(0xFFFEFFFF),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 20.0),
