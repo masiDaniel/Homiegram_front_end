@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   marquee: ^2.2.3
   animated_text_kit: ^4.2.2
-  google_sign_in: ^5.2.1
+  flutter_native_splash: ^2.3.13
   url_launcher: ^6.0.12
   http: ^1.2.1
 
@@ -52,6 +52,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  fading_edge_scrollview: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -68,6 +69,17 @@ flutter:
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
+
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  image: assets/images/logo.png
+  color: "#FFFFFF"
+  android_12:
+    image: assets/images/logo.png
+    color: "#FFFFFF"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
