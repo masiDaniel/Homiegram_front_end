@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
-import 'package:homi_2/views/house_details_screen.dart';
+import 'package:homi_2/views/Tenants/house_details_screen.dart';
 
 class HouseListScreen extends StatefulWidget {
   @override
@@ -103,6 +103,8 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                     style: const TextStyle(fontSize: 16),
                                   ),
                                   IconButton(
+
+                                      /// i havent handled the bookmark feature but this is where it will be handled
                                       onPressed: () {},
                                       icon: const Icon(
                                           Icons.bookmark_add_outlined))

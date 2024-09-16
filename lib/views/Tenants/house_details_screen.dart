@@ -21,7 +21,7 @@ class specificHouseDetailsScreen extends StatefulWidget {
 
 class _HouseDetailsScreenState extends State<specificHouseDetailsScreen> {
   late Future<List<getComments>> _commentsFuture;
-  List<getComments> _comments = [];
+  // List<getComments> _comments = [];
 
   @override
   void initState() {
@@ -38,17 +38,17 @@ class _HouseDetailsScreenState extends State<specificHouseDetailsScreen> {
       nestedId: '3',
     );
     //the setstate bellow does not affect anything
-    setState(() {
-      getComments newComment = getComments(
-        commentId: 0,
-        houseId: 2,
-        userId: 2,
-        comment: comment,
-        nested: false,
-        nestedId: '0',
-      );
-      _comments.insert(0, newComment);
-    });
+    // setState(() {
+    //   getComments newComment = getComments(
+    //     commentId: 0,
+    //     houseId: 2,
+    //     userId: 2,
+    //     comment: comment,
+    //     nested: false,
+    //     nestedId: '0',
+    //   );
+    //   _comments.insert(0, newComment);
+    // });
   }
 
   void _submitComment(TextEditingController commentController) {

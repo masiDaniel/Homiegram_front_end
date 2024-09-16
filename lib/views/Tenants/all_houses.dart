@@ -16,7 +16,7 @@ class allHouses extends StatefulWidget {
 }
 
 class _allHousesState extends State<allHouses> {
-  List<dynamic> houses = [];
+  List<dynamic> houses = []; // bad for performance use the actual model
 
   //this is used in this class only
   Future<void> fetchHouses() async {

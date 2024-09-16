@@ -92,11 +92,15 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                           width: 20,
                         ),
                         Text(
-                          'hi, $firstName\n today is  ${DateTime.now().toString().substring(0, 10)}',
+                          'hi, $firstName\n Today is  ${DateTime.now().toString().substring(0, 10)}',
                           style: const TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
+                  ),
+                  Text(
+                    'Your rent is due in, $firstName days',
+                    style: const TextStyle(fontSize: 20),
                   ),
                   const SizedBox(
                     height: 50,
@@ -110,7 +114,10 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                           const Text(
                             'Current House',
                             style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
+                              fontSize: 24,
+                              color: Color(0xFF126E06),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Container(
                             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -129,15 +136,18 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                     ),
                   ),
                   const Divider(
-                    color: Colors.grey,
-                    thickness: 1,
+                    color: Color(0xFF126E06),
+                    thickness: 3,
                   ),
                   const SizedBox(
                     width: 30,
                   ),
                   const Text(
                     'Bookmarks',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF126E06)),
                   ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),

@@ -26,20 +26,22 @@ class Node {
 
   Node({
     required this.title,
-    this.color = Colors.grey,
+    this.color = const Color.fromARGB(255, 119, 204, 98),
     this.borderRadius = const BorderRadius.all(Radius.circular(8.0)),
     List<BoxShadow>? boxShadow,
   }) : boxShadow = boxShadow ??
             [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
+                color: const Color.fromARGB(255, 14, 13, 13).withOpacity(0.5),
+                spreadRadius: 2,
                 blurRadius: 7,
                 offset: const Offset(0, 3),
               )
             ];
 }
 
+///how will i wdit the text in the nodes?
+///
 class AboutHomiegram extends StatelessWidget {
   final List<Node> nodes = [
     Node(
@@ -56,13 +58,13 @@ class AboutHomiegram extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 31, 70, 87),
+        backgroundColor: const Color(0xFF126E06),
         title: const Text(
-          "What HomieGram has to offer",
+          "What is HomiGram?",
           style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         ),
       ),
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: CustomPaint(
         painter: VerticalLinePainter(),
         child: ListView.builder(

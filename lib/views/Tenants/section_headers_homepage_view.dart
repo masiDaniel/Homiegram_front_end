@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homi_2/views/house_views.dart';
+import 'package:homi_2/views/Tenants/house_views.dart';
 
 class sectionHeders extends StatelessWidget {
   final String headerTitle;

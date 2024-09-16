@@ -9,10 +9,10 @@ import 'package:http/http.dart' as http;
 const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
-
+List<GetHouse> AllHouses = [];
 String? houseId;
 
-// /this is used in the home_page class and the house list page
+// /this is used in the home_page class(commented out) and the house list page
 
 Future<List<GetHouse>> fetchHouses() async {
   try {
@@ -31,6 +31,7 @@ Future<List<GetHouse>> fetchHouses() async {
       final List<GetHouse> houses =
           housesData.map((json) => GetHouse.fromJSon(json)).toList();
 
+      AllHouses = houses;
       return houses;
     } else {
       throw Exception('failed to fetch arguments');

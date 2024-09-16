@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:homi_2/views/about_app.dart';
-import 'package:homi_2/views/all_houses.dart';
-import 'package:homi_2/views/home_page.dart';
-import 'package:homi_2/views/house_list_screen.dart';
+import 'package:homi_2/views/Shared/about_app.dart';
+import 'package:homi_2/views/Tenants/Navigation_bar.dart';
+import 'package:homi_2/views/Tenants/all_houses.dart';
+import 'package:homi_2/views/Tenants/home_page_v1.dart';
+import 'package:homi_2/views/Tenants/house_list_screen.dart';
 import 'package:homi_2/views/sign_in.dart';
-import 'package:homi_2/views/sign_up.dart';
+import 'package:homi_2/views/Shared/sign_up.dart';
 import 'package:homi_2/views/welcome_page.dart';
 import 'dart:async';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/about': (context) => AboutHomiegram(),
         '/homepage': (context) => const HomePage(),
+        '/homescreen': (context) => const CustomBottomNavigartion(),
         '/allHouses': (context) => const allHouses(),
         '/trialAllHouses': (context) => HouseListScreen()
       },

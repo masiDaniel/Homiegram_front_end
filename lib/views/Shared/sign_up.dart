@@ -68,7 +68,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(
@@ -77,7 +77,7 @@ class _SignUpState extends State<SignUp> {
             Text(
               "Sign Up",
               style: GoogleFonts.carterOne(
-                  color: Colors.white,
+                  color: Color(0xFF126E06),
                   fontSize: 50,
                   fontWeight: FontWeight.w700),
             ),
@@ -137,7 +137,7 @@ class _SignUpState extends State<SignUp> {
               onPressed: _signUserUp,
               width: 150,
               height: 40,
-              color: const Color.fromARGB(255, 71, 70, 70),
+              color: const Color(0xFF126E06),
             ),
             const SizedBox(
               height: 15,
@@ -145,8 +145,8 @@ class _SignUpState extends State<SignUp> {
             const Text(
               "Already have an account?  ",
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
+                  color: Colors.black,
+                  fontSize: 15,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w700),
             ),
@@ -157,7 +157,7 @@ class _SignUpState extends State<SignUp> {
               child: const Text(
                 " sign in",
                 style: TextStyle(
-                  color: Color.fromARGB(255, 8, 254, 4),
+                  color: Color(0xFF126E06),
                   fontSize: 15,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w700,

@@ -47,10 +47,11 @@ class _myTextFieldState extends State<myTextField> {
             borderRadius: BorderRadius.circular(50.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color.fromARGB(255, 255, 2, 2)),
+            borderSide:
+                const BorderSide(color: Color.fromARGB(255, 35, 223, 10)),
             borderRadius: BorderRadius.circular(45.0),
           ),
-          fillColor: const Color.fromARGB(255, 255, 255, 255),
+          fillColor: const Color(0xFFFFFFFF),
           filled: true,
           hintText: widget.hintText,
           suffixIcon: widget.suffixIcon != null

@@ -35,7 +35,7 @@ class _SignInState extends State<SignIn> {
           await fetchUserSignIn(email, password);
       if (userRegistration != null) {
         //navigate to the homepage screen if sign in is succesfull
-        Navigator.pushNamed(context, '/homepage');
+        Navigator.pushNamed(context, '/homescreen');
       } else {
         // Show error message if the sign-in was unsuccessful
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -56,7 +56,7 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -66,7 +66,7 @@ class _SignInState extends State<SignIn> {
                 Text(
                   "Sign in",
                   style: GoogleFonts.carterOne(
-                      color: Colors.white,
+                      color: Color(0xFF126E06),
                       fontSize: 50,
                       fontWeight: FontWeight.w700),
                 ),
@@ -90,7 +90,7 @@ class _SignInState extends State<SignIn> {
                 const Text(
                   "Dont' have an account?  ",
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 10,
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700),
@@ -103,8 +103,8 @@ class _SignInState extends State<SignIn> {
                   child: const Text(
                     " sign up",
                     style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 10,
+                        color: Color(0xFF126E06),
+                        fontSize: 20,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w700),
                   ),
@@ -115,7 +115,7 @@ class _SignInState extends State<SignIn> {
                   onPressed: _signIn,
                   width: 150,
                   height: 40,
-                  color: const Color.fromARGB(255, 71, 70, 70),
+                  color: const Color(0xFF126E06),
                 ),
               ],
             ),
