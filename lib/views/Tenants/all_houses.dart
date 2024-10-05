@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 const Map<String, String> headers = {
   "Content-Type": "application/json",
@@ -18,7 +18,7 @@ class allHouses extends StatefulWidget {
 class _allHousesState extends State<allHouses> {
   List<dynamic> houses = []; // bad for performance use the actual model
 
-  //this is used in this class only
+  // this is used in this class only
   Future<void> fetchHouses() async {
     final headersWithToken = {
       ...headers,

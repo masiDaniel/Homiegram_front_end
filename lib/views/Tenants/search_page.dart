@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_amenities.dart';
+import 'package:homi_2/services/get_filtered_houses_service.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/views/Tenants/section_headers_homepage_view.dart';
-import 'package:http/http.dart' as http;
 
 ///
 ///how will i handle having multiple arguments to pass to a url, ie searching
@@ -123,33 +123,6 @@ class _SearchPageState extends State<SearchPage> {
       'max_price': _maxPrice,
       'amenities': _selectedAmenities,
     };
-  }
-
-  Future<List<GetHouse>> fetchFilteredHouses() async {
-    String baseUrl = 'http://127.0.0.1:8000';
-    String apiUrl = '$baseUrl/api/houses/filter';
-
-    // Prepare the filter parameters
-    Map<String, dynamic> filterParams = {
-      'location': _selectedLocation,
-      'min_price': _minPrice,
-      'max_price': _maxPrice,
-      'amenities': _selectedAmenities,
-    };
-
-    // Send the request to the API
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(filterParams),
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => GetHouse.fromJSon(data)).toList();
-    } else {
-      throw Exception('Failed to load houses');
-    }
   }
 
   @override

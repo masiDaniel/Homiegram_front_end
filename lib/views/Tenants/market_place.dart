@@ -42,8 +42,8 @@ class _RentingPageState extends State<MarketPlace> {
                           fit: BoxFit
                               .cover, // Ensures the image covers the width
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(
+                        const Padding(
+                          padding: EdgeInsets.all(
                               8.0), // Adds some padding around the text
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,8 +92,8 @@ class _RentingPageState extends State<MarketPlace> {
                           fit:
                               BoxFit.fill, // Ensures the image covers the width
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(
+                        const Padding(
+                          padding: EdgeInsets.all(
                               8.0), // Adds some padding around the text
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,8 +142,8 @@ class _RentingPageState extends State<MarketPlace> {
                           fit:
                               BoxFit.fill, // Ensures the image covers the width
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(
+                        const Padding(
+                          padding: EdgeInsets.all(
                               8.0), // Adds some padding around the text
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFFEFFFF),
+        backgroundColor: const Color(0xFFFEFFFF),
         body: SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 20.0),
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Text('Rent status'),
+                          const Text('Rent status'),
                           const SizedBox(
                             height: 4,
                           ),
@@ -149,8 +149,8 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.green),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Text(
                           'All - 6',
                           style: TextStyle(color: Colors.white),
@@ -163,8 +163,8 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.green),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Text(
                           'Unread - 6',
                           style: TextStyle(color: Colors.white),
@@ -177,8 +177,8 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.green),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Text(
                           'Groups - 1',
                           style: TextStyle(color: Colors.white),
@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       child: isConditionMet
                           ? ListView.builder(
                               itemCount: chats.length,
@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                                 return ChatCard(chat: chats[index]);
                               },
                             )
-                          : Center(
+                          : const Center(
                               key: ValueKey('animation'),
                               child:
                                   CircularProgressIndicator(), // Example animation, can be any other widget
