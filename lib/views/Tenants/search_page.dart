@@ -295,16 +295,7 @@ class _SearchPageState extends State<SearchPage> {
                       ]),
                 ),
                 const sectionHeders(
-                  headerTitle: "Highlights",
-                ),
-                const sectionHeders(
-                  headerTitle: "all houses",
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                const sectionHeders(
-                  headerTitle: "house listings",
+                  headerTitle: "Categories",
                 ),
               ]),
         ),

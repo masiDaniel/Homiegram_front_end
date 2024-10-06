@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
@@ -10,6 +11,8 @@ class HouseListScreen extends StatefulWidget {
 
 class _HouseListScreenState extends State<HouseListScreen> {
   late Future<List<GetHouse>> futureHouses;
+  // Variable to track if the house is bookmarked
+  bool isBookmarked = false;
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => specificHouseDetailsScreen(
+                            builder: (context) => SpecificHouseDetailsScreen(
                                 house: snapshot.data![index]),
                           ),
                         );
@@ -102,12 +105,34 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                     'Location: ${snapshot.data![index].location}',
                                     style: const TextStyle(fontSize: 16),
                                   ),
-                                  IconButton(
-
-                                      /// i havent handled the bookmark feature but this is where it will be handled
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                          Icons.bookmark_add_outlined))
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      int houseId = snapshot.data![index]
+                                          .HouseId; // Replace this with the actual house ID you want to bookmark
+                                      PostBookmark.postBookmark(
+                                              houseId: houseId)
+                                          .then((_) {
+                                        // Optionally handle successful bookmarking here, like showing a message to the user
+                                        print("Bookmarking action completed.");
+                                        setState(() {
+                                          isBookmarked =
+                                              true; // Update state to reflect that bookmarking is successful
+                                        });
+                                      }).catchError((error) {
+                                        // Handle any errors here
+                                        print(
+                                            "Error occurred while bookmarking: $error");
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isBookmarked
+                                          ? Colors.green
+                                          : null, // Change button color based on state
+                                    ),
+                                    child: Text(isBookmarked
+                                        ? 'Bookmarked'
+                                        : 'Bookmark this House'),
+                                  )
                                 ],
                               ),
                             ),
