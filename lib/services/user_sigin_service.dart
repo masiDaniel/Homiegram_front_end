@@ -11,6 +11,9 @@ String? authToken;
 String? firstName;
 String? imageUrl;
 int? userId;
+String? lastName;
+String? userName;
+DateTime? dateJoined;
 
 Future fetchUserSignIn(String username, String password) async {
   try {
@@ -28,10 +31,12 @@ Future fetchUserSignIn(String username, String password) async {
       final token = userData['token'];
       final first_name = userData['first_name'];
       final currentUserId = userData['id'];
+
       userId = currentUserId;
       imageUrl = userData['profile_pic'];
       authToken = token;
       firstName = first_name;
+      lastName = userData['last_name'];
 
       return UserRegistration.fromJSon(userData);
     }

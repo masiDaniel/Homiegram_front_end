@@ -28,7 +28,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
   }
 
   // this is a function that takes the first letter from the name of the user
-  String _extractInitials(String name) {
+  String extractInitials(String name) {
     List<String> nameParts = name.split(' ');
     if (nameParts.isNotEmpty) {
       return nameParts[0][0].toUpperCase(); //first name, first letter
@@ -83,7 +83,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                               : null,
                           child: imageUrl == null
                               ? Text(
-                                  _extractInitials('$firstName'),
+                                  extractInitials('$firstName'),
                                   style: TextStyle(color: Colors.white),
                                 )
                               : null,
