@@ -23,6 +23,15 @@ class _HomePageState extends State<CustomBottomNavigartion> {
     const ProfilePage(),
   ];
 
+  // static final List<Widget> _pagesLandlord = <Widget>[
+  //   const HomePage(),
+  //   const SearchPage(),
+  //   const MarketPlace(),
+  //   const RentingPage(),
+  //   const ProfilePage(),
+  //   const LandingPage(),
+  // ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

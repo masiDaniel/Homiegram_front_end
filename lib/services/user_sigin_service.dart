@@ -14,6 +14,9 @@ int? userId;
 String? lastName;
 String? userName;
 DateTime? dateJoined;
+String? userEmail;
+int? idNumber;
+int? phoneNumber;
 
 Future fetchUserSignIn(String username, String password) async {
   try {
@@ -37,6 +40,10 @@ Future fetchUserSignIn(String username, String password) async {
       authToken = token;
       firstName = first_name;
       lastName = userData['last_name'];
+      userName = userData['username'];
+      userEmail = userData['email'];
+      idNumber = userData['id_number'];
+      phoneNumber = userData['phone_number'];
 
       return UserRegistration.fromJSon(userData);
     }

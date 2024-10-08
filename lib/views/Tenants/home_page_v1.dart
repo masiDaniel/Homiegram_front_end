@@ -23,31 +23,51 @@ String _extractInitials(String name) {
 
 class _HomePageState extends State<HomePage> {
   final bool isConditionMet = true;
+
+  //this will hold the current filter selection
+  String selectedFilter = 'All';
+
+  // Sample chat list
+  final List<Chat> chats = [
+    Chat(
+        chatName: "Landlord Maina",
+        lastMessage: "Welcome to heri",
+        unreadMessage: 1),
+    Chat(
+        chatName: "Heri Group Chat",
+        lastMessage: "Party at 5",
+        unreadMessage: 0),
+    Chat(
+        chatName: "Complaints",
+        lastMessage: "Will be completed tomorrow",
+        unreadMessage: 4),
+    Chat(
+        chatName: "Liquor",
+        lastMessage: "Will be completed tomorrow",
+        unreadMessage: 0),
+    Chat(
+        chatName: "Food",
+        lastMessage: "Will be completed tomorrow",
+        unreadMessage: 0),
+  ];
+
+  // Function to filter chats based on the selected filter
+  List<Chat> _getFilteredChats() {
+    if (selectedFilter == 'Unread') {
+      return chats.where((chat) => chat.unreadMessage > 0).toList();
+    } else if (selectedFilter == 'Groups') {
+      return chats.where((chat) => chat.chatName.contains('Group')).toList();
+    } else {
+      return chats; // 'All' or default
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String baseUrl = 'http://127.0.0.1:8000';
-    final chats = [
-      Chat(
-          chatName: "Landlord Maina",
-          lastMessage: "Welcome to heri",
-          unreadMessage: 2),
-      Chat(
-          chatName: "Heri Group Chat",
-          lastMessage: "Party at 5",
-          unreadMessage: 0),
-      Chat(
-          chatName: "Complaints",
-          lastMessage: "Will be completed tomorrow",
-          unreadMessage: 1),
-      Chat(
-          chatName: "Liqour",
-          lastMessage: "Will be completed tomorrow",
-          unreadMessage: 1),
-      Chat(
-          chatName: "Food",
-          lastMessage: "Will be completed tomorrow",
-          unreadMessage: 1),
-    ];
+    List Unread = chats.where((chat) => chat.unreadMessage > 0).toList();
+
+    final filteredChats = _getFilteredChats();
 
     return SafeArea(
       child: Scaffold(
@@ -143,48 +163,72 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 30,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.green),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'All - 6',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                    Wrap(
+                      runSpacing: 8,
+                      spacing: 8,
+                      children: [
+                        FilterChip(
+                          label: const Text("All"),
+                          labelStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          selected: true,
+                          selectedColor: Colors.green,
+                          backgroundColor: Colors.blue,
+                          checkmarkColor: Colors.red,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedFilter = 'All'; // Update filter
+                            });
+                          },
+                        )
+                      ],
                     ),
-                    Container(
-                      height: 30,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.green),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Unread - 6',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                    Wrap(
+                      runSpacing: 8,
+                      spacing: 8,
+                      children: [
+                        FilterChip(
+                          label: Text("Unread - ${Unread.length}"),
+                          labelStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          selected: true,
+                          selectedColor: Colors.green,
+                          backgroundColor: Colors.blue,
+                          checkmarkColor: Colors.red,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedFilter = 'Unread'; // Update filter
+                            });
+                          },
+                        )
+                      ],
                     ),
-                    Container(
-                      height: 30,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.green),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Groups - 1',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    )
+                    Wrap(
+                      runSpacing: 8,
+                      spacing: 8,
+                      children: [
+                        FilterChip(
+                          label: const Text("Groups - 1"),
+                          labelStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          selected: true,
+                          selectedColor: Colors.green,
+                          backgroundColor: Colors.blue,
+                          checkmarkColor: Colors.red,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedFilter = 'Groups'; // Update filter
+                            });
+                          },
+                        )
+                      ],
+                    ),
                   ],
                 ),
                 Container(
@@ -196,9 +240,10 @@ class _HomePageState extends State<HomePage> {
                       duration: const Duration(milliseconds: 500),
                       child: isConditionMet
                           ? ListView.builder(
-                              itemCount: chats.length,
+                              key: ValueKey(selectedFilter),
+                              itemCount: filteredChats.length,
                               itemBuilder: (context, index) {
-                                return ChatCard(chat: chats[index]);
+                                return ChatCard(chat: filteredChats[index]);
                               },
                             )
                           : const Center(

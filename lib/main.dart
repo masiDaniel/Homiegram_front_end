@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         '/homepage': (context) => const HomePage(),
         '/homescreen': (context) => const CustomBottomNavigartion(),
         '/allHouses': (context) => const allHouses(),
-        '/trialAllHouses': (context) => HouseListScreen()
+        '/trialAllHouses': (context) => HouseListScreen(),
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
