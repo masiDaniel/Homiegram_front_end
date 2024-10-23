@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/services/user_signout_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,179 +22,137 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _logout() async {
+    try {
+      await logoutUser();
+      Navigator.pushReplacementNamed(context, '/');
+    } catch (e) {
+      print("error logging out: $e");
+    }
+  }
+
   @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: const Text('profile Page'),
-  //       leading: Container(),
-  //     ),
-  //     body: Column(
-  //       mainAxisAlignment: MainAxisAlignment.start,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         Row(
-  //           children: [
-  //             SizedBox(
-  //               height: 200,
-  //               child: CircleAvatar(
-  //                 backgroundColor: const Color.fromARGB(255, 2, 75, 50),
-  //                 maxRadius: 150,
-  //                 backgroundImage: imageUrl != null
-  //                     ? NetworkImage('$baseUrl$imageUrl')
-  //                     : null,
-  //                 child: imageUrl == null
-  //                     ? Text(
-  //                         extractInitials('$firstName'),
-  //                         style: const TextStyle(color: Colors.white),
-  //                       )
-  //                     : null,
-  //               ),
-  //             ),
-  //             Column(
-  //               children: [
-  //                 Text('User Id: $userId'),
-  //                 Text('Username: $userName'),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile Page'),
         centerTitle: true,
         leading: Container(),
+        backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+              onPressed: () {
+                // handling of editing of the profile
+              },
+              icon: const Icon(Icons.edit))
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           Center(
-            child: CircleAvatar(
-              backgroundColor: const Color.fromARGB(255, 2, 75, 50),
-              radius: 60,
-              backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                  ? NetworkImage('$baseUrl$imageUrl')
-                  : null,
-              child: imageUrl == null || imageUrl!.isEmpty
-                  ? Text(
-                      extractInitials(firstName!),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                      ),
-                    )
-                  : null,
+            child: GestureDetector(
+              onTap: () {
+                //functionality to update the profile image.
+              },
+              child: CircleAvatar(
+                backgroundColor: const Color.fromARGB(255, 2, 75, 50),
+                radius: 60,
+                backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+                    ? NetworkImage('$baseUrl$imageUrl')
+                    : null,
+                child: imageUrl == null || imageUrl!.isEmpty
+                    ? Text(
+                        extractInitials(firstName!),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                        ),
+                      )
+                    : null,
+              ),
             ),
           ),
           const SizedBox(height: 20),
           Card(
-            elevation: 4,
+            elevation: 6,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(15.0),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.person, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'User ID: $userId',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  ListTile(
+                    leading: const Icon(Icons.person, color: Colors.teal),
+                    title: const Text('User ID'),
+                    subtitle: Text('$userId'),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Username: $userName',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading:
+                        const Icon(Icons.account_circle, color: Colors.teal),
+                    title: const Text('Username'),
+                    subtitle: Text('$userName'),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'First Name: $firstName',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading:
+                        const Icon(Icons.person_outline, color: Colors.teal),
+                    title: const Text('First Name'),
+                    subtitle: Text('$firstName'),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Last Name: $lastName',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading:
+                        const Icon(Icons.person_outline, color: Colors.teal),
+                    title: const Text('Last Name'),
+                    subtitle: Text('$lastName'),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Email: $userEmail',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.email, color: Colors.teal),
+                    title: const Text('Email'),
+                    subtitle: Text('$userEmail'),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'ID Number: $idNumber',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.credit_card, color: Colors.teal),
+                    title: const Text('ID Number'),
+                    subtitle: Text('$idNumber'),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle, color: Colors.teal),
-                      const SizedBox(width: 10),
-                      Text(
-                        'PhoneNumber: $phoneNumber',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.phone, color: Colors.teal),
+                    title: const Text('Phone Number'),
+                    subtitle: Text('$phoneNumber'),
                   ),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton.icon(
+            onPressed: () {
+              // Handle logout functionality
+              _logout();
+              print('logging out');
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            label: const Text(
+              'Logout',
+              style: TextStyle(color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 160, 2, 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
             ),
           ),
         ],

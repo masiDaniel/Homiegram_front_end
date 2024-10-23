@@ -8,6 +8,8 @@ class GetHouse {
   final String description;
   final String location;
   final List<String> images;
+  final String bankName;
+  final String accountNumber;
 
   GetHouse({
     required this.HouseId,
@@ -17,6 +19,8 @@ class GetHouse {
     required this.description,
     required this.location,
     required this.images,
+    required this.bankName,
+    required this.accountNumber,
   });
 
   factory GetHouse.fromJSon(Map<String, dynamic> json) {
@@ -34,6 +38,8 @@ class GetHouse {
       description: json['description'] ?? '',
       location: json['location'] ?? '',
       images: images,
+      bankName: json['payment_bank_name'] ?? '',
+      accountNumber: json['payment_account_number'] ?? '',
     );
   }
 

@@ -32,3 +32,55 @@ Future<List<BusinessModel>> fetchBusinesses() async {
     rethrow;
   }
 }
+
+Future<List<Category>> fetchCategorys() async {
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+
+    final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/business/getCategorys/'),
+        headers: headersWithToken);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> categoryData = json.decode(response.body);
+
+      final List<Category> categories =
+          categoryData.map((json) => Category.fromJSon(json)).toList();
+
+      return categories;
+    } else {
+      throw Exception('failed to fetch arguments');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+Future<List<Products>> fetchProducts() async {
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+
+    final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/business/getProducts/'),
+        headers: headersWithToken);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> productsData = json.decode(response.body);
+
+      final List<Products> products =
+          productsData.map((json) => Products.fromJSon(json)).toList();
+
+      return products;
+    } else {
+      throw Exception('failed to fetch arguments');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}

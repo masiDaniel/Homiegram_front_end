@@ -3,6 +3,7 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
+import 'package:homi_2/views/Tenants/products_page.dart';
 
 class MarketPlace extends StatefulWidget {
   const MarketPlace({super.key});
@@ -14,6 +15,7 @@ class MarketPlace extends StatefulWidget {
 class _MarketPlaceState extends State<MarketPlace> {
   late Future<List<BusinessModel>> futureBusinesses;
   late Future<List<Locations>> futureLocations;
+  late Future<List<Category>> futureCategories;
   String baseUrl = 'http://127.0.0.1:8000';
 
   @override
@@ -21,6 +23,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     super.initState();
     futureBusinesses = fetchBusinesses(); // Fetch businesses
     futureLocations = fetchLocations(); // Fetch locations
+    futureCategories = fetchCategorys();
   }
 
   @override
@@ -77,69 +80,98 @@ class _MarketPlaceState extends State<MarketPlace> {
 
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: 400,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF126E06),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Display business image with a default fallback
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12),
-                                      ),
-                                      child: Image.network(
-                                        businessImage,
-                                        width: double.infinity,
-                                        height:
-                                            300, // Set a height if necessary
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          // Handle any errors in loading the image
-                                          return Image.asset(
-                                            'assets/images/ad2.jpeg', // Default image
-                                            width: double.infinity,
-                                            height: 300,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                      ),
+                              child: InkWell(
+                                onTap: () {
+                                  // navigate to the business page.
+                                  print("item clicked");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProductsPage(
+                                          businessId: business
+                                              .businessId), // Pass the business ID
                                     ),
-                                    const SizedBox(height: 8.0),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            business.businessName,
-                                            style: const TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4.0),
-                                          // Display the matched location data
-                                          Text(
-                                            businessLocation != null
-                                                ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
-                                                : 'Location: Unknown',
-                                            style: const TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
+                                  );
+                                },
+                                child: Container(
+                                  width: 400,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF126E06),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Display business image with a default fallback
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        ),
+                                        child: Image.network(
+                                          businessImage,
+                                          width: double.infinity,
+                                          height:
+                                              300, // Set a height if necessary
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            // Handle any errors in loading the image
+                                            return Image.asset(
+                                              'assets/images/ad2.jpeg', // Default image
+                                              width: double.infinity,
+                                              height: 300,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 8.0),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              business.businessName,
+                                              style: const TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4.0),
+                                            // Display the matched location data
+                                            Text(
+                                              businessLocation != null
+                                                  ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
+                                                  : 'Location: Unknown',
+                                              style: const TextStyle(
+                                                fontSize: 16.0,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Contact: ${business.contactNumber},',
+                                              style: const TextStyle(
+                                                fontSize: 16.0,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Category: ${business.businessTypeId},',
+                                              style: const TextStyle(
+                                                fontSize: 16.0,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

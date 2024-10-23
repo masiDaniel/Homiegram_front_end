@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/chat.dart';
-import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
-import 'package:homi_2/views/Tenants/student_dashboard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -77,7 +75,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    String baseUrl = 'http://127.0.0.1:8000';
     List Unread = chats.where((chat) => chat.unreadMessage > 0).toList();
 
     final filteredChats = _getFilteredChats();
@@ -92,63 +89,57 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 80,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const studentDashboardView()),
-                        );
-                      },
-                      child: CircleAvatar(
-                        foregroundImage: imageUrl != null
-                            ? NetworkImage('$baseUrl$imageUrl')
-                            : null,
-                        backgroundColor: const Color(0xFF126E06),
-                        child: imageUrl != null
-                            ? null
-                            : Text(
-                                _extractInitials('$firstName'),
-                                style: const TextStyle(color: Colors.white),
-                              ),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 50,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Welcome back, $firstName",
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 22,
+                      // InkWell(
+                      //   onTap: () {
+                      //     // not needed currently.
+                      //     // Navigator.push(
+                      //     //   context,
+                      //     //   MaterialPageRoute(
+                      //     //       builder: (context) =>
+                      //     //           const studentDashboardView()),
+                      //     // );
+                      //   },
+                      //   // will be useful later.
+                      //   // child: CircleAvatar(
+                      //   //   radius: 50,
+                      //   //   foregroundImage: imageUrl != null
+                      //   //       ? NetworkImage('$baseUrl$imageUrl')
+                      //   //       : null,
+                      //   //   backgroundColor: const Color(0xFF126E06),
+                      //   //   child: imageUrl != null
+                      //   //       ? null
+                      //   //       : Text(
+                      //   //           _extractInitials('$firstName'),
+                      //   //           style: const TextStyle(color: Colors.white),
+                      //   //         ),
+                      //   // ),
+                      // ),
+
+                      Text(
+                        "HomiGram.",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 16, 90, 1),
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          const Text('Rent status'),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Container(
-                            height: 30,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.green),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
+
+                      // Text(
+                      //   "Welcome back, $firstName",
+                      //   style: const TextStyle(
+                      //     color: Color.fromARGB(255, 0, 0, 0),
+                      //     fontSize: 22,
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
