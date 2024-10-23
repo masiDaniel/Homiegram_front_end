@@ -37,8 +37,9 @@ class WelcomePage extends StatelessWidget {
             /// wraping this row with a widget that will ebsure that there is no
             /// overflow
             ///
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              spacing: 10.0,
+              alignment: WrapAlignment.center,
               children: [
                 MyButton(
                   buttonText: "Login!",

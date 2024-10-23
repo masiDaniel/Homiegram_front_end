@@ -17,7 +17,7 @@ class _ChatCardState extends State<ChatCard> {
   Widget build(BuildContext context) {
     return Card(
       child: Container(
-        height: 100,
+        height: 80,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListTile(
@@ -33,12 +33,6 @@ class _ChatCardState extends State<ChatCard> {
             isThreeLine:
                 true, // Enable this if you want to allow three lines of text
             dense: true, // Use dense to adjust the height of the tile
-            onTap: () {
-              setState(() {
-                isRead = true; // Mark as read when tapped
-              });
-              Navigator.pushNamed(context, '/chatScreen');
-            },
           ),
         ),
       ),

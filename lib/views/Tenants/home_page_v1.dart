@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
+import 'package:homi_2/views/Tenants/chat_page.dart';
 import 'package:homi_2/views/Tenants/student_dashboard.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,6 +61,18 @@ class _HomePageState extends State<HomePage> {
     } else {
       return chats; // 'All' or default
     }
+  }
+
+  void _markChatAsRead(int index) {
+    setState(() {
+      chats[index].markAsRead();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getFilteredChats();
   }
 
   @override
@@ -232,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Container(
-                  height: 400,
+                  height: 500,
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -243,7 +256,19 @@ class _HomePageState extends State<HomePage> {
                               key: ValueKey(selectedFilter),
                               itemCount: filteredChats.length,
                               itemBuilder: (context, index) {
-                                return ChatCard(chat: filteredChats[index]);
+                                return InkWell(
+                                  onTap: () {
+                                    _markChatAsRead(index);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                            chat: filteredChats[index]),
+                                      ),
+                                    );
+                                  },
+                                  child: ChatCard(chat: filteredChats[index]),
+                                );
                               },
                             )
                           : const Center(

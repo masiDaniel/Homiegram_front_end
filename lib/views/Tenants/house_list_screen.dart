@@ -20,6 +20,9 @@ class _HouseListScreenState extends State<HouseListScreen> {
     futureHouses = fetchHouses();
   }
 
+  // This map will store the bookmark state for each house by its HouseId
+  Map<int, bool> bookmarkedHouses = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +37,10 @@ class _HouseListScreenState extends State<HouseListScreen> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     String baseUrl = 'http://127.0.0.1:8000';
+                    int houseId = snapshot.data![index].HouseId;
+
+                    // Check if this house is bookmarked, if not default to false
+                    bool isBookmarked = bookmarkedHouses[houseId] ?? false;
 
                     return GestureDetector(
                       onTap: () {
@@ -90,21 +97,35 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                 ],
                               ),
                               padding: const EdgeInsets.all(8),
-                              child: Column(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Rent amount: ${snapshot.data![index].rent_amount}',
-                                    style: const TextStyle(fontSize: 16),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Rent amount: ${snapshot.data![index].rent_amount}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      Text(
+                                        'Rating: ${snapshot.data![index].rating}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      Text(
+                                        'Location: ${snapshot.data![index].location}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Rating: ${snapshot.data![index].rating}',
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  Text(
-                                    'Location: ${snapshot.data![index].location}',
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
+                                  // Spacer pushes the button to the right
+                                  const Spacer(),
+
                                   ElevatedButton(
                                     onPressed: () {
                                       int houseId = snapshot.data![index]
@@ -115,8 +136,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                         // Optionally handle successful bookmarking here, like showing a message to the user
                                         print("Bookmarking action completed.");
                                         setState(() {
-                                          isBookmarked =
-                                              true; // Update state to reflect that bookmarking is successful
+                                          bookmarkedHouses[houseId] = true;
                                         });
                                       }).catchError((error) {
                                         // Handle any errors here
@@ -131,7 +151,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                     ),
                                     child: Text(isBookmarked
                                         ? 'Bookmarked'
-                                        : 'Bookmark this House'),
+                                        : 'Bookmark'),
                                   )
                                 ],
                               ),

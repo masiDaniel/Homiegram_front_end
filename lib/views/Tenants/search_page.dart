@@ -28,7 +28,7 @@ class CustomSearchDelegate extends SearchDelegate {
         onPressed: () {
           query = '';
         },
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
       ),
     ];
   }
@@ -40,7 +40,7 @@ class CustomSearchDelegate extends SearchDelegate {
       onPressed: () {
         close(context, null);
       },
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
     );
   }
 
@@ -156,7 +156,7 @@ class _SearchPageState extends State<SearchPage> {
                             delegate: CustomSearchDelegate(),
                           );
                         },
-                        icon: Icon(Icons.search,
+                        icon: const Icon(Icons.search,
                             color: Colors.white), // Set icon color if needed
                       ),
                     )),
@@ -186,7 +186,7 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                               DropdownButton<String>(
                                 borderRadius: BorderRadius.circular(20),
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 value: _selectedLocation,
                                 onChanged: (String? newValue) {
                                   setState(() {
@@ -222,7 +222,7 @@ class _SearchPageState extends State<SearchPage> {
                                 values: RangeValues(_minPrice, _maxPrice),
                                 max: 100000,
                                 divisions: 100,
-                                activeColor: Color(0xFF126E06),
+                                activeColor: const Color(0xFF126E06),
                                 labels: RangeLabels(
                                     '\Ksh $_minPrice', '\Ksh $_maxPrice'),
                                 onChanged: (RangeValues values) {
@@ -250,18 +250,24 @@ class _SearchPageState extends State<SearchPage> {
                         spacing: 10,
                         runSpacing: 10,
                         children: _amenities.map((String amenity) {
-                          return CheckboxListTile(
-                            title: Text(amenity),
-                            value: _selectedAmenities.contains(amenity),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value!) {
-                                  _selectedAmenities.add(amenity);
-                                } else {
-                                  _selectedAmenities.remove(amenity);
-                                }
-                              });
-                            },
+                          return Row(
+                            mainAxisSize: MainAxisSize
+                                .min, // Ensure the Row doesn't take full width
+                            children: [
+                              Checkbox(
+                                value: _selectedAmenities.contains(amenity),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value!) {
+                                      _selectedAmenities.add(amenity);
+                                    } else {
+                                      _selectedAmenities.remove(amenity);
+                                    }
+                                  });
+                                },
+                              ),
+                              Text(amenity),
+                            ],
                           );
                         }).toList(),
                       ),
