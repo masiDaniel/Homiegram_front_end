@@ -14,8 +14,7 @@ Future<List<Locations>> fetchLocations() async {
       'Authorization': 'Token $authToken',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/houses/getLocation/'),
+    final response = await http.get(Uri.parse('$devUrl/houses/getLocation/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

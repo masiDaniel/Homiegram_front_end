@@ -7,21 +7,24 @@ class GetHouse {
   final int rating;
   final String description;
   final String location;
-  final List<String> images;
+  final List<String>? images;
   final String bankName;
   final String accountNumber;
+  final List<int> amenities;
+  final int landlord_id;
 
-  GetHouse({
-    required this.HouseId,
-    required this.name,
-    required this.rent_amount,
-    required this.rating,
-    required this.description,
-    required this.location,
-    required this.images,
-    required this.bankName,
-    required this.accountNumber,
-  });
+  GetHouse(
+      {required this.HouseId,
+      required this.name,
+      required this.rent_amount,
+      required this.rating,
+      required this.description,
+      required this.location,
+      this.images,
+      required this.bankName,
+      required this.accountNumber,
+      required this.amenities,
+      required this.landlord_id});
 
   factory GetHouse.fromJSon(Map<String, dynamic> json) {
     List<String> images = [];
@@ -31,27 +34,29 @@ class GetHouse {
     if (json['image_3'] != null) images.add(json['image_3']);
 
     return GetHouse(
-      HouseId: json['id'] ?? '',
-      name: json['name'] ?? '',
-      rent_amount: json['rent_amount'] ?? '',
-      rating: json['rating'] ?? '',
-      description: json['description'] ?? '',
-      location: json['location'] ?? '',
-      images: images,
-      bankName: json['payment_bank_name'] ?? '',
-      accountNumber: json['payment_account_number'] ?? '',
-    );
+        HouseId: json['id'] ?? '',
+        name: json['name'] ?? '',
+        rent_amount: json['rent_amount'] ?? '',
+        rating: json['rating'] ?? '',
+        description: json['description'] ?? '',
+        location: json['location'] ?? '',
+        images: images,
+        bankName: json['payment_bank_name'] ?? '',
+        accountNumber: json['payment_account_number'] ?? '',
+        amenities: List<int>.from(json['amenities'] ?? []),
+        landlord_id: json['landlord_id']);
   }
 
   Map<String, dynamic> tojson() {
     return {
-      'id': HouseId,
       'name': name,
       'rent_amount': rent_amount,
       'rating': rating,
       'description': description,
       'location': location,
-      'images': images,
+      // 'images': images,
+      'amenities': amenities,
+      'landlord_id': landlord_id,
     };
   }
 }

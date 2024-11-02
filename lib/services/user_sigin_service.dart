@@ -16,12 +16,15 @@ String? userName;
 DateTime? dateJoined;
 String? userEmail;
 int? idNumber;
-int? phoneNumber;
+String? phoneNumber;
+String? userTypeCurrent;
+String azurebaseUrl = 'https://hommiegram.azurewebsites.net';
+String devUrl = 'http://127.0.0.1:8000/';
 
 Future fetchUserSignIn(String username, String password) async {
   try {
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/accounts/login/"),
+      Uri.parse("$devUrl/accounts/login/"),
       headers: headers,
       body: jsonEncode({
         "email": username,
@@ -44,6 +47,7 @@ Future fetchUserSignIn(String username, String password) async {
       userEmail = userData['email'];
       idNumber = userData['id_number'];
       phoneNumber = userData['phone_number'];
+      userTypeCurrent = userData['user_type'];
 
       return UserRegistration.fromJSon(userData);
     }

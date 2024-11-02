@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:homi_2/models/user_signup.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
 const Map<String, String> headers = {
@@ -12,7 +13,7 @@ Future<UserSignUp?> fetchUserSignUp(
     String firstName, String lastName, String email, String password) async {
   try {
     final response =
-        await http.post(Uri.parse("http://127.0.0.1:8000/accounts/signup/"),
+        await http.post(Uri.parse("$azurebaseUrl/accounts/signup/"),
             headers: headers,
             body: jsonEncode({
               "first_name": firstName,

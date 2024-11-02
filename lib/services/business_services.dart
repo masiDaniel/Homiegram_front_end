@@ -40,8 +40,7 @@ Future<List<Category>> fetchCategorys() async {
       'Authorization': 'Token $authToken',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/business/getCategorys/'),
+    final response = await http.get(Uri.parse('$devUrl/business/getCategorys/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

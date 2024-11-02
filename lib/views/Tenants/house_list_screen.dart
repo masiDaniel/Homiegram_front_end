@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
 
 class HouseListScreen extends StatefulWidget {
@@ -36,7 +37,6 @@ class _HouseListScreenState extends State<HouseListScreen> {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    String baseUrl = 'http://127.0.0.1:8000';
                     int houseId = snapshot.data![index].HouseId;
 
                     // Check if this house is bookmarked, if not default to false
@@ -58,15 +58,15 @@ class _HouseListScreenState extends State<HouseListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // for (var imageUrl in snapshot.data![index].images)
-                            if (snapshot.data![index].images.isNotEmpty)
+                            if (snapshot.data![index].images!.isNotEmpty)
                               Image.network(
-                                '$baseUrl${snapshot.data![index].images[0]}',
+                                '$azurebaseUrl${snapshot.data![index].images?[0]}',
                                 height: 150,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                               ),
 
-                            if (snapshot.data![index].images.isEmpty)
+                            if (snapshot.data![index].images!.isEmpty)
                               const Placeholder(
                                 fallbackHeight: 150,
                                 fallbackWidth: double.infinity,

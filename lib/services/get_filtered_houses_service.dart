@@ -1,5 +1,6 @@
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -19,8 +20,7 @@ final List<String> _selectedAmenities = [];
 final List<String> _amenities = [];
 
 Future<List<GetHouse>> fetchFilteredHouses() async {
-  String baseUrl = 'http://127.0.0.1:8000';
-  String apiUrl = '$baseUrl/api/houses/filter';
+  String apiUrl = '$azurebaseUrl/api/houses/filter';
 
   // Prepare the filter parameters
   Map<String, dynamic> filterParams = {

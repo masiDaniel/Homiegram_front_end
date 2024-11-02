@@ -57,8 +57,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   }
 
   Future<void> deleteComment(int commentId) async {
-    String baseUrl = 'http://127.0.0.1:8000';
-    String url = '$baseUrl/comments/deleteComments/$commentId/';
+    String url = '$azurebaseUrl/comments/deleteComments/$commentId/';
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token $authToken',
@@ -93,7 +92,6 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
-    String baseUrl = 'http://127.0.0.1:8000';
 
     return Scaffold(
       appBar: AppBar(
@@ -108,9 +106,9 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  for (var imageUrl in widget.house.images)
+                  for (var imageUrl in widget.house.images!)
                     Image.network(
-                      '$baseUrl$imageUrl',
+                      '$azurebaseUrl$imageUrl',
                       width: 500,
                       height: 300,
                       fit: BoxFit.cover,
@@ -166,6 +164,42 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               onDelete: deleteComment, // Pass the delete function
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Handle rent button press
+                  // _handleRentButton();
+                },
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(150, 50), // Full-width button
+                    backgroundColor: Color(0xFF126E06)),
+                child: const Text(
+                  'Bookmark',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle rent button press
+                  // _handleRentButton();
+                },
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(150, 50), // Full-width button
+                    backgroundColor: const Color(0xFF126E06)),
+                child: const Text(
+                  'Rent',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

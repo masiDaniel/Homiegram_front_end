@@ -10,15 +10,13 @@ class PostComments {
     required bool nested,
     required String nestedId,
   }) async {
-    // const String url = '$baseUrl/comments/post/';
-
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token $authToken',
     };
     try {
       final response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/comments/post/"),
+        Uri.parse("$azurebaseUrl/comments/post/"),
         headers: headers,
         body: jsonEncode({
           "house_id": houseId,

@@ -15,7 +15,7 @@ Future logoutUser() async {
     };
     print("this is the token ${authToken}");
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/accounts/logout/"),
+      Uri.parse("$azurebaseUrl/accounts/logout/"),
       headers: headersWithToken,
     );
 

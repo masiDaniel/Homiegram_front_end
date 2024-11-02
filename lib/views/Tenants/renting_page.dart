@@ -45,39 +45,40 @@ class _RentingPageState extends State<RentingPage> {
 
             if (matchedRooms.isEmpty) {
               // No room found for the current user
-              return Center(
+              return const Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.warning,
-                          size: 100, color: Color(0xFF126E06)),
-                      const SizedBox(height: 20),
-                      const Text(
+                      Icon(Icons.warning, size: 100, color: Color(0xFF126E06)),
+                      SizedBox(height: 20),
+                      Text(
                         'You don\'t have a room assigned yet.',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Get a room now to access this service and enjoy seamless experience!',
+                      SizedBox(height: 10),
+                      Text(
+                        'Get a room now to access this service and enjoy seamless experience!\nHead over to the search page for multiple choices!',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Add logic to direct user to rent a room page
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF126E06)),
-                        child: const Text(
-                          'Find a Room',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                      SizedBox(height: 20),
+                      // Look at get x for state management and stack for pages
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     // Add logic to direct user to rent a room page
+                      //     Navigator.pushNamed(context, '/searchPage');
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //       backgroundColor: const Color(0xFF126E06)),
+                      //   child: const Text(
+                      //     'Find a Room',
+                      //     style: TextStyle(color: Colors.white),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -87,10 +88,54 @@ class _RentingPageState extends State<RentingPage> {
               return ListView.builder(
                 itemCount: matchedRooms.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Room ID: ${matchedRooms[index].roomId}'),
-                    subtitle: Text(
-                        'Bedrooms: ${matchedRooms[index].noOfBedrooms}\nTenant ID: ${matchedRooms[index].tenantId}\n Rent amount ${matchedRooms[index].rentAmount}\n rentStatus: ${matchedRooms[index].rentStatus}'),
+                  return Card(
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.home,
+                                color: Color(0xFF126E06)),
+                            title: const Text('Room ID'),
+                            subtitle: Text('${matchedRooms[index].roomId}'),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading:
+                                const Icon(Icons.bed, color: Color(0xFF126E06)),
+                            title: const Text('Bedrooms'),
+                            subtitle:
+                                Text('${matchedRooms[index].noOfBedrooms}'),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.person,
+                                color: Color(0xFF126E06)),
+                            title: const Text('Tenant ID'),
+                            subtitle: Text('${matchedRooms[index].tenantId}'),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.monetization_on,
+                                color: Color(0xFF126E06)),
+                            title: const Text('Rent Amount'),
+                            subtitle: Text('${matchedRooms[index].rentAmount}'),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.payments,
+                                color: Color(0xFF126E06)),
+                            title: const Text('Rent Status'),
+                            subtitle: Text('${matchedRooms[index].rentStatus}'),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               );

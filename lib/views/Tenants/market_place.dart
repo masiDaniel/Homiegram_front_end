@@ -3,6 +3,7 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/products_page.dart';
 
 class MarketPlace extends StatefulWidget {
@@ -12,11 +13,43 @@ class MarketPlace extends StatefulWidget {
   State<MarketPlace> createState() => _MarketPlaceState();
 }
 
+void _showPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Create Business or Sell Product'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic to create a business here
+                Navigator.of(context).pop();
+                // For example, navigate to a business creation screen
+              },
+              child: const Text('Create a Business'),
+            ),
+            SizedBox(height: 10), // Add space between buttons
+            ElevatedButton(
+              onPressed: () {
+                // Add your logic to sell a product here
+                Navigator.of(context).pop();
+                // For example, navigate to a product selling screen
+              },
+              child: const Text('Sell a Product'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 class _MarketPlaceState extends State<MarketPlace> {
   late Future<List<BusinessModel>> futureBusinesses;
   late Future<List<Locations>> futureLocations;
   late Future<List<Category>> futureCategories;
-  String baseUrl = 'http://127.0.0.1:8000';
 
   @override
   void initState() {
@@ -26,12 +59,49 @@ class _MarketPlaceState extends State<MarketPlace> {
     futureCategories = fetchCategorys();
   }
 
+  void _showPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create Business or Sell Product'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Add your logic to create a business here
+                  Navigator.of(context).pop();
+                  // Navigate to the business creation screen
+                },
+                child: const Text('Create a Business'),
+              ),
+              const SizedBox(height: 10), // Add space between buttons
+              ElevatedButton(
+                onPressed: () {
+                  // Add your logic to sell a product here
+                  Navigator.of(context).pop();
+                  // Navigate to the product selling screen
+                },
+                child: const Text('Sell a Product'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Market Place'),
         leading: Container(),
+        actions: [
+          IconButton(
+              onPressed: () => _showPopup(context), icon: const Icon(Icons.add))
+        ],
       ),
       body: SafeArea(
         child: FutureBuilder<List<BusinessModel>>(
@@ -71,7 +141,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                             // Check if the business image is empty or null
                             String businessImage = business
                                     .businessImage.isNotEmpty
-                                ? '$baseUrl${business.businessImage}'
+                                ? '$azurebaseUrl${business.businessImage}'
                                 : 'assets/images/ad2.jpeg'; // Default image asset
 
                             // Find the corresponding location for the business

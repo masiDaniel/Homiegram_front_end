@@ -5,8 +5,6 @@ class PostBookmark {
   static Future<void> postBookmark({
     required int houseId,
   }) async {
-    // const String url = '$baseUrl/comments/post/';
-
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token $authToken',

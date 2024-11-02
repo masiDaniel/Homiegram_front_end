@@ -1,90 +1,261 @@
-import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:homi_2/models/amenities.dart';
+// import 'package:homi_2/models/bookmark.dart';
+// import 'package:homi_2/models/get_house.dart';
+// import 'package:homi_2/services/get_amenities.dart';
+// import 'package:homi_2/services/get_house_service.dart';
+// import 'package:homi_2/services/user_sigin_service.dart';
+// import 'package:homi_2/views/Tenants/house_details_screen.dart';
+
+// class SearchPage extends StatefulWidget {
+//   const SearchPage({super.key});
+
+//   @override
+//   State<SearchPage> createState() => _SearchPageState();
+// }
+
+// class _SearchPageState extends State<SearchPage> {
+//   List<GetHouse> allHouses = [];
+//   List<GetHouse> displayedHouses = [];
+//   String _selectedLocation = 'All Locations';
+//   double _minPrice = 0;
+//   double _maxPrice = 1000;
+//   final List<String> _selectedAmenities = [];
+//   Map<int, bool> bookmarkedHouses = {}; // Bookmark tracking map
+
+//   // Sample data for filter chips
+//   final List<String> locations = ['All Locations', 'City Center', 'Suburbs'];
+//   final List<double> priceRanges = [0, 500, 1000]; // Example price ranges
+//   List<Amenities> amenities = [];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadAllHouses(); // Fetch and display all houses initially
+//     fetchAmenitiesforSearching();
+//   }
+
+//   Future<void> fetchAmenitiesforSearching() async {
+//     try {
+//       amenities = await fetchAllAmenities();
+//       setState(() {}); // Update the UI with the fetched amenities
+//     } catch (e) {
+//       print('Error fetching amenities: $e'); // Handle errors appropriately
+//     }
+//   }
+
+//   Future<void> _loadAllHouses() async {
+//     List<GetHouse> fetchedHouses = await fetchHouses();
+//     setState(() {
+//       allHouses = fetchedHouses;
+//       displayedHouses = fetchedHouses; // Initially display all houses
+//     });
+//   }
+
+//   void _applyFilters() {
+//     setState(() {
+//       displayedHouses = allHouses.where((house) {
+//         bool matchesLocation = _selectedLocation == 'All Locations' ||
+//             house.location == _selectedLocation;
+
+//         // Convert rent_amount to double for numeric comparison
+//         double? rentAmount = double.tryParse(house.rent_amount);
+//         bool matchesPrice = rentAmount! >= _minPrice && rentAmount <= _maxPrice;
+//         bool matchesAmenities = _selectedAmenities
+//             .every((amenity) => house.amenities.contains(amenity));
+//         return matchesLocation && matchesPrice && matchesAmenities;
+//       }).toList();
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         leading: Container(),
+//         title: TextField(
+//           decoration: const InputDecoration(hintText: 'Search houses...'),
+//           onChanged: (query) {
+//             setState(() {
+//               displayedHouses = allHouses
+//                   .where((house) =>
+//                       house.name.toLowerCase().contains(query.toLowerCase()))
+//                   .toList();
+//             });
+//           },
+//         ),
+//       ),
+//       body: Column(
+//         children: [
+//           // Filter Chips for Location, Price Range, and Amenities
+//           Wrap(
+//             spacing: 8.0,
+//             children: [
+//               // Location filter chips
+//               ...locations.map((location) {
+//                 return FilterChip(
+//                   label: Text(location),
+//                   selected: _selectedLocation == location,
+//                   onSelected: (isSelected) {
+//                     setState(() {
+//                       _selectedLocation =
+//                           isSelected ? location : 'All Locations';
+//                       _applyFilters();
+//                     });
+//                   },
+//                 );
+//               }).toList(),
+
+//               // Price range filter chips
+//               ...priceRanges.map((price) {
+//                 return FilterChip(
+//                   label: Text('\$${price.toInt()}'),
+//                   selected: _minPrice == price,
+//                   onSelected: (isSelected) {
+//                     setState(() {
+//                       if (isSelected) {
+//                         _minPrice = price;
+//                         _maxPrice = price + 500;
+//                       } else {
+//                         _minPrice = 0;
+//                         _maxPrice = 1000;
+//                       }
+//                       _applyFilters();
+//                     });
+//                   },
+//                 );
+//               }).toList(),
+
+//               // Amenities filter chips
+//               ...amenities.map((amenity) {
+//                 return FilterChip(
+//                   label: Text(amenity.name!),
+//                   selected: _selectedAmenities.contains(amenity),
+//                   onSelected: (isSelected) {
+//                     setState(() {
+//                       if (isSelected) {
+//                         _selectedAmenities.add(amenity.name!);
+//                       } else {
+//                         _selectedAmenities.remove(amenity);
+//                       }
+//                       _applyFilters();
+//                     });
+//                   },
+//                 );
+//               }).toList(),
+//             ],
+//           ),
+
+//           // List of filtered houses
+//           Expanded(
+//             child: ListView.builder(
+//               itemCount: displayedHouses.length,
+//               itemBuilder: (context, index) {
+//                 final house = displayedHouses[index];
+//                 bool isBookmarked = bookmarkedHouses[house.HouseId] ?? false;
+
+//                 return Card(
+//                   margin: const EdgeInsets.symmetric(
+//                       vertical: 8.0, horizontal: 10.0),
+//                   child: GestureDetector(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) =>
+//                               SpecificHouseDetailsScreen(house: house),
+//                         ),
+//                       );
+//                     },
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         // Display the first image for the house
+//                         if (house.images!.isNotEmpty)
+//                           Image.network(
+//                             '$azurebaseUrl${house.images?[0]}', // Use the correct image URL
+//                             height: 150,
+//                             width: double.infinity,
+//                             fit: BoxFit.cover,
+//                             errorBuilder: (context, error, stackTrace) =>
+//                                 const Icon(
+//                               Icons.error,
+//                               color: Colors.red,
+//                               size: 50,
+//                             ),
+//                           ),
+//                         if (house.images!.isEmpty)
+//                           const Placeholder(
+//                             fallbackHeight: 150,
+//                             fallbackWidth: double.infinity,
+//                           ),
+//                         Padding(
+//                           padding: const EdgeInsets.all(8.0),
+//                           child: Text(
+//                             house.name,
+//                             style: TextStyle(
+//                                 fontSize: 18, fontWeight: FontWeight.bold),
+//                           ),
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                           child: Text("Location: ${house.location}"),
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                           child: Text("Rent: ${house.rent_amount}"),
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                           child: Text("Rating: ${house.rating}"),
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.symmetric(
+//                               horizontal: 8.0, vertical: 10.0),
+//                           child: ElevatedButton(
+//                             onPressed: () {
+//                               int houseId = house.HouseId; // Get the house ID
+//                               PostBookmark.postBookmark(houseId: houseId)
+//                                   .then((_) {
+//                                 print("Bookmarking action completed.");
+//                                 setState(() {
+//                                   bookmarkedHouses[houseId] =
+//                                       true; // Update bookmark status
+//                                 });
+//                               }).catchError((error) {
+//                                 print(
+//                                     "Error occurred while bookmarking: $error");
+//                               });
+//                             },
+//                             style: ElevatedButton.styleFrom(
+//                               backgroundColor: isBookmarked
+//                                   ? Colors.green
+//                                   : null, // Change button color based on state
+//                             ),
+//                             child:
+//                                 Text(isBookmarked ? 'Bookmarked' : 'Bookmark'),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 import 'package:flutter/material.dart';
-import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_amenities.dart';
-import 'package:homi_2/services/get_filtered_houses_service.dart';
 import 'package:homi_2/services/get_house_service.dart';
-import 'package:homi_2/views/Tenants/section_headers_homepage_view.dart';
-
-///
-///how will i handle having multiple arguments to pass to a url, ie searching
-///and filtering
-///
-///
-
-class CustomSearchDelegate extends SearchDelegate {
-  // Demo list to show querying
-  List<GetHouse> searchTerms = AllHouses;
-
-  // first overwrite to
-  // clear the search text
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    ];
-  }
-
-  // second overwrite to pop out of search menu
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: const Icon(Icons.arrow_back),
-    );
-  }
-
-  // third overwrite to show query result
-  @override
-  Widget buildResults(BuildContext context) {
-    List<GetHouse> matchQuery = [];
-    for (var house in searchTerms) {
-      if (house.name.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(house);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result.name),
-        );
-      },
-    );
-  }
-
-  // last overwrite to show the
-  // querying process at the runtime
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<GetHouse> matchQuery = [];
-    for (var house in searchTerms) {
-      if (house.name.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(house);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result.name),
-        );
-      },
-    );
-  }
-}
+import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Tenants/house_details_screen.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -94,217 +265,215 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  late Future<List<GetHouse>> futureHouses;
-  late Future<List<Amenities>> futureAmenities;
+  List<GetHouse> allHouses = [];
+  List<GetHouse> displayedHouses = [];
   String _selectedLocation = 'All Locations';
-  final List<String> _locations = [
-    'All Locations',
-    'Devki',
-    'Nairobi - CBD',
-    'Machakos'
-  ];
-
-  final double _minPrice = 0;
+  double _minPrice = 0;
   double _maxPrice = 1000;
   final List<String> _selectedAmenities = [];
-  final List<String> _amenities = [];
+  List<Amenities> amenities = [];
+  bool isLoadingAmenities = true;
 
   @override
   void initState() {
     super.initState();
-    futureHouses = fetchHouses();
-    futureAmenities = fetchAllAmenities();
+    _loadAllHouses(); // Fetch and display all houses initially
+    fetchAmenitiesforSearching();
   }
 
-  Map<String, dynamic> _getFilterData() {
-    return {
-      'location': _selectedLocation,
-      'min_price': _minPrice,
-      'max_price': _maxPrice,
-      'amenities': _selectedAmenities,
-    };
+  Future<void> fetchAmenitiesforSearching() async {
+    try {
+      amenities = await fetchAllAmenities();
+      setState(() {
+        isLoadingAmenities = false; // Set loading to false after fetching
+      });
+    } catch (e) {
+      print('Error fetching amenities: $e');
+      setState(() {
+        isLoadingAmenities = false; // Set loading to false on error
+      });
+    }
+  }
+
+  Future<void> _loadAllHouses() async {
+    List<GetHouse> fetchedHouses = await fetchHouses();
+    setState(() {
+      allHouses = fetchedHouses;
+      displayedHouses = fetchedHouses; // Initially display all houses
+    });
+  }
+
+  void _applyFilters() {
+    setState(() {
+      displayedHouses = allHouses.where((house) {
+        bool matchesLocation = _selectedLocation == 'All Locations' ||
+            house.location == _selectedLocation;
+
+        // Convert rent_amount to double for numeric comparison
+        double? rentAmount = double.tryParse(house.rent_amount);
+        bool matchesPrice = rentAmount != null &&
+            rentAmount >= _minPrice &&
+            rentAmount <= _maxPrice;
+
+        bool matchesAmenities = _selectedAmenities.isEmpty ||
+            _selectedAmenities
+                .every((amenity) => house.amenities.contains(amenity));
+
+        return matchesLocation && matchesPrice && matchesAmenities;
+      }).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("these are the amenities ${futureAmenities}");
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Container(
-                      width:
-                          150.0, // Set the desired width and height (equal for a circle)
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                          color: const Color(
-                              0xFF126E06), // Set the background color
-                          shape: BoxShape.rectangle,
-                          borderRadius:
-                              BorderRadius.circular(16) // Circular shape
-                          ),
-                      child: IconButton(
-                        onPressed: () {
-                          showSearch(
-                            context: context,
-                            delegate: CustomSearchDelegate(),
-                          );
-                        },
-                        icon: const Icon(Icons.search,
-                            color: Colors.white), // Set icon color if needed
-                      ),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Wrap(
-                    spacing: 10, // Space between adjacent chips.
-                    runSpacing: 10, // Space between lines.
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              const Text(
-                                "location",
-                                style: TextStyle(
-                                  color: const Color(0xFF126E06),
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              DropdownButton<String>(
-                                borderRadius: BorderRadius.circular(20),
-                                padding: const EdgeInsets.all(10),
-                                value: _selectedLocation,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedLocation = newValue!;
-                                  });
-                                },
-                                items: _locations.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 30,
-                          ),
-                          Column(
-                            children: [
-                              const Text(
-                                "Price",
-                                style: TextStyle(
-                                  color: const Color(0xFF126E06),
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              RangeSlider(
-                                values: RangeValues(_minPrice, _maxPrice),
-                                max: 100000,
-                                divisions: 100,
-                                activeColor: const Color(0xFF126E06),
-                                labels: RangeLabels(
-                                    '\Ksh $_minPrice', '\Ksh $_maxPrice'),
-                                onChanged: (RangeValues values) {
-                                  setState(() {
-                                    // _minPrice = values.start;
-                                    _maxPrice = values.end;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      const Text(
-                        "Amenities",
-                        style: TextStyle(
-                          color: const Color(0xFF126E06),
-                          fontSize: 16,
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: _amenities.map((String amenity) {
-                          return Row(
-                            mainAxisSize: MainAxisSize
-                                .min, // Ensure the Row doesn't take full width
-                            children: [
-                              Checkbox(
-                                value: _selectedAmenities.contains(amenity),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value!) {
-                                      _selectedAmenities.add(amenity);
-                                    } else {
-                                      _selectedAmenities.remove(amenity);
-                                    }
-                                  });
-                                },
-                              ),
-                              Text(amenity),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        MyButton(
-                          buttonText: "apply",
-                          onPressed: () async {
-                            // Fetch the filtered houses
-                            List<GetHouse> filteredHouses =
-                                await fetchFilteredHouses();
-
-                            setState(() {
-                              futureHouses = Future.value(filteredHouses);
-                            });
-                          },
-                          width: 100,
-                          height: 50,
-                          color: const Color(0xFF126E06),
-                        ),
-                      ]),
-                ),
-                const sectionHeders(
-                  headerTitle: "Categories",
-                ),
-              ]),
+      appBar: AppBar(
+        leading: Container(),
+        title: TextField(
+          decoration: const InputDecoration(hintText: 'Search houses...'),
+          onChanged: (query) {
+            setState(() {
+              displayedHouses = allHouses
+                  .where((house) =>
+                      house.name.toLowerCase().contains(query.toLowerCase()))
+                  .toList();
+            });
+          },
         ),
+      ),
+      body: Column(
+        children: [
+          // Filter Chips for Location, Price Range, and Amenities
+          Wrap(
+            spacing: 8.0,
+            children: [
+              // Location filter chips
+              ...['All Locations', 'City Center', 'Suburbs'].map((location) {
+                return FilterChip(
+                  label: Text(location),
+                  selected: _selectedLocation == location,
+                  onSelected: (isSelected) {
+                    setState(() {
+                      _selectedLocation =
+                          isSelected ? location : 'All Locations';
+                      _applyFilters();
+                    });
+                  },
+                );
+              }).toList(),
+
+              // Price range filter chips
+              ...[0, 500, 1000].map((price) {
+                return FilterChip(
+                  label: Text('\$${price.toInt()}'),
+                  selected: _minPrice == price,
+                  onSelected: (isSelected) {
+                    setState(() {
+                      if (isSelected) {
+                        _minPrice = price as double;
+                        _maxPrice = price + 500;
+                      } else {
+                        _minPrice = 0;
+                        _maxPrice = 1000;
+                      }
+                      _applyFilters();
+                    });
+                  },
+                );
+              }).toList(),
+
+              // Amenities filter chips
+              if (isLoadingAmenities)
+                const CircularProgressIndicator() // Show loading indicator while fetching amenities
+              else
+                ...amenities.map((amenity) {
+                  return FilterChip(
+                    label: Text(
+                        amenity.name ?? 'Unknown'), // Ensure non-null label
+                    selected: _selectedAmenities.contains(amenity.name),
+                    onSelected: (isSelected) {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedAmenities.add(amenity.name!);
+                        } else {
+                          _selectedAmenities.remove(amenity.name!);
+                        }
+                        _applyFilters();
+                      });
+                    },
+                  );
+                }).toList(),
+            ],
+          ),
+
+          // List of filtered houses
+          Expanded(
+            child: ListView.builder(
+              itemCount: displayedHouses.length,
+              itemBuilder: (context, index) {
+                final house = displayedHouses[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 10.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SpecificHouseDetailsScreen(house: house),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (house.images?.isNotEmpty ?? false)
+                          Image.network(
+                            '$devUrl${house.images?.first}', // Use the correct image URL
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.error,
+                              color: Colors.red,
+                              size: 50,
+                            ),
+                          ),
+                        if (house.images?.isEmpty ?? true)
+                          const Placeholder(
+                            fallbackHeight: 150,
+                            fallbackWidth: double.infinity,
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            house.name,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("Location: ${house.location}"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("Rent: ${house.rent_amount}"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("Rating: ${house.rating}"),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

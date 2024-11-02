@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
+import 'package:video_player/video_player.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,10 +69,20 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  late Future<List<Ad>> futureAds;
+  VideoPlayerController? _videoController;
+
   @override
   void initState() {
     super.initState();
     _getFilteredChats();
+    futureAds = fetchAds();
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -97,32 +109,6 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: 50,
                       ),
-                      // InkWell(
-                      //   onTap: () {
-                      //     // not needed currently.
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //       builder: (context) =>
-                      //     //           const studentDashboardView()),
-                      //     // );
-                      //   },
-                      //   // will be useful later.
-                      //   // child: CircleAvatar(
-                      //   //   radius: 50,
-                      //   //   foregroundImage: imageUrl != null
-                      //   //       ? NetworkImage('$baseUrl$imageUrl')
-                      //   //       : null,
-                      //   //   backgroundColor: const Color(0xFF126E06),
-                      //   //   child: imageUrl != null
-                      //   //       ? null
-                      //   //       : Text(
-                      //   //           _extractInitials('$firstName'),
-                      //   //           style: const TextStyle(color: Colors.white),
-                      //   //         ),
-                      //   // ),
-                      // ),
-
                       Text(
                         "HomiGram.",
                         style: TextStyle(
@@ -130,35 +116,72 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 40,
                             fontWeight: FontWeight.w600),
                       ),
-
-                      // Text(
-                      //   "Welcome back, $firstName",
-                      //   style: const TextStyle(
-                      //     color: Color.fromARGB(255, 0, 0, 0),
-                      //     fontSize: 22,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
-                  height: 300,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    border: Border.all(
-                      color: Colors.green, // Border color
-                      width: 2.0, // Border width
-                    ),
-                    borderRadius: BorderRadius.circular(12.0), // Rounded edges
-                  ),
-                  child: Image.asset(
-                    'assets/images/ad2.jpeg',
-                    fit: BoxFit.fill,
-                  ),
+                FutureBuilder<List<Ad>>(
+                  future: futureAds,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Image.asset(
+                          'assets/images/splash.jpeg', // Fallback image path
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    } else {
+                      final ads = snapshot.data!;
+                      return Column(
+                        children: ads.map((ad) {
+                          return Container(
+                            height: 300,
+                            width: 400,
+                            margin: const EdgeInsets.symmetric(vertical: 10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              border: Border.all(
+                                color: Colors.green,
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: ad.imageUrl != null
+                                ? Image.network(
+                                    ad.imageUrl!,
+                                    fit: BoxFit.fill,
+                                  )
+                                : ad.videoUrl != null
+                                    ? FutureBuilder(
+                                        future:
+                                            initializeVideoPlayer(ad.videoUrl!),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            return AspectRatio(
+                                              aspectRatio: _videoController!
+                                                  .value.aspectRatio,
+                                              child: VideoPlayer(
+                                                  _videoController!),
+                                            );
+                                          } else {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                        },
+                                      )
+                                    : Center(
+                                        child: Text("No content available")),
+                          );
+                        }).toList(),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -276,5 +299,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> initializeVideoPlayer(String videoUrl) async {
+    _videoController = VideoPlayerController.network(videoUrl);
+    await _videoController!.initialize();
+    setState(() {});
+    _videoController!.play();
   }
 }

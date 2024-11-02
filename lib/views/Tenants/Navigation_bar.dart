@@ -4,9 +4,11 @@ import 'package:homi_2/views/Tenants/market_place.dart';
 import 'package:homi_2/views/Tenants/profile_page.dart';
 import 'package:homi_2/views/Tenants/renting_page.dart';
 import 'package:homi_2/views/Tenants/search_page.dart';
+import 'package:homi_2/views/landlord/management.dart';
 
 class CustomBottomNavigartion extends StatefulWidget {
-  const CustomBottomNavigartion({super.key});
+  final String? userType; // Add a userType parameter
+  const CustomBottomNavigartion({super.key, required this.userType});
 
   @override
   State<CustomBottomNavigartion> createState() => _HomePageState();
@@ -15,22 +17,25 @@ class CustomBottomNavigartion extends StatefulWidget {
 class _HomePageState extends State<CustomBottomNavigartion> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _pages = <Widget>[
-    const HomePage(),
-    const SearchPage(),
-    const MarketPlace(),
-    const RentingPage(),
-    const ProfilePage(),
-  ];
-
-  // static final List<Widget> _pagesLandlord = <Widget>[
-  //   const HomePage(),
-  //   const SearchPage(),
-  //   const MarketPlace(),
-  //   const RentingPage(),
-  //   const ProfilePage(),
-  //   const LandingPage(),
-  // ];
+  List<Widget> get _pages {
+    if (widget.userType == 'landlord') {
+      return const [
+        HomePage(),
+        SearchPage(),
+        MarketPlace(),
+        LandlordManagement(),
+        ProfilePage(),
+      ];
+    } else {
+      return const [
+        HomePage(),
+        SearchPage(),
+        MarketPlace(),
+        RentingPage(),
+        ProfilePage(),
+      ];
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {

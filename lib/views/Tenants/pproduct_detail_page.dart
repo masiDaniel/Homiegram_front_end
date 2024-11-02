@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Products product;
@@ -8,9 +9,8 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String baseUrl = 'http://127.0.0.1:8000';
     String productImage = product.productImage.isNotEmpty
-        ? '$baseUrl${product.productImage}'
+        ? '$azurebaseUrl${product.productImage}'
         : 'assets/images/ad2.jpeg'; // Default image asset
     return Scaffold(
       appBar: AppBar(

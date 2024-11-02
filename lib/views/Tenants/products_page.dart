@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 
 class ProductsPage extends StatefulWidget {
@@ -14,7 +15,6 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   late Future<List<Products>> futureProducts;
-  String baseUrl = 'http://127.0.0.1:8000';
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _ProductsPageState extends State<ProductsPage> {
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
                 String productImage = product.productImage.isNotEmpty
-                    ? '$baseUrl${product.productImage}'
+                    ? '$azurebaseUrl${product.productImage}'
                     : 'assets/images/ad2.jpeg'; // Default image asset
                 return Card(
                   margin: const EdgeInsets.all(8.0),

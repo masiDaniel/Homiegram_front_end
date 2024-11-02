@@ -46,11 +46,15 @@ class AboutHomiegram extends StatelessWidget {
   final List<Node> nodes = [
     Node(
       title:
-          "Landlords \n HomieGram revolutionizes the way landlords manage their rental properties, offering a comprehensive platform that streamlines every aspect of property management.\n With HomieGram, landlords can efficiently communicate with tenants, manage rental agreements,\n and handle maintenance requests all in one place.\n The app's intuitive interface and powerful features make it easier than ever to keep track of property details,\n tenant information, and upcoming maintenance schedules. By leveraging HomieGram, landlords can significantly reduce the time\n and effort required to manage their rental properties, allowing them to focus more on their business or personal endeavors. HomieGram's commitment to enhancing\n the rental experience for both landlords and tenants makes it an indispensable tool for property management.",
+          "Landlords \n HomieGram provides landlords with a streamlined property management experience. Through a single platform, landlords can manage rental agreements, handle maintenance requests, and communicate with tenants efficiently. With HomieGram's intuitive tools, managing property details, tenant information, and maintenance schedules becomes effortless, reducing administrative time and enhancing focus on business growth.",
     ),
     Node(
       title:
-          "Students \n HomieGram is designed to simplify the rental search process for students, providing a user-friendly platform that connects them with suitable rental properties. The app offers a wide range of filters and search options, allowing students to find properties that match their budget, preferences, and location. With HomieGram, students can easily apply to properties, view property listings, and even read reviews from other students who have lived in the same area. The app's personalized recommendations feature further enhances the search experience, suggesting properties based on the student's preferences and past searches. HomieGram's focus on making the rental process more efficient and enjoyable for students is evident in its design and functionality. By using HomieGram, students can save time and effort in their search for a new rental property, ensuring a smoother transition into their new living situation.",
+          "Tenants \n HomieGram simplifies the rental search process for students, offering a user-friendly platform with filters for budget, location, and preferences. Students can browse listings, apply easily, and even read reviews. Personalized recommendations make it easier to find the perfect property, making the transition to a new living space smoother and more enjoyable.",
+    ),
+    Node(
+      title:
+          "Market \n HomieGram extends its platform to businesses and individuals looking to sell items within the rental ecosystem. The Market node allows users to list and browse items relevant to student life and rental needs, from furniture to appliances, making it a one-stop shop for both property management and essential items. By integrating sales opportunities directly into the platform, HomieGram creates a seamless environment for students, landlords, and sellers alike, enhancing the overall rental experience.",
     ),
   ];
 

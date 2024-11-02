@@ -12,7 +12,7 @@ class Amenities {
   factory Amenities.fromJSon(Map<String, dynamic> json) {
     return Amenities(
       locationId: json['id'],
-      name: json['county'],
+      name: json['name'],
     );
   }
 }
