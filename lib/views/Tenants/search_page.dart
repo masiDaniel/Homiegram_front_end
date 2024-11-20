@@ -362,16 +362,16 @@ class _SearchPageState extends State<SearchPage> {
                 );
               }).toList(),
 
-              // Price range filter chips
+// Price range filter chips
               ...[0, 500, 1000].map((price) {
                 return FilterChip(
                   label: Text('\$${price.toInt()}'),
-                  selected: _minPrice == price,
+                  selected: _minPrice == price.toDouble(),
                   onSelected: (isSelected) {
                     setState(() {
                       if (isSelected) {
-                        _minPrice = price as double;
-                        _maxPrice = price + 500;
+                        _minPrice = price.toDouble();
+                        _maxPrice = (price + 500).toDouble();
                       } else {
                         _minPrice = 0;
                         _maxPrice = 1000;
