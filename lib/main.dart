@@ -11,7 +11,6 @@ import 'package:homi_2/views/landlord/management.dart';
 import 'package:homi_2/views/sign_in.dart';
 import 'package:homi_2/views/Shared/sign_up.dart';
 import 'package:homi_2/views/welcome_page.dart';
-import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -70,9 +69,9 @@ class NotFoundPage extends StatelessWidget {
   }
 }
 
-void navigateToPageAfterDelay(
-    BuildContext context, String routeName, int delayInSeconds) {
-  Future.delayed(Duration(seconds: delayInSeconds), () {
-    Navigator.pushNamed(context, routeName);
-  });
-}
+// void navigateToPageAfterDelay(
+//     BuildContext context, String routeName, int delayInSeconds) {
+//   Future.delayed(Duration(seconds: delayInSeconds), () {
+//     Navigator.pushNamed(context, routeName);
+//   });
+// }

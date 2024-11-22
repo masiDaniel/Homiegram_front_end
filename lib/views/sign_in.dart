@@ -21,6 +21,8 @@ class _SignInState extends State<SignIn> {
   /// it stores the value returned in the userRegistration object and redirects the user to the homepage if succesful
   /// questions - (userRegistration class object?  what does the ? mean and do?)
   ///
+
+  bool _isLoading = false;
   void _signIn() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
@@ -31,16 +33,25 @@ class _SignInState extends State<SignIn> {
     }
 
     if (email.isNotEmpty && password.isNotEmpty && isValidEmail(email)) {
-      UserRegistration? userRegistration =
-          await fetchUserSignIn(email, password);
-      if (userRegistration != null) {
-        //navigate to the homepage screen if sign in is succesfull
-        Navigator.pushNamed(context, '/homescreen');
-      } else {
-        // Show error message if the sign-in was unsuccessful
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Invalid email or password'),
-        ));
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        UserRegistration? userRegistration =
+            await fetchUserSignIn(email, password);
+        if (userRegistration != null) {
+          //navigate to the homepage screen if sign in is succesfull
+          Navigator.pushNamed(context, '/homescreen');
+        } else {
+          // Show error message if the sign-in was unsuccessful
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Invalid email or password'),
+          ));
+        }
+      } finally {
+        setState(() {
+          _isLoading = false; // Hide loading indicator
+        });
       }
     } else {
       // Show error message if one or both of the fields are not inputted or email format is invalid
@@ -58,70 +69,83 @@ class _SignInState extends State<SignIn> {
       resizeToAvoidBottomInset: true,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Sign in",
-                  style: GoogleFonts.carterOne(
-                      color: Color(0xFF126E06),
-                      fontSize: 50,
-                      fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 15),
-                myTextField(
-                  controller: _emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                  suffixIcon: Icons.email,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: 25),
-                myTextField(
-                  controller: _passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                  suffixIcon: Icons.password,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: 25),
-                const Text(
-                  "Dont' have an account?  ",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 10,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 25),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/signup');
-                  },
-                  child: const Text(
-                    " sign up",
-                    style: TextStyle(
+          child: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sign in",
+                    style: GoogleFonts.carterOne(
                         color: Color(0xFF126E06),
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic,
+                        fontSize: 50,
                         fontWeight: FontWeight.w700),
                   ),
-                ),
-                const SizedBox(height: 25),
-                MyButton(
-                  buttonText: 'Sign In',
-                  onPressed: _signIn,
-                  width: 150,
-                  height: 40,
-                  color: const Color(0xFF126E06),
-                ),
-              ],
+                  const SizedBox(height: 15),
+                  myTextField(
+                    controller: _emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    suffixIcon: Icons.email,
+                    onChanged: (value) {},
+                  ),
+                  const SizedBox(height: 25),
+                  myTextField(
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                    suffixIcon: Icons.password,
+                    onChanged: (value) {},
+                  ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    "Dont' have an account?  ",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 25),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/signup');
+                    },
+                    child: const Text(
+                      " sign up",
+                      style: TextStyle(
+                          color: Color(0xFF126E06),
+                          fontSize: 20,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  MyButton(
+                    buttonText: 'Sign In',
+                    onPressed: _signIn,
+                    width: 150,
+                    height: 40,
+                    color: const Color(0xFF126E06),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+          // Loading overlay
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF126E06)),
+                ),
+              ),
+            ),
+        ],
+      )),
     );
   }
 }

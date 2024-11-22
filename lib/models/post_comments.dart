@@ -16,7 +16,7 @@ class PostComments {
     };
     try {
       final response = await http.post(
-        Uri.parse("$azurebaseUrl/comments/post/"),
+        Uri.parse("$devUrl/comments/post/"),
         headers: headers,
         body: jsonEncode({
           "house_id": houseId,

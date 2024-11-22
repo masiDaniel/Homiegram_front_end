@@ -19,7 +19,7 @@ Future<List<GetRooms>> fetchRooms() async {
       'Authorization': 'Token $authToken',
     };
 
-    final response = await http.get(Uri.parse('$azurebaseUrl/houses/getRooms/'),
+    final response = await http.get(Uri.parse('$devUrl/houses/getRooms/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

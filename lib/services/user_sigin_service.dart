@@ -56,3 +56,26 @@ Future fetchUserSignIn(String username, String password) async {
   }
   return null;
 }
+
+Future UpdateUserInfo(Map<String, dynamic> updateData) async {
+  try {
+    // Convert Set to List if necessary
+    print("this is the data $updateData");
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+    final response = await http.patch(
+      Uri.parse("$devUrl/accounts/user/update/"),
+      headers: headersWithToken,
+      body: jsonEncode(updateData),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+  } catch (e) {
+    rethrow;
+  }
+  return null;
+}

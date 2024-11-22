@@ -54,7 +54,6 @@ class GetHouse {
       'rating': rating,
       'description': description,
       'location': location,
-      // 'images': images,
       'amenities': amenities,
       'landlord_id': landlord_id,
     };

@@ -27,7 +27,7 @@ class GetRooms {
         sizeInSqMeters: json['user_id'] ?? '',
         rentAmount: json['rent'] ?? '',
         occuiedStatus: json['occuiedStatus'] ?? false,
-        roomImages: json['nested_id'] ?? '',
+        roomImages: json['room_images'] ?? '',
         apartmentID: json['apartment'] ?? 0,
         tenantId: json['tenant'] ?? 0,
         rentStatus: json['rent_status'] ?? false);

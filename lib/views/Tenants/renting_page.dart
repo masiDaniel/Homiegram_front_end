@@ -66,71 +66,144 @@ class _RentingPageState extends State<RentingPage> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 20),
-                      // Look at get x for state management and stack for pages
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     // Add logic to direct user to rent a room page
-                      //     Navigator.pushNamed(context, '/searchPage');
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //       backgroundColor: const Color(0xFF126E06)),
-                      //   child: const Text(
-                      //     'Find a Room',
-                      //     style: TextStyle(color: Colors.white),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
               );
             } else {
               // Room found for the current user
+
               return ListView.builder(
                 itemCount: matchedRooms.length,
                 itemBuilder: (context, index) {
+                  String imageUrl = '$devUrl${matchedRooms[index].roomImages}';
+
                   return Card(
                     elevation: 6,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 16),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Image Section
+                          Container(
+                            height:
+                                200, // Adjust the height based on your needs
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Center(
+                                      child: Text('Image not available'));
+                                },
+                              ),
+                            ),
+                          ),
+
+                          // Room ID
+                          const SizedBox(height: 12),
                           ListTile(
+                            contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.home,
                                 color: Color(0xFF126E06)),
-                            title: const Text('Room ID'),
+                            title: const Text(
+                              'Room ID',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
                             subtitle: Text('${matchedRooms[index].roomId}'),
                           ),
                           const Divider(),
+
+                          // Bedrooms Section
                           ListTile(
+                            contentPadding: EdgeInsets.zero,
                             leading:
                                 const Icon(Icons.bed, color: Color(0xFF126E06)),
-                            title: const Text('Bedrooms'),
+                            title: const Text(
+                              'Bedrooms',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
                             subtitle:
                                 Text('${matchedRooms[index].noOfBedrooms}'),
                           ),
                           const Divider(),
+
+                          // Tenant ID Section
                           ListTile(
+                            contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.person,
                                 color: Color(0xFF126E06)),
-                            title: const Text('Tenant ID'),
+                            title: const Text(
+                              'Tenant ID',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
                             subtitle: Text('${matchedRooms[index].tenantId}'),
                           ),
                           const Divider(),
+
+                          // Rent Amount Section
                           ListTile(
+                            contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.monetization_on,
                                 color: Color(0xFF126E06)),
-                            title: const Text('Rent Amount'),
+                            title: const Text(
+                              'Rent Amount',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
                             subtitle: Text('${matchedRooms[index].rentAmount}'),
                           ),
                           const Divider(),
+
+                          // Rent Status Section
                           ListTile(
+                            contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.payments,
                                 color: Color(0xFF126E06)),
-                            title: const Text('Rent Status'),
+                            title: const Text(
+                              'Rent Status',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
                             subtitle: Text('${matchedRooms[index].rentStatus}'),
                           ),
                         ],

@@ -55,8 +55,23 @@ class ProductDetailPage extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     // Handle bookmark functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Product bookmarked!')),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Coming Soon!'),
+                          content: const Text(
+                              'This feature will be available in future updates.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   icon: const Icon(Icons.bookmark),
@@ -65,8 +80,23 @@ class ProductDetailPage extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     // Handle buy functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Purchase initiated!')),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Coming Soon!'),
+                          content: const Text(
+                              'This feature will be available in future updates.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   icon: const Icon(Icons.shopping_cart),

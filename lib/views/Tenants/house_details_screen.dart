@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
+import 'package:homi_2/services/rent_room_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -89,6 +91,9 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     }
   }
 
+  // This map will store the bookmark state for each house by its HouseId
+  Map<int, bool> bookmarkedHouses = {};
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
@@ -168,34 +173,151 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // Handle rent button press
-                  // _handleRentButton();
+                  int houseId = widget.house.HouseId;
+
+                  // Check if the house is already bookmarked
+                  if (bookmarkedHouses[houseId] == true) {
+                    // Remove bookmark
+                    PostBookmark.removeBookmark(houseId: houseId).then((_) {
+                      print("Bookmark removed successfully.");
+                      setState(() {
+                        bookmarkedHouses[houseId] = false;
+                      });
+                      // Show a success alert for unbookmarking
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Bookmark Removed'),
+                            content: const Text(
+                                'This house has been removed from your bookmarks.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }).catchError((error) {
+                      print("Error occurred while removing bookmark: $error");
+                    });
+                  } else {
+                    // Add bookmark
+                    PostBookmark.postBookmark(houseId: houseId).then((_) {
+                      print("Bookmark added successfully.");
+                      setState(() {
+                        bookmarkedHouses[houseId] = true;
+                      });
+                      // Show a success alert for bookmarking
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Bookmarked'),
+                            content: Text(
+                                '${widget.house.name} has been added to your bookmarks.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }).catchError((error) {
+                      print("Error occurred while bookmarking: $error");
+                    });
+                  }
                 },
                 style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(150, 50), // Full-width button
-                    backgroundColor: Color(0xFF126E06)),
+                  minimumSize:
+                      const Size(150, 60), // Adjust size for better button
+                  backgroundColor: const Color(0xFF126E06), // Green color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                  ),
+                  shadowColor: Colors.black.withOpacity(0.3), // Shadow effect
+                  elevation: 8, // Increased depth for elevation
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 15), // More padding for easier tap
+                  side: const BorderSide(
+                      color: Color(0xFF0B4B02),
+                      width: 2), // Border for more emphasis
+                ),
                 child: const Text(
                   'Bookmark',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
+              const SizedBox(width: 20), // Space between buttons
               ElevatedButton(
-                onPressed: () {
-                  // Handle rent button press
-                  // _handleRentButton();
+                onPressed: () async {
+                  int houseId = widget.house.HouseId;
+
+                  // Call the rentRoom function
+                  String? message = await rentRoom(houseId);
+
+                  // Check the message and display feedback to the user
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(message == "Room successfully rented!"
+                            ? 'Success'
+                            : 'Error'),
+                        content:
+                            Text(message ?? 'An unexpected error occurred.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(150, 50), // Full-width button
-                    backgroundColor: const Color(0xFF126E06)),
-                child: const Text(
-                  'Rent',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  minimumSize: const Size(150, 100), // Increased size
+                  backgroundColor: const Color(0xFF126E06), // Green color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                  ),
+                  shadowColor: Colors.black.withOpacity(0.3), // Shadow effect
+                  elevation: 8, // Depth for elevation
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 15), // Increase padding for better touch
+                  side: const BorderSide(
+                      color: Color(0xFF0B4B02),
+                      width: 2), // Border for extra emphasis
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.home, color: Colors.white), // House icon
+                    SizedBox(width: 10),
+                    Text(
+                      'Rent',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             ],

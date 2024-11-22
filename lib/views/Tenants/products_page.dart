@@ -6,8 +6,10 @@ import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 
 class ProductsPage extends StatefulWidget {
   final int businessId;
+  final String businessName;
 
-  const ProductsPage({super.key, required this.businessId});
+  const ProductsPage(
+      {super.key, required this.businessId, required this.businessName});
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -27,7 +29,7 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products for Business ${widget.businessId}'),
+        title: Text('Products for ${widget.businessName}'),
       ),
       body: FutureBuilder<List<Products>>(
         future: futureProducts,

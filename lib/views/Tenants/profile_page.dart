@@ -31,26 +31,24 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showEditDialog() {
-    // final TextEditingController idController =
-    //     TextEditingController(text: userId);
-    // final TextEditingController phoneController =
-    //     TextEditingController(text: phoneNumber);
+    final TextEditingController idNumberController = TextEditingController();
+    final TextEditingController phoneController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Edit Profile'),
-          content: const SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 TextField(
-                  // controller: idController,
-                  decoration: InputDecoration(labelText: 'User ID'),
+                  controller: idNumberController,
+                  decoration: const InputDecoration(labelText: 'National ID'),
                 ),
                 TextField(
-                  // controller: phoneController,
-                  decoration: InputDecoration(labelText: 'Phone Number'),
+                  controller: phoneController,
+                  decoration: const InputDecoration(labelText: 'Phone Number'),
                   keyboardType: TextInputType.phone,
                 ),
               ],
@@ -65,11 +63,27 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               child: const Text('Save'),
-              onPressed: () {
-                setState(() {
-                  // userId = idController.text; // Update user ID
-                  // phoneNumber = phoneController.text; // Update phone number
-                });
+              onPressed: () async {
+                // Collect the updated fields
+                Map<String, dynamic> updateData = {};
+
+                if (idNumberController.text.isNotEmpty) {
+                  updateData['id_number'] = idNumberController.text;
+                }
+                if (phoneController.text.isNotEmpty) {
+                  updateData['phone_number'] = phoneController.text;
+                }
+
+                if (updateData.isNotEmpty) {
+                  // Call the backend update function
+                  bool? success = await UpdateUserInfo(updateData);
+                  if (success == true) {
+                    print('Profile updated successfully!');
+                  } else {
+                    print('Failed to update profile.');
+                  }
+                }
+
                 Navigator.of(context).pop(); // Close the dialog
               },
             ),

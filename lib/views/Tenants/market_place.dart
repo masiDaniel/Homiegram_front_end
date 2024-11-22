@@ -13,50 +13,23 @@ class MarketPlace extends StatefulWidget {
   State<MarketPlace> createState() => _MarketPlaceState();
 }
 
-void _showPopup(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Create Business or Sell Product'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Add your logic to create a business here
-                Navigator.of(context).pop();
-                // For example, navigate to a business creation screen
-              },
-              child: const Text('Create a Business'),
-            ),
-            SizedBox(height: 10), // Add space between buttons
-            ElevatedButton(
-              onPressed: () {
-                // Add your logic to sell a product here
-                Navigator.of(context).pop();
-                // For example, navigate to a product selling screen
-              },
-              child: const Text('Sell a Product'),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 class _MarketPlaceState extends State<MarketPlace> {
   late Future<List<BusinessModel>> futureBusinesses;
   late Future<List<Locations>> futureLocations;
-  late Future<List<Category>> futureCategories;
+  List<BusinessModel> allBusinesses = [];
+  List<BusinessModel> displayedBusinesses = [];
 
   @override
   void initState() {
     super.initState();
-    futureBusinesses = fetchBusinesses(); // Fetch businesses
-    futureLocations = fetchLocations(); // Fetch locations
-    futureCategories = fetchCategorys();
+    futureBusinesses = fetchBusinesses();
+    futureLocations = fetchLocations();
+    futureBusinesses.then((businesses) {
+      setState(() {
+        allBusinesses = businesses;
+        displayedBusinesses = businesses; // Initialize with all businesses
+      });
+    });
   }
 
   void _showPopup(BuildContext context) {
@@ -70,18 +43,48 @@ class _MarketPlaceState extends State<MarketPlace> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // Add your logic to create a business here
-                  Navigator.of(context).pop();
-                  // Navigate to the business creation screen
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Coming Soon!'),
+                        content: const Text(
+                            'This feature will be available in future updates.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Text('Create a Business'),
               ),
-              const SizedBox(height: 10), // Add space between buttons
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Add your logic to sell a product here
-                  Navigator.of(context).pop();
-                  // Navigate to the product selling screen
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Coming Soon!'),
+                        content: const Text(
+                            'This feature will be available in future updates.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Text('Sell a Product'),
               ),
@@ -96,55 +99,53 @@ class _MarketPlaceState extends State<MarketPlace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market Place'),
         leading: Container(),
+        title: TextField(
+          decoration: const InputDecoration(
+            hintText: 'Search Business...',
+            border: InputBorder.none,
+          ),
+          onChanged: (query) {
+            setState(() {
+              displayedBusinesses = allBusinesses
+                  .where((business) => business.businessName
+                      .toLowerCase()
+                      .contains(query.toLowerCase()))
+                  .toList();
+            });
+          },
+        ),
         actions: [
           IconButton(
-              onPressed: () => _showPopup(context), icon: const Icon(Icons.add))
+            onPressed: () => _showPopup(context),
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: SafeArea(
-        child: FutureBuilder<List<BusinessModel>>(
-          future: futureBusinesses,
+        child: FutureBuilder<List<Locations>>(
+          future: futureLocations,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text('Error loading businesses'));
+              return const Center(child: Text('Error loading locations'));
             } else if (snapshot.hasData && snapshot.data != null) {
-              List<BusinessModel> businesses = snapshot.data!;
+              List<Locations> locations = snapshot.data!;
+              Map<int, Locations> locationMap = {
+                for (var location in locations) location.locationId: location
+              };
 
-              return FutureBuilder<List<Locations>>(
-                future: futureLocations, // Fetch locations
-                builder: (context, locationSnapshot) {
-                  if (locationSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (locationSnapshot.hasError) {
-                    return const Center(child: Text('Error loading locations'));
-                  } else if (locationSnapshot.hasData &&
-                      locationSnapshot.data != null) {
-                    List<Locations> locations = locationSnapshot.data!;
-
-                    // Create a map of locationId -> Locations for quick lookup
-                    Map<int, Locations> locationMap = {
-                      for (var location in locations)
-                        location.locationId: location
-                    };
-
-                    return SingleChildScrollView(
+              return displayedBusinesses.isNotEmpty
+                  ? SingleChildScrollView(
                       child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: businesses.map((business) {
-                            // Check if the business image is empty or null
-                            String businessImage = business
-                                    .businessImage.isNotEmpty
-                                ? '$azurebaseUrl${business.businessImage}'
-                                : 'assets/images/ad2.jpeg'; // Default image asset
+                          children: displayedBusinesses.map((business) {
+                            String businessImage =
+                                business.businessImage.isNotEmpty
+                                    ? '$devUrl${business.businessImage}'
+                                    : 'assets/images/ad2.jpeg';
 
-                            // Find the corresponding location for the business
                             Locations? businessLocation =
                                 locationMap[business.businessAddress];
 
@@ -152,14 +153,13 @@ class _MarketPlaceState extends State<MarketPlace> {
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
                                 onTap: () {
-                                  // navigate to the business page.
-                                  print("item clicked");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ProductsPage(
-                                          businessId: business
-                                              .businessId), // Pass the business ID
+                                        businessId: business.businessId,
+                                        businessName: business.businessName,
+                                      ),
                                     ),
                                   );
                                 },
@@ -173,7 +173,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // Display business image with a default fallback
                                       ClipRRect(
                                         borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(12),
@@ -182,14 +181,12 @@ class _MarketPlaceState extends State<MarketPlace> {
                                         child: Image.network(
                                           businessImage,
                                           width: double.infinity,
-                                          height:
-                                              300, // Set a height if necessary
+                                          height: 300,
                                           fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) {
-                                            // Handle any errors in loading the image
                                             return Image.asset(
-                                              'assets/images/ad2.jpeg', // Default image
+                                              'assets/images/ad2.jpeg',
                                               width: double.infinity,
                                               height: 300,
                                               fit: BoxFit.cover,
@@ -197,7 +194,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                           },
                                         ),
                                       ),
-                                      const SizedBox(height: 8.0),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(
@@ -213,7 +209,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                                               ),
                                             ),
                                             const SizedBox(height: 4.0),
-                                            // Display the matched location data
                                             Text(
                                               businessLocation != null
                                                   ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
@@ -224,14 +219,14 @@ class _MarketPlaceState extends State<MarketPlace> {
                                               ),
                                             ),
                                             Text(
-                                              'Contact: ${business.contactNumber},',
+                                              'Contact: ${business.contactNumber}',
                                               style: const TextStyle(
                                                 fontSize: 16.0,
                                                 color: Colors.white70,
                                               ),
                                             ),
                                             Text(
-                                              'Category: ${business.businessTypeId},',
+                                              'Category: ${business.businessTypeId}',
                                               style: const TextStyle(
                                                 fontSize: 16.0,
                                                 color: Colors.white70,
@@ -248,14 +243,11 @@ class _MarketPlaceState extends State<MarketPlace> {
                           }).toList(),
                         ),
                       ),
-                    );
-                  } else {
-                    return const Center(child: Text('No locations available'));
-                  }
-                },
-              );
+                    )
+                  : const Center(
+                      child: Text('No businesses match your search.'));
             } else {
-              return const Center(child: Text('No businesses available'));
+              return const Center(child: Text('No locations available'));
             }
           },
         ),

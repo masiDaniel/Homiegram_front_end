@@ -28,10 +28,11 @@ class _SignUpState extends State<SignUp> {
       TextEditingController();
 
   void _signUserUp() async {
-    String first_name = firstNameController.text.trim();
-    String last_name = lastNameController.text.trim();
+    String firstName = firstNameController.text.trim();
+    String lastName = lastNameController.text.trim();
     String email = emailContoller.text.trim();
     String password = passwordController.text.trim();
+    String confirmPassword = confirmpaswordController.text.trim();
 
     /// method to check if the email structure is valid
     bool isValidEmail(String email) {
@@ -39,13 +40,19 @@ class _SignUpState extends State<SignUp> {
       return emailRegex.hasMatch(email);
     }
 
+    /// method to check if passwords match
+    bool isPasswordMatch(String password, confirmPassword) {
+      return password == confirmPassword;
+    }
+
     if (email.isNotEmpty &&
         password.isNotEmpty &&
-        first_name.isNotEmpty &&
-        last_name.isNotEmpty &&
-        isValidEmail(email)) {
+        firstName.isNotEmpty &&
+        lastName.isNotEmpty &&
+        isValidEmail(email) &&
+        isPasswordMatch(password, confirmPassword)) {
       UserSignUp? userSignUp =
-          await fetchUserSignUp(first_name, last_name, email, password);
+          await fetchUserSignUp(firstName, lastName, email, password);
 
       if (userSignUp != null) {
         // Sign in successful, navigate to the dignup screen

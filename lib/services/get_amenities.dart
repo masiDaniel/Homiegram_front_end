@@ -8,7 +8,7 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
-Future<List<Amenities>> fetchAmenities(int houseId) async {
+Future<List<Amenities>> fetchAmenities() async {
   try {
     final headersWithToken = {
       ...headers,
