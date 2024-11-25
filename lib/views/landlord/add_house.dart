@@ -25,11 +25,38 @@ class _AddHousePageState extends State<AddHousePage> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImages() async {
+    if (_imageUrls.length >= 4) {
+      // Show a message or handle the limit
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You can only select up to 4 images.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Prevent further image picking
+    }
+
     final List<XFile>? images = await _picker.pickMultiImage();
     if (images != null) {
+      // Calculate how many more images can be added
+      final int remainingSlots = 4 - _imageUrls.length;
+
       setState(() {
-        _imageUrls.addAll(images.map((file) => file.path));
+        // Add only up to the remaining number of slots
+        _imageUrls.addAll(
+          images.take(remainingSlots).map((file) => file.path),
+        );
       });
+
+      if (images.length > remainingSlots) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Some images were not added due to the 4-image limit.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -101,20 +128,48 @@ class _AddHousePageState extends State<AddHousePage> {
                 child: const Text('Select Images'),
               ),
               const SizedBox(height: 16),
-              // Display selected images
+              // Display selected images with restriction and deselect option
               _imageUrls.isNotEmpty
                   ? Wrap(
                       spacing: 8.0,
-                      children: _imageUrls.map((url) {
-                        return Image.file(
-                          File(url),
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
+                      children: _imageUrls.take(4).map((url) {
+                        // Limit to 4 images
+                        return Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Image.file(
+                              File(url),
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _imageUrls.remove(
+                                        url); // Remove the image from the list
+                                  });
+                                },
+                                // ignore: prefer_const_constructors
+                                child: CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: Colors.red,
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         );
                       }).toList(),
                     )
-                  : const Text('No images selected.'),
+                  : const Center(child: Text('No images selected.')),
               const SizedBox(height: 16),
               TextFormField(
                 decoration: const InputDecoration(

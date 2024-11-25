@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                         height: 50,
                       ),
                       Text(
-                        "HomiGram.",
+                        "Homigram.",
                         style: TextStyle(
                             color: Color.fromARGB(255, 16, 90, 1),
                             fontSize: 40,
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   future: futureAds,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Image.asset(
@@ -169,13 +169,13 @@ class _HomePageState extends State<HomePage> {
                                                   _videoController!),
                                             );
                                           } else {
-                                            return Center(
+                                            return const Center(
                                                 child:
                                                     CircularProgressIndicator());
                                           }
                                         },
                                       )
-                                    : Center(
+                                    : const Center(
                                         child: Text("No content available")),
                           );
                         }).toList(),

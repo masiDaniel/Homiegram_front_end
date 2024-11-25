@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'HomiGram',
+      title: 'Homigram',
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => SplashScreen(),

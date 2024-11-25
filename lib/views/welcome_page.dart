@@ -25,9 +25,11 @@ class WelcomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TypewriterAnimatedTextKit(
-              text: const ["HomiGram!"],
-              textStyle: GoogleFonts.fugazOne(
-                  color: const Color(0xFF126E06), fontSize: 26),
+              text: const ["Homigram"],
+              textStyle: GoogleFonts.aBeeZee(
+                  color: const Color(0xFF126E06),
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800),
               speed: const Duration(milliseconds: 300),
             ),
             const SizedBox(

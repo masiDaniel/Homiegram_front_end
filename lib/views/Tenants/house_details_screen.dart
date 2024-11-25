@@ -113,7 +113,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 children: [
                   for (var imageUrl in widget.house.images!)
                     Image.network(
-                      '$azurebaseUrl$imageUrl',
+                      '$devUrl$imageUrl',
                       width: 500,
                       height: 300,
                       fit: BoxFit.cover,

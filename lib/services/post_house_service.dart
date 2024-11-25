@@ -30,51 +30,6 @@ class PostHouseService {
     }
   }
 
-  // Function to post a new house with images
-  // Future<bool> postHouseWithImages(GetHouse house) async {
-  //   final dio = Dio();
-
-  //   FormData formData = FormData();
-  //   formData.fields.add(MapEntry('name', house.name));
-  //   formData.fields.add(MapEntry('rent_amount', house.rent_amount));
-  //   formData.fields.add(MapEntry('rating', house.rating.toString()));
-  //   formData.fields.add(MapEntry('description', house.description));
-  //   formData.fields.add(MapEntry('location', house.location));
-  //   formData.fields.add(MapEntry('landlord_id', house.landlord_id.toString()));
-  //   for (int amenity in house.amenities) {
-  //     formData.fields.add(MapEntry('amenities', amenity.toString()));
-  //   }
-
-  //   // Add images if they exist
-  //   if (house.images != null) {
-  //     for (String image in house.images!) {
-  //       // Assuming the image is a file path or a URL
-  //       formData.files
-  //           .add(MapEntry('images', await MultipartFile.fromFile(image)));
-  //     }
-  //   }
-  //   print(formData);
-
-  //   try {
-  //     final response = await dio.post(
-  //       '$devUrl/houses/gethouses/',
-  //       data: formData,
-  //       options: Options(
-  //         headers: {
-  //           'Authorization': 'Token $authToken',
-  //         },
-  //       ),
-  //     );
-  //     return true;
-  //   } on DioException catch (e) {
-  //     print('Failed to post house: ${e.response?.data}');
-  //     print('Status code: ${e.response?.statusCode}');
-  //     print('Status message: ${e.response?.statusMessage}');
-
-  //     return false;
-  //   }
-  // }
-
   Future<bool> postHouseWithImages(GetHouse house) async {
     final dio = Dio();
 

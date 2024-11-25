@@ -50,11 +50,11 @@ class AboutHomiegram extends StatelessWidget {
     ),
     Node(
       title:
-          "Tenants \n HomieGram simplifies the rental search process for students, offering a user-friendly platform with filters for budget, location, and preferences. Students can browse listings, apply easily, and even read reviews. Personalized recommendations make it easier to find the perfect property, making the transition to a new living space smoother and more enjoyable.",
+          "Tenants \n Homiegram simplifies the rental search process for students, offering a user-friendly platform with filters for budget, location, and preferences. Students can browse listings, apply easily, and even read reviews. Personalized recommendations make it easier to find the perfect property, making the transition to a new living space smoother and more enjoyable.",
     ),
     Node(
       title:
-          "Market \n HomieGram extends its platform to businesses and individuals looking to sell items within the rental ecosystem. The Market node allows users to list and browse items relevant to student life and rental needs, from furniture to appliances, making it a one-stop shop for both property management and essential items. By integrating sales opportunities directly into the platform, HomieGram creates a seamless environment for students, landlords, and sellers alike, enhancing the overall rental experience.",
+          "Market \n Homigram extends its platform to businesses and individuals looking to sell items within the rental ecosystem. The Market node allows users to list and browse items relevant to student life and rental needs, from furniture to appliances, making it a one-stop shop for both property management and essential items. By integrating sales opportunities directly into the platform, Homiegram creates a seamless environment for students, landlords, and sellers alike, enhancing the overall rental experience.",
     ),
   ];
 
@@ -64,7 +64,7 @@ class AboutHomiegram extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF126E06),
         title: const Text(
-          "What is HomiGram?",
+          "What is Homigram?",
           style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
         ),
       ),
