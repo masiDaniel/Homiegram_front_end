@@ -42,26 +42,7 @@ class _MarketPlaceState extends State<MarketPlace> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Coming Soon!'),
-                        content: const Text(
-                            'This feature will be available in future updates.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                onPressed: () => showBusinessCreationDialog(context),
                 child: const Text('Create a Business'),
               ),
               const SizedBox(height: 10),
@@ -90,6 +71,108 @@ class _MarketPlaceState extends State<MarketPlace> {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void showBusinessCreationDialog(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    final TextEditingController _businessNameController =
+        TextEditingController();
+    final TextEditingController _contactNumberController =
+        TextEditingController();
+    final TextEditingController _businessEmailController =
+        TextEditingController();
+    final TextEditingController _businessAddressController =
+        TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create a Business'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: _businessNameController,
+                    decoration:
+                        const InputDecoration(labelText: 'Business Name'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the business name';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _contactNumberController,
+                    decoration:
+                        const InputDecoration(labelText: 'Contact Number'),
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the contact number';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _businessEmailController,
+                    decoration:
+                        const InputDecoration(labelText: 'Email Address'),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the email address';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _businessAddressController,
+                    decoration: const InputDecoration(labelText: 'Address ID'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the address ID';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  final businessData = {
+                    'name': _businessNameController.text,
+                    'contact_number': _contactNumberController.text,
+                    'email': _businessEmailController.text,
+                    'location':
+                        int.tryParse(_businessAddressController.text) ?? 0,
+                    'owner': userId, // Replace with actual owner ID
+                    'business_type': 2, // Replace with actual business type ID
+                  };
+                  postBusiness(businessData, context);
+                }
+              },
+              child: const Text('Create'),
+            ),
+          ],
         );
       },
     );

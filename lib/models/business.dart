@@ -34,14 +34,11 @@ class BusinessModel {
 
   Map<String, dynamic> tojson() {
     return {
-      'id': businessId,
       'name': businessName,
       'contact_number': contactNumber,
       'email': businessEmail,
-      'location': businessAddress,
       'owner': businessOwnerId,
       'business_type': businessTypeId,
-      'image': businessImage,
     };
   }
 }

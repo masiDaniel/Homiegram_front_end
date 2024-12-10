@@ -210,6 +210,35 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
+          if (userTypeCurrent != "landlord")
+            ElevatedButton.icon(
+              onPressed: () async {
+                Map<String, dynamic> updateData = {};
+                updateData['user_type'] = 'landlord';
+                bool? success = await UpdateUserInfo(updateData);
+                if (success == true) {
+                  print('Profile updated successfully!');
+                } else {
+                  print('Failed to update profile.');
+                }
+              },
+              icon: const Icon(
+                Icons.house,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'Become a Landlord',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 30, 100, 200),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
           const SizedBox(height: 30),
           ElevatedButton.icon(
             onPressed: () {
