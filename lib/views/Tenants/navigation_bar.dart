@@ -92,7 +92,7 @@ class _HomePageState extends State<CustomBottomNavigartion> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 5, 146, 5),
+        selectedItemColor: const Color(0xFF059205),
         onTap: _onItemTapped,
       ),
     );

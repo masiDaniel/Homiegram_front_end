@@ -7,16 +7,16 @@ class ChatCard extends StatefulWidget {
   const ChatCard({required this.chat, Key? key}) : super(key: key);
 
   @override
-  _ChatCardState createState() => _ChatCardState();
+  ChatCardState createState() => ChatCardState();
 }
 
-class _ChatCardState extends State<ChatCard> {
+class ChatCardState extends State<ChatCard> {
   bool isRead = false;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(
+      child: SizedBox(
         height: 80,
         child: Padding(
           padding: const EdgeInsets.all(8.0),

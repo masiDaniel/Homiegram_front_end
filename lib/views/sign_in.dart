@@ -9,10 +9,10 @@ class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
   @override
-  _SignInState createState() => _SignInState();
+  SignInState createState() => SignInState();
 }
 
-class _SignInState extends State<SignIn> {
+class SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -40,9 +40,13 @@ class _SignInState extends State<SignIn> {
         UserRegistration? userRegistration =
             await fetchUserSignIn(email, password);
         if (userRegistration != null) {
+          // Check if the widget is still mounted before using the context
+          if (!mounted) return;
           //navigate to the homepage screen if sign in is succesfull
           Navigator.pushNamed(context, '/homescreen');
         } else {
+          // Check if the widget is still mounted before using the context
+          if (!mounted) return;
           // Show error message if the sign-in was unsuccessful
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Invalid email or password'),
@@ -79,12 +83,12 @@ class _SignInState extends State<SignIn> {
                   Text(
                     "Sign in",
                     style: GoogleFonts.carterOne(
-                        color: Color(0xFF126E06),
+                        color: const Color(0xFF126E06),
                         fontSize: 50,
                         fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 15),
-                  myTextField(
+                  MyTextField(
                     controller: _emailController,
                     hintText: 'Email',
                     obscureText: false,
@@ -92,7 +96,7 @@ class _SignInState extends State<SignIn> {
                     onChanged: (value) {},
                   ),
                   const SizedBox(height: 25),
-                  myTextField(
+                  MyTextField(
                     controller: _passwordController,
                     hintText: 'Password',
                     obscureText: true,

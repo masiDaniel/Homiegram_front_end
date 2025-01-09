@@ -1,29 +1,29 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
 
-class studentDashboardView extends StatefulWidget {
+class StudentDashboardView extends StatefulWidget {
   ///
   ///this page handles the page for the specific user
   ///it will contain the users name, profile, bookmarks and current residence(this should be handled by 10th may)
   ///it will have a log out button
   ///
 
-  const studentDashboardView({super.key});
+  const StudentDashboardView({super.key});
 
   @override
-  State<studentDashboardView> createState() => _studentDashboardViewState();
+  State<StudentDashboardView> createState() => StudentDashboardViewState();
 }
 
-class _studentDashboardViewState extends State<studentDashboardView> {
+class StudentDashboardViewState extends State<StudentDashboardView> {
   //this is a method that calls the logoutUser method and if it is succesfull it redirectts the user to the homepage
   Future<void> _logout() async {
     try {
       await logoutUser();
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
-      print("error logging out: $e");
+      log("error logging out: $e");
     }
   }
 
@@ -45,12 +45,9 @@ class _studentDashboardViewState extends State<studentDashboardView> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Container(
-            // Your container properties here
-            child: const Text(
-              'Go Back',
-              style: TextStyle(fontSize: 15),
-            ),
+          child: const Text(
+            'Go Back',
+            style: TextStyle(fontSize: 15),
           ),
         ),
         actions: [
@@ -74,7 +71,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CircleAvatar(
-                          backgroundColor: Color.fromARGB(255, 2, 75, 50),
+                          backgroundColor: const Color.fromARGB(255, 2, 75, 50),
                           maxRadius: 25,
                           backgroundImage: imageUrl != null
                               ? NetworkImage('$devUrl$imageUrl')
@@ -82,7 +79,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                           child: imageUrl == null
                               ? Text(
                                   extractInitials('$firstName'),
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 )
                               : null,
                         ),

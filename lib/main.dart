@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
-import 'package:homi_2/views/Tenants/Navigation_bar.dart';
+import 'package:homi_2/views/Tenants/navigation_bar.dart';
 import 'package:homi_2/views/Tenants/all_houses.dart';
 import 'package:homi_2/views/Tenants/home_page_v1.dart';
 import 'package:homi_2/views/Tenants/house_list_screen.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Homigram',
       initialRoute: '/splash',
       routes: {
-        '/splash': (context) => SplashScreen(),
+        '/splash': (context) => const SplashScreen(),
         '/': (context) => const WelcomePage(),
         '/signin': (context) => const SignIn(),
         '/signup': (context) => const SignUp(),
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
         '/homescreen': (context) => CustomBottomNavigartion(
               userType: userTypeCurrent,
             ),
-        '/allHouses': (context) => const allHouses(),
-        '/trialAllHouses': (context) => HouseListScreen(),
+        '/allHouses': (context) => const AllHouses(),
+        '/trialAllHouses': (context) => const HouseListScreen(),
         '/searchPage': (context) => const SearchPage(),
         '/landlordManagement': (context) => const LandlordManagement(),
       },

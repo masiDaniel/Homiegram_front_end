@@ -72,7 +72,7 @@ class Products {
   final String productName;
   final String productDescription;
   final String productPrice;
-  final int StockAvailable;
+  final int stockAvailable;
   final int businessId;
   final int productTypeId;
   final String productImage;
@@ -82,7 +82,7 @@ class Products {
     required this.productName,
     required this.productDescription,
     required this.productPrice,
-    required this.StockAvailable,
+    required this.stockAvailable,
     required this.businessId,
     required this.productTypeId,
     required this.productImage,
@@ -94,7 +94,7 @@ class Products {
       productName: json['name'] ?? '',
       productDescription: json['description'] ?? '',
       productPrice: json['price'] ?? '',
-      StockAvailable: json['stock'] ?? 0,
+      stockAvailable: json['stock'] ?? 0,
       businessId: json['business'] ?? 0,
       productTypeId: json['category'] ?? 0,
       productImage: json['image'] ?? '',
@@ -106,7 +106,7 @@ class Products {
       'name': productName,
       'description': productDescription,
       'price': productPrice,
-      'stock': StockAvailable,
+      'stock': stockAvailable,
       'business': businessId,
       'category': productTypeId,
       'image': productImage,

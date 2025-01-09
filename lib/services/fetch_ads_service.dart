@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +17,7 @@ Future<List<Ad>> fetchAds() async {
 
   if (response.statusCode == 200) {
     List jsonResponse = json.decode(response.body);
-    print("ad feting was succesful");
+    log("ad feting was succesful");
     return jsonResponse.map((ad) => Ad.fromJson(ad)).toList();
   } else {
     throw Exception('Failed to load advertisements');

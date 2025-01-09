@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -8,14 +10,14 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
-class allHouses extends StatefulWidget {
-  const allHouses({super.key});
+class AllHouses extends StatefulWidget {
+  const AllHouses({super.key});
 
   @override
-  _allHousesState createState() => _allHousesState();
+  AllHousesState createState() => AllHousesState();
 }
 
-class _allHousesState extends State<allHouses> {
+class AllHousesState extends State<AllHouses> {
   List<dynamic> houses = []; // bad for performance use the actual model
 
   // this is used in this class only
@@ -34,7 +36,7 @@ class _allHousesState extends State<allHouses> {
       });
     } else {
       // Handle error
-      print('Failed to load houses: ${response.statusCode}');
+      log('Failed to load houses: ${response.statusCode}');
     }
   }
 
@@ -54,7 +56,7 @@ class _allHousesState extends State<allHouses> {
         itemCount: houses.length,
         itemBuilder: (context, index) {
           final house = houses[index];
-          // print('${house['image']}');
+
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(

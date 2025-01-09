@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
-List<GetHouse> AllHouses = [];
+List<GetHouse> allHouses = [];
 String? houseId;
 
 // /this is used in the home_page class(commented out) and the house list page
@@ -23,14 +23,14 @@ Future<List<GetHouse>> fetchHouses() async {
 
     final response = await http.get(Uri.parse('$devUrl/houses/gethouses/'),
         headers: headersWithToken);
-
+   
     if (response.statusCode == 200) {
       final List<dynamic> housesData = json.decode(response.body);
 
       final List<GetHouse> houses =
           housesData.map((json) => GetHouse.fromJSon(json)).toList();
 
-      AllHouses = houses;
+      allHouses = houses;
       return houses;
     } else {
       throw Exception('failed to fetch arguments');

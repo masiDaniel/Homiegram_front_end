@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
@@ -25,9 +27,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _logout() async {
     try {
       await logoutUser();
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
-      print("error logging out: $e");
+      log("error logging out: $e");
     }
   }
 
@@ -77,11 +81,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 if (updateData.isNotEmpty) {
                   // Call the backend update function
-                  bool? success = await UpdateUserInfo(updateData);
+                  bool? success = await updateUserInfo(updateData);
                   if (success == true) {
-                    print('Profile updated successfully!');
+                    log('Profile updated successfully!');
                   } else {
-                    print('Failed to update profile.');
+                    log('Failed to update profile.');
                   }
                 }
 
@@ -214,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => BookmarkedHousesPage(
-                            userId: userId as int,
+                            userId: userId!,
                           ),
                         ),
                       );
@@ -235,11 +239,11 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async {
                 Map<String, dynamic> updateData = {};
                 updateData['user_type'] = 'landlord';
-                bool? success = await UpdateUserInfo(updateData);
+                bool? success = await updateUserInfo(updateData);
                 if (success == true) {
-                  print('Profile updated successfully!');
+                  log('Profile updated successfully!');
                 } else {
-                  print('Failed to update profile.');
+                  log('Failed to update profile.');
                 }
               },
               icon: const Icon(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
@@ -55,9 +54,14 @@ class _SignUpState extends State<SignUp> {
           await fetchUserSignUp(firstName, lastName, email, password);
 
       if (userSignUp != null) {
+        // Check if the widget is still mounted before using the context
+        if (!mounted) return;
+
         // Sign in successful, navigate to the dignup screen
         Navigator.pushNamed(context, '/signin');
       } else {
+        // Check if the widget is still mounted before using the context
+        if (!mounted) return;
         // Show error messageif the sign in was unsuccesful
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('An error occured during signing in, try again later'),
@@ -84,14 +88,14 @@ class _SignUpState extends State<SignUp> {
             Text(
               "Sign Up",
               style: GoogleFonts.carterOne(
-                  color: Color(0xFF126E06),
+                  color: const Color(0xFF126E06),
                   fontSize: 50,
                   fontWeight: FontWeight.w700),
             ),
             const SizedBox(
               height: 15,
             ),
-            myTextField(
+            MyTextField(
               controller: firstNameController,
               hintText: "First name",
               obscureText: false,
@@ -100,7 +104,7 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(
               height: 15,
             ),
-            myTextField(
+            MyTextField(
               controller: lastNameController,
               hintText: "Last name",
               obscureText: false,
@@ -109,7 +113,7 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(
               height: 15,
             ),
-            myTextField(
+            MyTextField(
               controller: emailContoller,
               hintText: "Email",
               obscureText: false,
@@ -119,7 +123,7 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(
               height: 15,
             ),
-            myTextField(
+            MyTextField(
               controller: passwordController,
               hintText: "Password",
               obscureText: true,
@@ -129,7 +133,7 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(
               height: 15,
             ),
-            myTextField(
+            MyTextField(
               controller: confirmpaswordController,
               hintText: "password confirmation",
               obscureText: true,

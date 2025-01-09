@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
@@ -18,7 +20,7 @@ class SpecificHouseDetailsScreen extends StatefulWidget {
 }
 
 class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
-  List<getComments> _comments = []; // Local comments list
+  List<GetComments> _comments = []; // Local comments list
 
   @override
   void initState() {
@@ -27,7 +29,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   }
 
   Future<void> _fetchComments() async {
-    List<getComments> comments = await fetchComments(widget.house.HouseId);
+    List<GetComments> comments = await fetchComments(widget.house.houseId);
     setState(() {
       _comments = comments; // Initialize the local comments list
     });
@@ -35,7 +37,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
   void addComment(String comment) async {
     await PostComments.postComment(
-      houseId: widget.house.HouseId.toString(),
+      houseId: widget.house.houseId.toString(),
       userId: userId.toString(),
       comment: comment,
       nested: true,
@@ -78,22 +80,28 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               comment.commentId == commentId); // Remove from local list
         });
       } else if (response.statusCode == 404) {
+        // Check if the widget is still mounted before using the context
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Comment already deleted')),
         );
       } else {
+        // Check if the widget is still mounted before using the context
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('We have problems')),
         );
       }
     } catch (e) {
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error deleting comment')),
       );
     }
   }
 
-  // This map will store the bookmark state for each house by its HouseId
+  // This map will store the bookmark state for each house by its houseId
   Map<int, bool> bookmarkedHouses = {};
 
   @override
@@ -108,7 +116,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
         child: Column(
           children: [
             const SizedBox(height: 5),
-            Container(
+            SizedBox(
               height: 500,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -133,7 +141,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 8),
-                  Text('Rent Amount: ${widget.house.rent_amount}'),
+                  Text('Rent Amount: ${widget.house.rentAmount}'),
                   Text('Rating: ${widget.house.rating}'),
                   Text('Location: ${widget.house.location}'),
                 ],
@@ -181,16 +189,16 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  int houseId = widget.house.HouseId;
+                  int houseId = widget.house.houseId;
 
                   // Check if the house is already bookmarked
                   if (bookmarkedHouses[houseId] == true) {
                     // Remove bookmark
                     PostBookmark.removeBookmark(houseId: houseId).then((_) {
-                      print("Bookmark removed successfully.");
                       setState(() {
                         bookmarkedHouses[houseId] = false;
                       });
+
                       // Show a success alert for unbookmarking
                       showDialog(
                         context: context,
@@ -211,15 +219,15 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                         },
                       );
                     }).catchError((error) {
-                      print("Error occurred while removing bookmark: $error");
+                      log("Error occurred while removing bookmark: $error");
                     });
                   } else {
                     // Add bookmark
                     PostBookmark.postBookmark(houseId: houseId).then((_) {
-                      print("Bookmark added successfully.");
                       setState(() {
                         bookmarkedHouses[houseId] = true;
                       });
+
                       // Show a success alert for bookmarking
                       showDialog(
                         context: context,
@@ -240,7 +248,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                         },
                       );
                     }).catchError((error) {
-                      print("Error occurred while bookmarking: $error");
+                      log("Error occurred while bookmarking: $error");
                     });
                   }
                 },
@@ -289,7 +297,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       },
                     );
                   } else {
-                    int houseId = widget.house.HouseId;
+                    int houseId = widget.house.houseId;
 
                     // Call the rentRoom function
                     String? message = await rentRoom(houseId);
@@ -353,7 +361,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 }
 
 class CommentList extends StatelessWidget {
-  final List<getComments> comments;
+  final List<GetComments> comments;
   final Function(int) onDelete; // Callback for deleting comments
 
   const CommentList({

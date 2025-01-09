@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,12 +30,12 @@ class PostComments {
       );
 
       if (response.statusCode == 200) {
-        print('comment posted succesfully!');
+        log('comment posted succesfully!');
       } else {
-        print('failed to post comment: ${response.statusCode}');
+        log('failed to post comment: ${response.statusCode}');
       }
     } catch (e) {
-      print('error positng comment: $e');
+      log('error positng comment: $e');
     }
   }
 }

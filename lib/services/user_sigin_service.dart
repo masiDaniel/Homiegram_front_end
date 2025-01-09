@@ -1,7 +1,13 @@
 import 'dart:convert';
-
+import 'dart:developer';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:http/http.dart' as http;
+
+///
+/// the use of global variables is not the best approach,
+/// i will change this to use provider (state management) to make the code,
+/// easier to test and maintain
+///
 
 const Map<String, String> headers = {
   "Content-Type": "application/json",
@@ -18,7 +24,8 @@ String? userEmail;
 int? idNumber;
 String? phoneNumber;
 String? userTypeCurrent;
-String azurebaseUrl = 'https://hommiegram.azurewebsites.net';
+String productionUrl =
+    'https://hommiegram.azurewebsites.net'; // this will be deleted.
 String devUrl = 'http://127.0.0.1:8000/';
 
 Future fetchUserSignIn(String username, String password) async {
@@ -35,13 +42,12 @@ Future fetchUserSignIn(String username, String password) async {
     if (response.statusCode == 200) {
       final userData = json.decode(response.body);
       final token = userData['token'];
-      final first_name = userData['first_name'];
       final currentUserId = userData['id'];
 
       userId = currentUserId;
       imageUrl = userData['profile_pic'];
       authToken = token;
-      firstName = first_name;
+      firstName = userData['first_name'];
       lastName = userData['last_name'];
       userName = userData['username'];
       userEmail = userData['email'];
@@ -52,24 +58,27 @@ Future fetchUserSignIn(String username, String password) async {
       return UserRegistration.fromJSon(userData);
     }
   } catch (e) {
-    rethrow;
+    log("Error during sign-in: $e");
+    return null; // or return a specific error response
   }
   return null;
 }
 
-Future UpdateUserInfo(Map<String, dynamic> updateData) async {
+Future updateUserInfo(Map<String, dynamic> updateData) async {
   try {
     // Convert Set to List if necessary
-    print("this is the data $updateData");
+    log("this is the data $updateData");
     final headersWithToken = {
       ...headers,
       'Authorization': 'Token $authToken',
     };
-    final response = await http.patch(
-      Uri.parse("$devUrl/accounts/user/update/"),
-      headers: headersWithToken,
-      body: jsonEncode(updateData),
-    );
+    final response = await http
+        .patch(
+          Uri.parse("$devUrl/accounts/user/update/"),
+          headers: headersWithToken,
+          body: jsonEncode(updateData),
+        )
+        .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       return true;

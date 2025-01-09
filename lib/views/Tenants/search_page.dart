@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
@@ -20,9 +22,6 @@ class _SearchPageState extends State<SearchPage> {
   bool isLoadingHouses = true;
   bool isLoadingAmenities = true;
 
-  String _selectedLocation = 'All Locations';
-  final List<String> _selectedAmenities = [];
-
   @override
   void initState() {
     super.initState();
@@ -39,7 +38,7 @@ class _SearchPageState extends State<SearchPage> {
         isLoadingHouses = false;
       });
     } catch (e) {
-      print('Error fetching houses: $e');
+      log('Error fetching houses: $e');
       setState(() {
         isLoadingHouses = false;
       });
@@ -53,28 +52,11 @@ class _SearchPageState extends State<SearchPage> {
         isLoadingAmenities = false;
       });
     } catch (e) {
-      print('Error fetching amenities: $e');
+      log('Error fetching amenities: $e');
       setState(() {
         isLoadingAmenities = false;
       });
     }
-  }
-
-  void _applyFilters() {
-    setState(() {
-      displayedHouses = allHouses.where((house) {
-        // Location filter
-        bool matchesLocation = _selectedLocation == 'All Locations' ||
-            house.location == _selectedLocation;
-
-        // Amenities filter
-        bool matchesAmenities = _selectedAmenities.isEmpty ||
-            _selectedAmenities
-                .every((amenity) => house.amenities.contains(amenity));
-
-        return matchesLocation && matchesAmenities;
-      }).toList();
-    });
   }
 
   @override
@@ -156,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
-                                      child: Text("Rent: ${house.rent_amount}"),
+                                      child: Text("Rent: ${house.rentAmount}"),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(

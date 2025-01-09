@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/views/Tenants/house_views.dart';
 
-class sectionHeders extends StatelessWidget {
+class SectionHeders extends StatelessWidget {
   final String headerTitle;
 
-  const sectionHeders({super.key, this.headerTitle = "homie Houses"});
+  const SectionHeders({super.key, this.headerTitle = "homie Houses"});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class sectionHeders extends StatelessWidget {
               IconButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
-                  print("button clicked");
+                  log("button clicked");
                 },
                 icon: const Icon(
                   Icons.more_horiz,

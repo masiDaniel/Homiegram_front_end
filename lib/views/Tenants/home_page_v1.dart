@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
-import 'package:homi_2/services/fetchAds_service.dart';
+import 'package:homi_2/services/fetch_ads_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
@@ -14,16 +14,6 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
-}
-
-/// get this into a seperate function that can be used in differenet files
-String _extractInitials(String name) {
-  List<String> nameParts = name.split(' ');
-  if (nameParts.isNotEmpty) {
-    return nameParts[0][0].toUpperCase(); // First letter of the first name
-  } else {
-    return ''; // Return empty string if name is empty
-  }
 }
 
 class _HomePageState extends State<HomePage> {
@@ -58,7 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   // Function to filter chats based on the selected filter
   List<Chat> _getFilteredChats() {
-    if (selectedFilter == 'Unread') {
+    if (selectedFilter == 'unRead') {
       return chats.where((chat) => chat.unreadMessage > 0).toList();
     } else if (selectedFilter == 'Groups') {
       return chats.where((chat) => chat.chatName.contains('Group')).toList();
@@ -122,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List Unread = chats.where((chat) => chat.unreadMessage > 0).toList();
+    List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
 
     final filteredChats = _getFilteredChats();
 
@@ -258,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                       spacing: 8,
                       children: [
                         FilterChip(
-                          label: Text("Unread - ${Unread.length}"),
+                          label: Text("unRead - ${unRead.length}"),
                           labelStyle: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -269,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                           checkmarkColor: Colors.red,
                           onSelected: (bool selected) {
                             setState(() {
-                              selectedFilter = 'Unread'; // Update filter
+                              selectedFilter = 'unRead'; // Update filter
                             });
                           },
                         )
@@ -299,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                Container(
+                SizedBox(
                   height: 500,
                   width: double.infinity,
                   child: Padding(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/get_house.dart';
@@ -6,11 +8,13 @@ import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
 
 class HouseListScreen extends StatefulWidget {
+  const HouseListScreen({super.key});
+
   @override
-  State<HouseListScreen> createState() => _HouseListScreenState();
+  State<HouseListScreen> createState() => HouseListScreenState();
 }
 
-class _HouseListScreenState extends State<HouseListScreen> {
+class HouseListScreenState extends State<HouseListScreen> {
   late Future<List<GetHouse>> futureHouses;
   // Variable to track if the house is bookmarked
   bool isBookmarked = false;
@@ -37,7 +41,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    int houseId = snapshot.data![index].HouseId;
+                    int houseId = snapshot.data![index].houseId;
 
                     // Check if this house is bookmarked, if not default to false
                     bool isBookmarked = bookmarkedHouses[houseId] ?? false;
@@ -107,7 +111,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Rent amount: ${snapshot.data![index].rent_amount}',
+                                        'Rent amount: ${snapshot.data![index].rentAmount}',
                                         style: const TextStyle(fontSize: 16),
                                       ),
                                       Text(
@@ -129,19 +133,18 @@ class _HouseListScreenState extends State<HouseListScreen> {
                                   ElevatedButton(
                                     onPressed: () {
                                       int houseId = snapshot.data![index]
-                                          .HouseId; // Replace this with the actual house ID you want to bookmark
+                                          .houseId; // Replace this with the actual house ID you want to bookmark
                                       PostBookmark.postBookmark(
                                               houseId: houseId)
                                           .then((_) {
                                         // Optionally handle successful bookmarking here, like showing a message to the user
-                                        print("Bookmarking action completed.");
+
                                         setState(() {
                                           bookmarkedHouses[houseId] = true;
                                         });
                                       }).catchError((error) {
                                         // Handle any errors here
-                                        print(
-                                            "Error occurred while bookmarking: $error");
+                                        log("Error occurred while bookmarking: $error");
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(

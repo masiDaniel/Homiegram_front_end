@@ -1,4 +1,4 @@
-class getComments {
+class GetComments {
   final int commentId;
   final int houseId;
   final int userId;
@@ -6,7 +6,7 @@ class getComments {
   final bool nested;
   final String nestedId;
 
-  getComments({
+  GetComments({
     required this.commentId,
     required this.houseId,
     required this.userId,
@@ -15,8 +15,8 @@ class getComments {
     required this.nestedId,
   });
 
-  factory getComments.fromJSon(Map<String, dynamic> json) {
-    return getComments(
+  factory GetComments.fromJSon(Map<String, dynamic> json) {
+    return GetComments(
       commentId: json['id'] ?? 0,
       houseId: json['house_id'] ?? 0,
       userId: json['user_id'] ?? 0,

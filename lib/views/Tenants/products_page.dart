@@ -20,7 +20,8 @@ class ProductsPage extends StatefulWidget {
   State<ProductsPage> createState() => _ProductsPageState();
 }
 
-class _ProductsPageState extends State<ProductsPage> {
+class _ProductsPageState extends State<ProductsPage>
+    with TickerProviderStateMixin {
   late Future<List<Products>> futureProducts;
 
   @override
@@ -63,9 +64,9 @@ class _ProductsPageState extends State<ProductsPage> {
               itemCount: filteredProducts.length,
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
-                String productImage = product.productImage.isNotEmpty
-                    ? '$devUrl${product.productImage}'
-                    : 'assets/images/ad2.jpeg'; // Default image asset
+                // String productImage = product.productImage.isNotEmpty
+                //     ? '$devUrl${product.productImage}'
+                //     : 'assets/images/ad2.jpeg'; // Default image asset
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: Padding(
@@ -75,23 +76,29 @@ class _ProductsPageState extends State<ProductsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: double
-                              .infinity, // Make image stretch to card width
-                          height: 200, // Adjust height as needed
-                          child: Image.network(
-                            productImage,
-                            fit: BoxFit
-                                .cover, // Ensure the image covers the available space
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/ad2.jpeg', // Default image
-                                width: double.infinity,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          ),
+                          width: double.infinity,
+                          height: 200,
+                          child: product.productImage.isNotEmpty
+                              ? Image.network(
+                                  '$devUrl${product.productImage}',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/images/ad2.jpeg', // Default image in case of error
+                                      width: double.infinity,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  'assets/images/ad2.jpeg', // Default image when there is no product image
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
+
                         const SizedBox(height: 8.0), // Add some spacing
                         Text(
                           product.productName,
@@ -142,12 +149,26 @@ class _ProductsPageState extends State<ProductsPage> {
       floatingActionButton: userId == widget.businessOwnerId
           ? SpeedDial(
               animatedIcon: AnimatedIcons.menu_close,
-              backgroundColor: const Color.fromARGB(255, 24, 139, 7),
+              backgroundColor: const Color(0xFF188B07),
               foregroundColor: Colors.white,
+              overlayColor: const Color(0xFF188B07),
+              overlayOpacity: 0.5,
+              elevation: 8.0,
+              spaceBetweenChildren: 15,
               children: [
                 SpeedDialChild(
-                  child: Icon(Icons.add_home),
-                  label: 'Add House',
+                  child: const Icon(
+                    Icons.add_shopping_cart,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: const Color(0xFF03AA19),
+                  label: 'Add product',
+                  labelStyle: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  labelBackgroundColor: Colors.white,
                   onTap: () {
                     // Navigator.push(
                     //   context,
@@ -156,7 +177,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   },
                 ),
                 SpeedDialChild(
-                  child: Icon(Icons.tv),
+                  child: const Icon(Icons.tv),
                   label: 'Advertise',
                   onTap: () {
                     // Navigator.push(

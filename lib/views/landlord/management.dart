@@ -3,7 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/landlord/Landlord_house_details.dart';
+import 'package:homi_2/views/landlord/landlord_house_details.dart';
 import 'package:homi_2/views/landlord/add_house.dart';
 
 class LandlordManagement extends StatefulWidget {
@@ -44,7 +44,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
 
           // Filter houses where the landlord_id matches the user ID
           final filteredHouses =
-              houses.where((house) => house.landlord_id == userId).toList();
+              houses.where((house) => house.landlordId == userId).toList();
 
           return ListView.builder(
             itemCount: filteredHouses.length,
@@ -98,7 +98,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      Text('Rent: \$${house.rent_amount}'),
+                      Text('Rent: \$${house.rentAmount}'),
                       const SizedBox(height: 4),
                       Text('Location: ${house.location}'),
                       // Add more details as needed
@@ -116,101 +116,27 @@ class _LandlordManagementState extends State<LandlordManagement> {
         foregroundColor: Colors.white,
         children: [
           SpeedDialChild(
-            child: Icon(Icons.add_home),
+            child: const Icon(Icons.add_home),
             label: 'Add House',
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddHousePage()),
+                MaterialPageRoute(builder: (context) => const AddHousePage()),
               );
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.tv),
+            child: const Icon(Icons.tv),
             label: 'Advertise',
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddHousePage()),
+                MaterialPageRoute(builder: (context) => const AddHousePage()),
               );
             },
           ),
         ],
       ),
-    );
-  }
-
-  void _showAddHouseDialog() {
-    // Show a dialog to add a house
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add House'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Input fields for house details
-              TextField(
-                decoration: InputDecoration(labelText: 'House Name'),
-              ),
-              // Add more fields as necessary
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Handle adding house logic
-                Navigator.of(context).pop();
-              },
-              child: const Text('Add'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showAssignCaretakerDialog() {
-    // Show a dialog to assign a caretaker
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Assign Caretaker'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Input fields for caretaker details
-              TextField(
-                decoration: InputDecoration(labelText: 'Caretaker Name'),
-              ),
-              // Add more fields as necessary
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Handle assigning caretaker logic
-                Navigator.of(context).pop();
-              },
-              child: const Text('Assign'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

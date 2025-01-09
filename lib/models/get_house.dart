@@ -1,9 +1,9 @@
 // import 'package:flutter/widgets.dart';
 
 class GetHouse {
-  final int HouseId;
+  final int houseId;
   final String name;
-  final String rent_amount;
+  final String rentAmount;
   final int rating;
   final String description;
   final String location;
@@ -11,13 +11,13 @@ class GetHouse {
   final String bankName;
   final String accountNumber;
   final List<int> amenities;
-  final int landlord_id;
-  final int? caretaker_id;
+  final int landlordId;
+  final int? caretakerId;
 
   GetHouse(
-      {required this.HouseId,
+      {required this.houseId,
       required this.name,
-      required this.rent_amount,
+      required this.rentAmount,
       required this.rating,
       required this.description,
       required this.location,
@@ -25,8 +25,8 @@ class GetHouse {
       required this.bankName,
       required this.accountNumber,
       required this.amenities,
-      required this.landlord_id,
-      this.caretaker_id});
+      required this.landlordId,
+      this.caretakerId});
 
   factory GetHouse.fromJSon(Map<String, dynamic> json) {
     List<String> images = [];
@@ -36,9 +36,9 @@ class GetHouse {
     if (json['image_3'] != null) images.add(json['image_3']);
 
     return GetHouse(
-        HouseId: json['id'] ?? '',
+        houseId: json['id'] ?? '',
         name: json['name'] ?? '',
-        rent_amount: json['rent_amount'] ?? '',
+        rentAmount: json['rent_amount'] ?? '',
         rating: json['rating'] ?? '',
         description: json['description'] ?? '',
         location: json['location'] ?? '',
@@ -46,19 +46,19 @@ class GetHouse {
         bankName: json['payment_bank_name'] ?? '',
         accountNumber: json['payment_account_number'] ?? '',
         amenities: List<int>.from(json['amenities'] ?? []),
-        landlord_id: json['landlord_id'],
-        caretaker_id: json['caretaker']);
+        landlordId: json['landlord_id'],
+        caretakerId: json['caretaker']);
   }
 
   Map<String, dynamic> tojson() {
     return {
       'name': name,
-      'rent_amount': rent_amount,
+      'rentAmount': rentAmount,
       'rating': rating,
       'description': description,
       'location': location,
       'amenities': amenities,
-      'landlord_id': landlord_id,
+      'landlordId': landlordId,
     };
   }
 }

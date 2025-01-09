@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:dio/dio.dart';
 
 class PostHouseService {
@@ -24,7 +24,7 @@ class PostHouseService {
       return true;
     } else {
       // Handle error response
-      print('Failed to add house: ${response.statusCode} ${response.body}');
+      log('Failed to add house: ${response.statusCode} ${response.body}');
       return false;
     }
   }
@@ -34,11 +34,11 @@ class PostHouseService {
 
     FormData formData = FormData();
     formData.fields.add(MapEntry('name', house.name));
-    formData.fields.add(MapEntry('rent_amount', house.rent_amount));
+    formData.fields.add(MapEntry('rent_amount', house.rentAmount));
     formData.fields.add(MapEntry('rating', house.rating.toString()));
     formData.fields.add(MapEntry('description', house.description));
     formData.fields.add(MapEntry('location', house.location));
-    formData.fields.add(MapEntry('landlord_id', house.landlord_id.toString()));
+    formData.fields.add(MapEntry('landlord_id', house.landlordId.toString()));
 
     // Adding amenities as form fields
     for (int amenity in house.amenities) {
@@ -55,7 +55,7 @@ class PostHouseService {
             filename: imagePath.split('/').last);
 
         // Dynamically set the field name like 'image' for the first image, 'image_1', 'image_2' for others
-        String fieldName = i == 0 ? 'image' : 'image_${i}';
+        String fieldName = i == 0 ? 'image' : 'image_$i';
 
         formData.files.add(MapEntry(
           fieldName, // 'image' for the first one, 'image_1', 'image_2' for others
@@ -74,10 +74,10 @@ class PostHouseService {
           },
         ),
       );
-      print("Response: ${response.data}");
+      log("Response: ${response.data}");
       return true;
     } on DioException catch (e) {
-      print('Failed to post house: ${e.response?.data}');
+      log('Failed to post house: ${e.response?.data}');
       return false;
     }
   }

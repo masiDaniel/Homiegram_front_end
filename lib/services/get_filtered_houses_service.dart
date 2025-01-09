@@ -7,17 +7,10 @@ import 'dart:convert';
 late Future<List<GetHouse>> futureHouses;
 late Future<List<Amenities>> futureAmenities;
 String _selectedLocation = 'All Locations';
-final List<String> _locations = [
-  'All Locations',
-  'Devki',
-  'Nairobi - CBD',
-  'Machakos'
-];
 
-final double _minPrice = 0;
+const double _minPrice = 0;
 double _maxPrice = 1000;
 final List<String> _selectedAmenities = [];
-final List<String> _amenities = [];
 
 Future<List<GetHouse>> fetchFilteredHouses() async {
   String apiUrl = '$devUrl/api/houses/filter';

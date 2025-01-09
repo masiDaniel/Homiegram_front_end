@@ -5,7 +5,7 @@ import 'package:homi_2/services/user_sigin_service.dart';
 class ProductDetailPage extends StatelessWidget {
   final Products product;
 
-  ProductDetailPage({required this.product});
+  const ProductDetailPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class ProductDetailPage extends StatelessWidget {
             const SizedBox(height: 16.0),
             Text('Price: \$${product.productPrice}'),
             const SizedBox(height: 16.0),
-            Text('Stock: ${product.StockAvailable}'),
+            Text('Stock: ${product.stockAvailable}'),
 
             // Spacer to push buttons to the bottom
             const Spacer(),

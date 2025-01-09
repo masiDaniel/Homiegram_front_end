@@ -7,7 +7,7 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
-Future<List<getComments>> fetchUsers() async {
+Future<List<GetComments>> fetchUsers() async {
   try {
     final headersWithToken = {
       ...headers,
@@ -20,12 +20,10 @@ Future<List<getComments>> fetchUsers() async {
 
     if (response.statusCode == 200) {
       final List<dynamic> commentData = json.decode(response.body);
-      // print(response.body);
-      print("Fetched Comments");
-      print(commentData);
-      final List<getComments> comments =
-          commentData.map((json) => getComments.fromJSon(json)).toList();
-      // print(comments);
+
+      final List<GetComments> comments =
+          commentData.map((json) => GetComments.fromJSon(json)).toList();
+
       return comments;
     } else {
       throw Exception('failed to fetch arguments');

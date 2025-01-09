@@ -89,14 +89,14 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   void showBusinessCreationDialog(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    final TextEditingController _businessNameController =
+    final formKey = GlobalKey<FormState>();
+    final TextEditingController businessNameController =
         TextEditingController();
-    final TextEditingController _contactNumberController =
+    final TextEditingController contactNumberController =
         TextEditingController();
-    final TextEditingController _businessEmailController =
+    final TextEditingController businessEmailController =
         TextEditingController();
-    final TextEditingController _businessAddressController =
+    final TextEditingController businessAddressController =
         TextEditingController();
 
     showDialog(
@@ -106,12 +106,12 @@ class _MarketPlaceState extends State<MarketPlace> {
           title: const Text('Create a Business'),
           content: SingleChildScrollView(
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextFormField(
-                    controller: _businessNameController,
+                    controller: businessNameController,
                     decoration:
                         const InputDecoration(labelText: 'Business Name'),
                     validator: (value) {
@@ -122,7 +122,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                     },
                   ),
                   TextFormField(
-                    controller: _contactNumberController,
+                    controller: contactNumberController,
                     decoration:
                         const InputDecoration(labelText: 'Contact Number'),
                     keyboardType: TextInputType.phone,
@@ -134,7 +134,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                     },
                   ),
                   TextFormField(
-                    controller: _businessEmailController,
+                    controller: businessEmailController,
                     decoration:
                         const InputDecoration(labelText: 'Email Address'),
                     keyboardType: TextInputType.emailAddress,
@@ -146,7 +146,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                     },
                   ),
                   TextFormField(
-                    controller: _businessAddressController,
+                    controller: businessAddressController,
                     decoration: const InputDecoration(labelText: 'Address ID'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
@@ -169,19 +169,39 @@ class _MarketPlaceState extends State<MarketPlace> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   final businessData = {
-                    'name': _businessNameController.text,
-                    'contact_number': _contactNumberController.text,
-                    'email': _businessEmailController.text,
+                    'name': businessNameController.text,
+                    'contact_number': contactNumberController.text,
+                    'email': businessEmailController.text,
                     'location':
-                        int.tryParse(_businessAddressController.text) ?? 0,
+                        int.tryParse(businessAddressController.text) ?? 0,
                     'owner': userId, // Replace with actual owner ID
                   };
                   postBusiness(businessData, context).then((success) {
                     if (success) {
-                      _refreshBusinesses(); // Refresh data after creating a business
-                      Navigator.of(context).pop(); // Close the dialog
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Success'),
+                            content:
+                                const Text('Business created successfully!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the success dialog
+                                  _refreshBusinesses(); // Refresh data
+                                  Navigator.of(context)
+                                      .pop(); // Close the parent dialog
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   });
                 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -52,11 +53,14 @@ Future<bool> postBusiness(
     );
 
     if (response.statusCode == 201) {
-      print('Business created successfully.');
-      Navigator.of(context).pop();
+      log('Business created successfully.');
+      if (context.mounted) {
+        // Check if the widget is still in the widget tree
+        Navigator.of(context).pop();
+      }
       return true;
     } else {
-      print('Failed to create business: ${response.body}');
+      log('Failed to create business: ${response.body}');
       return false;
     }
   } catch (e) {
@@ -133,7 +137,7 @@ Future<bool> postProducts(
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Failed to post product: ${response.body}');
+      log('Failed to post product: ${response.body}');
       return false;
     }
   } catch (e) {

@@ -62,6 +62,8 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception('Failed to fetch users');
       }
     } catch (e) {
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
       // Handle errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching users: $e')),
@@ -93,12 +95,14 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         Uri.parse('http://127.0.0.1:8000/houses/assign-caretaker/'),
         headers: headers,
         body: json.encode({
-          'house_id': widget.house.HouseId,
-          'user_id': selectedUser!.user_id,
+          'house_id': widget.house.houseId,
+          'user_id': selectedUser!.userId,
         }),
       );
 
       if (response.statusCode == 200) {
+        // Check if the widget is still mounted before using the context
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Caretaker assigned successfully!')),
         );
@@ -125,11 +129,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         Uri.parse('http://127.0.0.1:8000/houses/remove-caretaker/'),
         headers: headers,
         body: json.encode({
-          'house_id': widget.house.HouseId,
-          'user_id': widget.house.caretaker_id,
+          'house_id': widget.house.houseId,
+          'user_id': widget.house.caretakerId,
         }),
       );
 
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Caretaker removed successfully!')),
@@ -152,6 +158,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         type: FileType.custom,
         allowedExtensions: ['pdf', 'txt'], // Allow only PDF and TXT files
       );
+
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
 
       if (result != null) {
         setState(() {
@@ -188,13 +197,16 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       final request = http.MultipartRequest('POST', uri)
         ..headers.addAll(headers)
         ..fields['house_id'] =
-            widget.house.HouseId.toString() // Include the house ID
+            widget.house.houseId.toString() // Include the house ID
         ..files.add(await http.MultipartFile.fromPath(
           'contract_file', // Backend expects this key for the file
           selectedFile!.path,
         ));
 
       final response = await request.send();
+
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -290,7 +302,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               ),
             ),
             const SizedBox(height: 16),
-            if (widget.house.caretaker_id == null)
+            if (widget.house.caretakerId == null)
               isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : DropdownButtonFormField<GerUsers>(
@@ -335,7 +347,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             ),
             const Text('Rooms'),
             FutureBuilder(
-              future: fetchRoomsByHouse(widget.house.HouseId),
+              future: fetchRoomsByHouse(widget.house.houseId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -343,7 +355,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   final rooms = snapshot.data!;
-                  print("these are the rooms $rooms");
 
                   if (rooms.isEmpty) {
                     return const Center(
@@ -411,7 +422,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         foregroundColor: Colors.white,
         children: [
           SpeedDialChild(
-            child: Icon(Icons.add_home),
+            child: const Icon(Icons.add_home),
             label: 'Add House',
             onTap: () {
               // Navigator.push(
@@ -421,7 +432,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.tv),
+            child: const Icon(Icons.tv),
             label: 'Advertise',
             onTap: () {
               // Navigator.push(
@@ -441,7 +452,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   void checkCaretakerStatus() {
     // Example: Check if caretaker is assigned.
     setState(() {
-      isCaretakerAssigned = widget.house.caretaker_id != null;
+      isCaretakerAssigned = widget.house.caretakerId != null;
     });
   }
 
@@ -470,12 +481,12 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Rent: \$${widget.house.rent_amount}',
+              'Rent: \$${widget.house.rentAmount}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
             Text(
-              'caretakert: \$${widget.house.caretaker_id}',
+              'caretakert: \$${widget.house.caretakerId}',
               style: const TextStyle(fontSize: 16),
             ),
           ],

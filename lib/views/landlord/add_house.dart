@@ -6,11 +6,13 @@ import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddHousePage extends StatefulWidget {
+  const AddHousePage({super.key});
+
   @override
-  _AddHousePageState createState() => _AddHousePageState();
+  AddHousePageState createState() => AddHousePageState();
 }
 
-class _AddHousePageState extends State<AddHousePage> {
+class AddHousePageState extends State<AddHousePage> {
   final _formKey = GlobalKey<FormState>();
   String _houseName = '';
   String _rentAmount = '';
@@ -18,7 +20,7 @@ class _AddHousePageState extends State<AddHousePage> {
   String _description = '';
   String _bankName = '';
   String __accountNumber = '';
-  List<String> _imageUrls = [];
+  final List<String> _imageUrls = [];
 
   final PostHouseService postHouseService = PostHouseService();
   final ImagePicker _picker = ImagePicker();
@@ -35,27 +37,27 @@ class _AddHousePageState extends State<AddHousePage> {
       return; // Prevent further image picking
     }
 
-    final List<XFile>? images = await _picker.pickMultiImage();
-    if (images != null) {
-      // Calculate how many more images can be added
-      final int remainingSlots = 4 - _imageUrls.length;
+    final List<XFile> images = await _picker.pickMultiImage();
+    // Calculate how many more images can be added
+    final int remainingSlots = 4 - _imageUrls.length;
 
-      setState(() {
-        // Add only up to the remaining number of slots
-        _imageUrls.addAll(
-          images.take(remainingSlots).map((file) => file.path),
-        );
-      });
+    setState(() {
+      // Add only up to the remaining number of slots
+      _imageUrls.addAll(
+        images.take(remainingSlots).map((file) => file.path),
+      );
+    });
 
-      if (images.length > remainingSlots) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Some images were not added due to the 4-image limit.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
+    // Check if the widget is still mounted before using the context
+    if (!mounted) return;
+
+    if (images.length > remainingSlots) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Some images were not added due to the 4-image limit.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -225,33 +227,38 @@ class _AddHousePageState extends State<AddHousePage> {
                     // Create a new house instance
                     final newHouse = GetHouse(
                       name: _houseName,
-                      rent_amount: _rentAmount,
+                      rentAmount: _rentAmount,
                       rating: 2, // Assuming a default rating
                       description: _description, // Add description if available
                       location: _location,
                       images: _imageUrls, // Assuming a list of images
                       amenities: [1], // Include if you have amenities
-                      landlord_id: userId as int,
-                      HouseId: 0,
+                      landlordId: userId as int,
+                      houseId: 0,
                       bankName: _bankName,
                       accountNumber:
                           __accountNumber, // Set the correct landlord ID
                     );
-                    print(newHouse.name);
+
                     // Call the addHouse method and await the response
                     bool success =
                         await postHouseService.postHouseWithImages(newHouse);
 
                     if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('House added successfully!')),
-                      );
-                      Navigator.pop(context); // Navigate back or clear the form
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('House added successfully!')),
+                        );
+                        Navigator.pop(
+                            context); // Navigate back or clear the form
+                      }
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to add house.')),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Failed to add house.')),
+                        );
+                      }
                     }
                   }
                 },

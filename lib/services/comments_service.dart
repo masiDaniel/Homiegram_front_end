@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +8,7 @@ const Map<String, String> headers = {
   "Content-Type": "application/json",
 };
 
-Future<List<getComments>> fetchComments(int houseId) async {
+Future<List<GetComments>> fetchComments(int houseId) async {
   try {
     final headersWithToken = {
       ...headers,
@@ -20,12 +21,12 @@ Future<List<getComments>> fetchComments(int houseId) async {
 
     if (response.statusCode == 200) {
       final List<dynamic> commentData = json.decode(response.body);
-      // print(response.body);
-      print("Fetched Comments");
-      print(commentData);
-      final List<getComments> comments =
-          commentData.map((json) => getComments.fromJSon(json)).toList();
-      // print(comments);
+
+      log("Fetched Comments");
+
+      final List<GetComments> comments =
+          commentData.map((json) => GetComments.fromJSon(json)).toList();
+
       return comments;
     } else {
       throw Exception('failed to fetch arguments');

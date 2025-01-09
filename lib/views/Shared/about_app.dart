@@ -51,6 +51,8 @@ class AboutHomiegram extends StatelessWidget {
     ),
   ];
 
+  AboutHomiegram({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
