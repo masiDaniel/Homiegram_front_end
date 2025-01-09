@@ -6,8 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class PostHouseService {
-  final String apiUrl =
-      '${devUrl}houses/gethouses/'; // Replace with your API URL
+  final String apiUrl = '${devUrl}houses/gethouses/';
 
   Future<bool> addHouse(GetHouse house) async {
     final response = await http.post(
@@ -64,12 +63,6 @@ class PostHouseService {
         ));
       }
     }
-
-    // // Log the form data content (files and fields)
-    // print("Form data with images:");
-    // formData.files.forEach((entry) {
-    //   print('Field: ${entry.key}, File: ${entry.value.filename}');
-    // });
 
     try {
       final response = await dio.post(

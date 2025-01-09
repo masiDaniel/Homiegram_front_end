@@ -22,6 +22,10 @@ class _MarketPlaceState extends State<MarketPlace> {
   @override
   void initState() {
     super.initState();
+    _loadBusinessesAndLocations();
+  }
+
+  void _loadBusinessesAndLocations() {
     futureBusinesses = fetchBusinesses();
     futureLocations = fetchLocations();
     futureBusinesses.then((businesses) {
@@ -29,6 +33,14 @@ class _MarketPlaceState extends State<MarketPlace> {
         allBusinesses = businesses;
         displayedBusinesses = businesses; // Initialize with all businesses
       });
+    });
+  }
+
+  Future<void> _refreshBusinesses() async {
+    final businesses = await fetchBusinesses();
+    setState(() {
+      allBusinesses = businesses;
+      displayedBusinesses = businesses;
     });
   }
 
@@ -165,9 +177,13 @@ class _MarketPlaceState extends State<MarketPlace> {
                     'location':
                         int.tryParse(_businessAddressController.text) ?? 0,
                     'owner': userId, // Replace with actual owner ID
-                    'business_type': 2, // Replace with actual business type ID
                   };
-                  postBusiness(businessData, context);
+                  postBusiness(businessData, context).then((success) {
+                    if (success) {
+                      _refreshBusinesses(); // Refresh data after creating a business
+                      Navigator.of(context).pop(); // Close the dialog
+                    }
+                  });
                 }
               },
               child: const Text('Create'),
@@ -206,133 +222,134 @@ class _MarketPlaceState extends State<MarketPlace> {
         ],
       ),
       body: SafeArea(
-        child: FutureBuilder<List<Locations>>(
-          future: futureLocations,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('Error loading locations'));
-            } else if (snapshot.hasData && snapshot.data != null) {
-              List<Locations> locations = snapshot.data!;
-              Map<int, Locations> locationMap = {
-                for (var location in locations) location.locationId: location
-              };
+        child: RefreshIndicator(
+          onRefresh: _refreshBusinesses,
+          child: FutureBuilder<List<Locations>>(
+            future: futureLocations,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error loading locations'));
+              } else if (snapshot.hasData && snapshot.data != null) {
+                List<Locations> locations = snapshot.data!;
+                Map<int, Locations> locationMap = {
+                  for (var location in locations) location.locationId: location
+                };
 
-              return displayedBusinesses.isNotEmpty
-                  ? SingleChildScrollView(
-                      child: Center(
-                        child: Column(
-                          children: displayedBusinesses.map((business) {
-                            String businessImage =
-                                business.businessImage.isNotEmpty
-                                    ? '$devUrl${business.businessImage}'
-                                    : 'assets/images/ad2.jpeg';
+                return displayedBusinesses.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: displayedBusinesses.length,
+                        itemBuilder: (context, index) {
+                          BusinessModel business = displayedBusinesses[index];
+                          String businessImage =
+                              business.businessImage.isNotEmpty
+                                  ? '$devUrl${business.businessImage}'
+                                  : 'assets/images/ad2.jpeg';
 
-                            Locations? businessLocation =
-                                locationMap[business.businessAddress];
+                          Locations? businessLocation =
+                              locationMap[business.businessAddress];
 
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductsPage(
-                                        businessId: business.businessId,
-                                        businessName: business.businessName,
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductsPage(
+                                      businessId: business.businessId,
+                                      businessName: business.businessName,
+                                      businessOwnerId: business.businessOwnerId,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 400,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF126E06),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                      ),
+                                      child: Image.network(
+                                        businessImage,
+                                        width: double.infinity,
+                                        height: 300,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Image.asset(
+                                            'assets/images/ad2.jpeg',
+                                            width: double.infinity,
+                                            height: 300,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
                                       ),
                                     ),
-                                  );
-                                },
-                                child: Container(
-                                  width: 400,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF126E06),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(12),
-                                          topRight: Radius.circular(12),
-                                        ),
-                                        child: Image.network(
-                                          businessImage,
-                                          width: double.infinity,
-                                          height: 300,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/images/ad2.jpeg',
-                                              width: double.infinity,
-                                              height: 300,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            business.businessName,
+                                            style: const TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4.0),
+                                          Text(
+                                            businessLocation != null
+                                                ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
+                                                : 'Location: Unknown',
+                                            style: const TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Contact: ${business.contactNumber}',
+                                            style: const TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Category: ${business.businessTypeId}',
+                                            style: const TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              business.businessName,
-                                              style: const TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4.0),
-                                            Text(
-                                              businessLocation != null
-                                                  ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
-                                                  : 'Location: Unknown',
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Contact: ${business.contactNumber}',
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Category: ${business.businessTypeId}',
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    )
-                  : const Center(
-                      child: Text('No businesses match your search.'));
-            } else {
-              return const Center(child: Text('No locations available'));
-            }
-          },
+                            ),
+                          );
+                        },
+                      )
+                    : const Center(
+                        child: Text('No businesses match your search.'));
+              } else {
+                return const Center(child: Text('No locations available'));
+              }
+            },
+          ),
         ),
       ),
     );

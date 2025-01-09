@@ -2,8 +2,6 @@ class Amenities {
   final int? locationId;
   final String? name;
 
-  // final String? token;
-
   Amenities({
     this.locationId,
     this.name,

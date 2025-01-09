@@ -1,6 +1,3 @@
-// import 'dart:convert';
-
-// import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,9 +10,8 @@ Future logoutUser() async {
       ...headers,
       'Authorization': 'Token $authToken',
     };
-    print("this is the token ${authToken}");
     final response = await http.post(
-      Uri.parse("$azurebaseUrl/accounts/logout/"),
+      Uri.parse("$devUrl/accounts/logout/"),
       headers: headersWithToken,
     );
 

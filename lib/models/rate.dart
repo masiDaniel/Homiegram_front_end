@@ -2,8 +2,6 @@ class Rate {
   final int? rating;
   final String? comment;
 
-  // final String? token;
-
   Rate({
     this.rating,
     this.comment,

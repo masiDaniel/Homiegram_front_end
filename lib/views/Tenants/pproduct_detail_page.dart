@@ -10,7 +10,7 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String productImage = product.productImage.isNotEmpty
-        ? '$azurebaseUrl${product.productImage}'
+        ? '$devUrl${product.productImage}'
         : 'assets/images/ad2.jpeg'; // Default image asset
     return Scaffold(
       appBar: AppBar(

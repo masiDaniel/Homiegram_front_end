@@ -34,7 +34,7 @@ Future<List<BusinessModel>> fetchBusinesses() async {
   }
 }
 
-Future<void> postBusiness(
+Future<bool> postBusiness(
   Map<String, Object?> businessData,
   BuildContext context,
 ) async {
@@ -54,12 +54,13 @@ Future<void> postBusiness(
     if (response.statusCode == 201) {
       print('Business created successfully.');
       Navigator.of(context).pop();
+      return true;
     } else {
       print('Failed to create business: ${response.body}');
-      throw Exception('Failed to create business');
+      return false;
     }
   } catch (e) {
-    rethrow;
+    return false;
   }
 }
 
@@ -108,6 +109,32 @@ Future<List<Products>> fetchProducts() async {
       return products;
     } else {
       throw Exception('failed to fetch arguments');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+Future<bool> postProducts(
+  Map<String, Object?> productData,
+) async {
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/business/postProducts/'),
+      headers: headersWithToken,
+      body: json.encode(productData),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Failed to post product: ${response.body}');
+      return false;
     }
   } catch (e) {
     rethrow;

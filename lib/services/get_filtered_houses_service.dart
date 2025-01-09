@@ -20,7 +20,7 @@ final List<String> _selectedAmenities = [];
 final List<String> _amenities = [];
 
 Future<List<GetHouse>> fetchFilteredHouses() async {
-  String apiUrl = '$azurebaseUrl/api/houses/filter';
+  String apiUrl = '$devUrl/api/houses/filter';
 
   // Prepare the filter parameters
   Map<String, dynamic> filterParams = {

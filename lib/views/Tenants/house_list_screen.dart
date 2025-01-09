@@ -60,7 +60,7 @@ class _HouseListScreenState extends State<HouseListScreen> {
                             // for (var imageUrl in snapshot.data![index].images)
                             if (snapshot.data![index].images!.isNotEmpty)
                               Image.network(
-                                '$azurebaseUrl${snapshot.data![index].images?[0]}',
+                                '$devUrl${snapshot.data![index].images?[0]}',
                                 height: 150,
                                 width: double.infinity,
                                 fit: BoxFit.cover,

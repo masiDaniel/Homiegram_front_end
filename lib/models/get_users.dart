@@ -3,7 +3,6 @@ class GerUsers {
   final String? firstName;
   final String? lastName;
   final int? user_id;
-  // final String? token;
 
   GerUsers({this.email, this.firstName, this.lastName, this.user_id});
 
@@ -15,11 +14,4 @@ class GerUsers {
       user_id: json['id'],
     );
   }
-
-  // Map<String, dynamic> tojson() {
-  //   return {
-  //     'email': email,
-  //     'password': password,
-  //   };
-  // }
 }

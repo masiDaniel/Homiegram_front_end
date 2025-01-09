@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
+import 'package:homi_2/services/fetchAds_service.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
 import 'package:video_player/video_player.dart';
@@ -71,18 +75,49 @@ class _HomePageState extends State<HomePage> {
 
   late Future<List<Ad>> futureAds;
   VideoPlayerController? _videoController;
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? _timer;
+  late List<Ad> ads;
 
   @override
   void initState() {
     super.initState();
     _getFilteredChats();
     futureAds = fetchAds();
+    _pageController = PageController(initialPage: 0);
+    _startAutoScroll();
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
     _videoController?.dispose();
     super.dispose();
+  }
+
+  void _startAutoScroll() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_pageController.hasClients) {
+        _currentPage++;
+        if (_currentPage >= ads.length) {
+          _currentPage = 0; // Reset to the first ad
+        }
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  Future<void> initializeVideoPlayer(String videoUrl) async {
+    _videoController = VideoPlayerController.network(videoUrl);
+    await _videoController!.initialize();
+    setState(() {});
+    _videoController!.play();
   }
 
   @override
@@ -135,50 +170,56 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
-                      final ads = snapshot.data!;
-                      return Column(
-                        children: ads.map((ad) {
-                          return Container(
-                            height: 300,
-                            width: 400,
-                            margin: const EdgeInsets.symmetric(vertical: 10.0),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              border: Border.all(
+                      ads = snapshot.data!;
+                      return SizedBox(
+                        height: 320, // Adjust height based on ad content
+                        child: PageView.builder(
+                          controller: _pageController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: ads.length,
+                          itemBuilder: (context, index) {
+                            final ad = ads[index];
+                            return Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              decoration: BoxDecoration(
                                 color: Colors.green,
-                                width: 2.0,
+                                border: Border.all(
+                                  color: Colors.green,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: ad.imageUrl != null
-                                ? Image.network(
-                                    ad.imageUrl!,
-                                    fit: BoxFit.fill,
-                                  )
-                                : ad.videoUrl != null
-                                    ? FutureBuilder(
-                                        future:
-                                            initializeVideoPlayer(ad.videoUrl!),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            return AspectRatio(
-                                              aspectRatio: _videoController!
-                                                  .value.aspectRatio,
-                                              child: VideoPlayer(
-                                                  _videoController!),
-                                            );
-                                          } else {
-                                            return const Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
-                                        },
-                                      )
-                                    : const Center(
-                                        child: Text("No content available")),
-                          );
-                        }).toList(),
+                              child: ad.imageUrl != null
+                                  ? Image.network(
+                                      '$devUrl${ad.imageUrl!}',
+                                      fit: BoxFit.fill,
+                                    )
+                                  : ad.videoUrl != null
+                                      ? FutureBuilder(
+                                          future: initializeVideoPlayer(
+                                              ad.videoUrl!),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
+                                              return AspectRatio(
+                                                aspectRatio: _videoController!
+                                                    .value.aspectRatio,
+                                                child: VideoPlayer(
+                                                    _videoController!),
+                                              );
+                                            } else {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                          },
+                                        )
+                                      : const Center(
+                                          child: Text("No content available")),
+                            );
+                          },
+                        ),
                       );
                     }
                   },
@@ -299,12 +340,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  Future<void> initializeVideoPlayer(String videoUrl) async {
-    _videoController = VideoPlayerController.network(videoUrl);
-    await _videoController!.initialize();
-    setState(() {});
-    _videoController!.play();
   }
 }

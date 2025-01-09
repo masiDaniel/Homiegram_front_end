@@ -36,3 +36,33 @@ Future<List<GetRooms>> fetchRooms() async {
     rethrow;
   }
 }
+
+Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+
+    final response = await http.get(Uri.parse('$devUrl/houses/getRooms/'),
+        headers: headersWithToken);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> roomData = json.decode(response.body);
+
+      final List<GetRooms> rooms =
+          roomData.map((json) => GetRooms.fromJSon(json)).toList();
+
+      // Filter rooms by houseId
+      final filteredRooms =
+          rooms.where((room) => room.apartmentID == houseId).toList();
+
+      AllRooms = rooms;
+      return filteredRooms;
+    } else {
+      throw Exception('failed to fetch arguments');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}

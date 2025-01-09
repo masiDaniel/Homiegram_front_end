@@ -11,7 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to the WelcomePage after a delay
+    // Navigate to the WelcomePage after a delay of the desired time.
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/');
     });
@@ -19,6 +19,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ///
+    /// this works well for an image,
+    /// how will i refactor for it to handle videos?
+    /// or both
+    ///
     return Container(
       color: Colors.white,
       child: Center(

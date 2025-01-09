@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -7,9 +8,13 @@ import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 class ProductsPage extends StatefulWidget {
   final int businessId;
   final String businessName;
+  final int businessOwnerId;
 
   const ProductsPage(
-      {super.key, required this.businessId, required this.businessName});
+      {super.key,
+      required this.businessId,
+      required this.businessName,
+      required this.businessOwnerId});
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -59,7 +64,7 @@ class _ProductsPageState extends State<ProductsPage> {
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
                 String productImage = product.productImage.isNotEmpty
-                    ? '$azurebaseUrl${product.productImage}'
+                    ? '$devUrl${product.productImage}'
                     : 'assets/images/ad2.jpeg'; // Default image asset
                 return Card(
                   margin: const EdgeInsets.all(8.0),
@@ -134,6 +139,35 @@ class _ProductsPageState extends State<ProductsPage> {
           }
         },
       ),
+      floatingActionButton: userId == widget.businessOwnerId
+          ? SpeedDial(
+              animatedIcon: AnimatedIcons.menu_close,
+              backgroundColor: const Color.fromARGB(255, 24, 139, 7),
+              foregroundColor: Colors.white,
+              children: [
+                SpeedDialChild(
+                  child: Icon(Icons.add_home),
+                  label: 'Add House',
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                    // );
+                  },
+                ),
+                SpeedDialChild(
+                  child: Icon(Icons.tv),
+                  label: 'Advertise',
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                    // );
+                  },
+                ),
+              ],
+            )
+          : null,
     );
   }
 }

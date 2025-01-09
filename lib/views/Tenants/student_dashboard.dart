@@ -77,7 +77,7 @@ class _studentDashboardViewState extends State<studentDashboardView> {
                           backgroundColor: Color.fromARGB(255, 2, 75, 50),
                           maxRadius: 25,
                           backgroundImage: imageUrl != null
-                              ? NetworkImage('$azurebaseUrl$imageUrl')
+                              ? NetworkImage('$devUrl$imageUrl')
                               : null,
                           child: imageUrl == null
                               ? Text(

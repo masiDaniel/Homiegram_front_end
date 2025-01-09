@@ -1,6 +1,7 @@
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
+/// this has an issue in terms of  proper coding standards, will refactor lator in the day
 class PostBookmark {
   static Future<void> postBookmark({
     required int houseId,
@@ -46,5 +47,27 @@ class PostBookmark {
     } catch (e) {
       print('error positng comment: $e');
     }
+  }
+}
+
+class Bookmark {
+  final int id;
+  final int user;
+  final int house;
+  final String createdAt;
+
+  Bookmark(
+      {required this.id,
+      required this.user,
+      required this.house,
+      required this.createdAt});
+
+  factory Bookmark.fromJson(Map<String, dynamic> json) {
+    return Bookmark(
+      id: json['id'],
+      user: json['user'],
+      house: json['house'],
+      createdAt: json['created_at'],
+    );
   }
 }

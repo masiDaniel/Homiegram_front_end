@@ -98,46 +98,6 @@ class _SearchPageState extends State<SearchPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Filter Chips for Location and Amenities
-                // Wrap(
-                //   spacing: 8.0,
-                //   children: [
-                //     // Location filter chips
-                //     ...['All Locations', 'City Center', 'Suburbs']
-                //         .map((location) => FilterChip(
-                //               label: Text(location),
-                //               selected: _selectedLocation == location,
-                //               onSelected: (isSelected) {
-                //                 setState(() {
-                //                   _selectedLocation =
-                //                       isSelected ? location : 'All Locations';
-                //                   _applyFilters();
-                //                 });
-                //               },
-                //             )),
-
-                //     // Amenities filter chips
-                //     if (isLoadingAmenities)
-                //       const CircularProgressIndicator()
-                //     else
-                //       ...amenities.map((amenity) => FilterChip(
-                //             label: Text(amenity.name ?? 'Unknown'),
-                //             selected: _selectedAmenities.contains(amenity.name),
-                //             onSelected: (isSelected) {
-                //               setState(() {
-                //                 if (isSelected) {
-                //                   _selectedAmenities.add(amenity.name!);
-                //                 } else {
-                //                   _selectedAmenities.remove(amenity.name!);
-                //                 }
-                //                 _applyFilters();
-                //               });
-                //             },
-                //           )),
-                //   ],
-                // ),
-
-                // List of filtered houses
                 Expanded(
                   child: displayedHouses.isEmpty
                       ? const Center(child: Text('No houses found.'))

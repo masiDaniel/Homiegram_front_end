@@ -3,7 +3,6 @@ class Locations {
   final String? county;
   final String? town;
   final String? area;
-  // final String? token;
 
   Locations({required this.locationId, this.county, this.town, this.area});
 

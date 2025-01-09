@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/get_users.dart';
+import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -27,8 +29,11 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   void initState() {
     super.initState();
     _fetchUsers();
+    checkCaretakerStatus();
   }
 
+  ///
+  ///how will i transfer this to its own individual file?
   Future<void> _fetchUsers() async {
     setState(() {
       isLoading = true;
@@ -103,6 +108,39 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error assigning caretaker: $e')),
+      );
+    }
+  }
+
+  Future<void> _removeCaretaker() async {
+    try {
+      // Define headers
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $authToken',
+      };
+
+      // Make DELETE request
+      final response = await http.delete(
+        Uri.parse('http://127.0.0.1:8000/houses/remove-caretaker/'),
+        headers: headers,
+        body: json.encode({
+          'house_id': widget.house.HouseId,
+          'user_id': widget.house.caretaker_id,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Caretaker removed successfully!')),
+        );
+      } else {
+        final error = json.decode(response.body)['error'] ?? 'Unknown error';
+        throw Exception(error);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error removing caretaker: $e')),
       );
     }
   }
@@ -276,23 +314,135 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                     ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _assignCaretaker,
+              onPressed:
+                  isCaretakerAssigned ? _removeCaretaker : _assignCaretaker,
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                backgroundColor:
+                    isCaretakerAssigned ? Colors.red : Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
-                'Assign Caretaker',
-                style: TextStyle(fontSize: 16),
+              child: Text(
+                isCaretakerAssigned ? 'Remove Caretaker' : 'Assign Caretaker',
+                style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
+            const SizedBox(
+              height: 30,
+            ),
+            const Text('Rooms'),
+            FutureBuilder(
+              future: fetchRoomsByHouse(widget.house.HouseId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  final rooms = snapshot.data!;
+                  print("these are the rooms $rooms");
+
+                  if (rooms.isEmpty) {
+                    return const Center(
+                        child: Text('No rooms found for this house.'));
+                  }
+
+                  return SizedBox(
+                    height:
+                        500, // You can adjust this height based on your design
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: rooms.length,
+                      itemBuilder: (context, index) {
+                        final room = rooms[index];
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to room details page
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: room.rentStatus
+                                  ? const Color(0xFF158518)
+                                  : const Color.fromARGB(255, 128, 14, 6),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Room Name: ${room.roomName}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Bedrooms: ${room.noOfBedrooms}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Rent: ${room.rentAmount}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return const Center(child: Text('No rooms available'));
+                }
+              },
+            )
           ],
         ),
       ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: const Color.fromARGB(255, 24, 139, 7),
+        foregroundColor: Colors.white,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.add_home),
+            label: 'Add House',
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => AddHousePage()),
+              // );
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.tv),
+            label: 'Advertise',
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => AddHousePage()),
+              // );
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  bool isCaretakerAssigned = false;
+
+// Update this variable based on the backend response or local state.
+  void checkCaretakerStatus() {
+    // Example: Check if caretaker is assigned.
+    setState(() {
+      isCaretakerAssigned = widget.house.caretaker_id != null;
+    });
   }
 
   Widget _buildHouseDetailsCard() {

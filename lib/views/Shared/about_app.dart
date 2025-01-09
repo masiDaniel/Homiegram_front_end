@@ -20,41 +20,34 @@ class VerticalLinePainter extends CustomPainter {
 
 class Node {
   final String title;
-  final Color color;
-  final BorderRadius borderRadius;
-  final List<BoxShadow> boxShadow;
+  final String description;
+  final IconData icon;
+  final List<Color> gradientColors;
 
   Node({
     required this.title,
-    this.color = const Color.fromARGB(255, 119, 204, 98),
-    this.borderRadius = const BorderRadius.all(Radius.circular(8.0)),
-    List<BoxShadow>? boxShadow,
-  }) : boxShadow = boxShadow ??
-            [
-              BoxShadow(
-                color: const Color.fromARGB(255, 14, 13, 13).withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
-              )
-            ];
+    required this.description,
+    this.icon = Icons.info,
+    this.gradientColors = const [Colors.greenAccent, Colors.green],
+  });
 }
 
-///how will i wdit the text in the nodes?
-///
 class AboutHomiegram extends StatelessWidget {
   final List<Node> nodes = [
     Node(
-      title:
-          "Landlords \n HomieGram provides landlords with a streamlined property management experience. Through a single platform, landlords can manage rental agreements, handle maintenance requests, and communicate with tenants efficiently. With HomieGram's intuitive tools, managing property details, tenant information, and maintenance schedules becomes effortless, reducing administrative time and enhancing focus on business growth.",
+      title: "Landlords",
+      description:
+          "HomieGram provides landlords with a streamlined property management experience. Through a single platform, landlords can manage rental agreements, handle maintenance requests, and communicate with tenants efficiently. With HomieGram's intuitive tools, managing property details, tenant information, and maintenance schedules becomes effortless, reducing administrative time and enhancing focus on business growth.",
     ),
     Node(
-      title:
-          "Tenants \n Homiegram simplifies the rental search process for students, offering a user-friendly platform with filters for budget, location, and preferences. Students can browse listings, apply easily, and even read reviews. Personalized recommendations make it easier to find the perfect property, making the transition to a new living space smoother and more enjoyable.",
+      title: "Tenants",
+      description:
+          "HomieGram simplifies the rental search process for students, offering a user-friendly platform with filters for budget, location, and preferences. Students can browse listings, apply easily, and even read reviews. Personalized recommendations make it easier to find the perfect property, making the transition to a new living space smoother and more enjoyable.",
     ),
     Node(
-      title:
-          "Market \n Homigram extends its platform to businesses and individuals looking to sell items within the rental ecosystem. The Market node allows users to list and browse items relevant to student life and rental needs, from furniture to appliances, making it a one-stop shop for both property management and essential items. By integrating sales opportunities directly into the platform, Homiegram creates a seamless environment for students, landlords, and sellers alike, enhancing the overall rental experience.",
+      title: "Market",
+      description:
+          "HomieGram extends its platform to businesses and individuals looking to sell items within the rental ecosystem. The Market node allows users to list and browse items relevant to student life and rental needs, from furniture to appliances, making it a one-stop shop for both property management and essential items. By integrating sales opportunities directly into the platform, HomieGram creates a seamless environment for students, landlords, and sellers alike, enhancing the overall rental experience.",
     ),
   ];
 
@@ -64,11 +57,11 @@ class AboutHomiegram extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF126E06),
         title: const Text(
-          "What is Homigram?",
-          style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+          "What is HomieGram?",
+          style: TextStyle(color: Colors.white),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       body: CustomPaint(
         painter: VerticalLinePainter(),
         child: ListView.builder(
@@ -94,13 +87,50 @@ class NodeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: node.color,
-        borderRadius: node.borderRadius,
-        boxShadow: node.boxShadow,
+        gradient: LinearGradient(
+          colors: node.gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            spreadRadius: 2,
+            offset: const Offset(4, 4),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text(node.title),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(node.icon, color: Colors.white, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  node.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              node.description,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

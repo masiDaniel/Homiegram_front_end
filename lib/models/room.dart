@@ -1,5 +1,6 @@
 class GetRooms {
   final int roomId;
+  final String roomName;
   final int noOfBedrooms;
   final String sizeInSqMeters;
   final String rentAmount;
@@ -11,6 +12,7 @@ class GetRooms {
 
   GetRooms(
       {required this.roomId,
+      required this.roomName,
       required this.noOfBedrooms,
       required this.sizeInSqMeters,
       required this.rentAmount,
@@ -23,10 +25,11 @@ class GetRooms {
   factory GetRooms.fromJSon(Map<String, dynamic> json) {
     return GetRooms(
         roomId: json['id'] ?? 0,
+        roomName: json['room_name'] ?? '',
         noOfBedrooms: json['number_of_bedrooms'] ?? 0,
-        sizeInSqMeters: json['user_id'] ?? '',
+        sizeInSqMeters: json['size_in_sq_meters'] ?? '',
         rentAmount: json['rent'] ?? '',
-        occuiedStatus: json['occuiedStatus'] ?? false,
+        occuiedStatus: json['occupied'] ?? false,
         roomImages: json['room_images'] ?? '',
         apartmentID: json['apartment'] ?? 0,
         tenantId: json['tenant'] ?? 0,
@@ -37,9 +40,9 @@ class GetRooms {
     return {
       "id": roomId,
       "number_of_bedrooms": noOfBedrooms,
-      "user_id": sizeInSqMeters,
-      "rentAmount": rentAmount,
-      "occuiedStatus": occuiedStatus,
+      "size_in_sq_meters": sizeInSqMeters,
+      "rent": rentAmount,
+      "occupied": occuiedStatus,
       "nested_id": roomImages,
       "apartment": apartmentID,
       "tenant": tenantId,

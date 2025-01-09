@@ -58,8 +58,10 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     }
   }
 
+  /// how should i refactor this?
+  /// have it in a seperate file?
   Future<void> deleteComment(int commentId) async {
-    String url = '$azurebaseUrl/comments/deleteComments/$commentId/';
+    String url = '$devUrl/comments/deleteComments/$commentId/';
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token $authToken',
@@ -266,32 +268,54 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               const SizedBox(width: 20), // Space between buttons
               ElevatedButton(
                 onPressed: () async {
-                  int houseId = widget.house.HouseId;
+                  // Assuming you have a variable `userType` that holds the user's type
+                  if (userTypeCurrent == "landlord") {
+                    // Show an error dialog to inform the landlord they cannot rent a room
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error'),
+                          content: const Text('Landlords cannot rent rooms.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    int houseId = widget.house.HouseId;
 
-                  // Call the rentRoom function
-                  String? message = await rentRoom(houseId);
+                    // Call the rentRoom function
+                    String? message = await rentRoom(houseId);
 
-                  // Check the message and display feedback to the user
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(message == "Room successfully rented!"
-                            ? 'Success'
-                            : 'Error'),
-                        content:
-                            Text(message ?? 'An unexpected error occurred.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                    // Check the message and display feedback to the user
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(message == "Room successfully rented!"
+                              ? 'Success'
+                              : 'Error'),
+                          content:
+                              Text(message ?? 'An unexpected error occurred.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(150, 100), // Increased size

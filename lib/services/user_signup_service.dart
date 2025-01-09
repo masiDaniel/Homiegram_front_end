@@ -12,15 +12,14 @@ const Map<String, String> headers = {
 Future<UserSignUp?> fetchUserSignUp(
     String firstName, String lastName, String email, String password) async {
   try {
-    final response =
-        await http.post(Uri.parse("$azurebaseUrl/accounts/signup/"),
-            headers: headers,
-            body: jsonEncode({
-              "first_name": firstName,
-              "last_name": lastName,
-              "email": email,
-              "password": password,
-            }));
+    final response = await http.post(Uri.parse("$devUrl/accounts/signup/"),
+        headers: headers,
+        body: jsonEncode({
+          "first_name": firstName,
+          "last_name": lastName,
+          "email": email,
+          "password": password,
+        }));
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);

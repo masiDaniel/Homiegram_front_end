@@ -1,7 +1,6 @@
 class UserRegistration {
   final String? email;
   final String? password;
-  // final String? token;
 
   UserRegistration({this.email, this.password});
 

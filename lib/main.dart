@@ -18,9 +18,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  final String AzurebaseUrl = 'https://hommiegram.azurewebsites.net';
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -68,10 +66,3 @@ class NotFoundPage extends StatelessWidget {
     );
   }
 }
-
-// void navigateToPageAfterDelay(
-//     BuildContext context, String routeName, int delayInSeconds) {
-//   Future.delayed(Duration(seconds: delayInSeconds), () {
-//     Navigator.pushNamed(context, routeName);
-//   });
-// }

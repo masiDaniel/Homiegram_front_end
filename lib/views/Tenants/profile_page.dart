@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
+import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -136,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: const Color.fromARGB(255, 2, 75, 50),
                 radius: 60,
                 backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                    ? NetworkImage('$azurebaseUrl$imageUrl')
+                    ? NetworkImage('$devUrl$imageUrl')
                     : null,
                 child: imageUrl == null || imageUrl!.isEmpty
                     ? Text(
@@ -206,6 +207,24 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: const Text('Phone Number'),
                     subtitle: Text('$phoneNumber'),
                   ),
+                  const Divider(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookmarkedHousesPage(
+                            userId: userId as int,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const ListTile(
+                      leading: Icon(Icons.bookmark_add_outlined,
+                          color: Color(0xFF126E06)),
+                      title: Text('bookmarks'),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -242,9 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 30),
           ElevatedButton.icon(
             onPressed: () {
-              // Handle logout functionality
               _logout();
-              print('logging out');
             },
             icon: const Icon(
               Icons.logout,
