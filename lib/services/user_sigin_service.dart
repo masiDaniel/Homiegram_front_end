@@ -26,7 +26,7 @@ String? phoneNumber;
 String? userTypeCurrent;
 String productionUrl =
     'https://hommiegram.azurewebsites.net'; // this will be deleted.
-String devUrl = 'http://192.168.8.112:8000/';
+String devUrl = 'http://192.168.2.127:8000/';
 
 Future fetchUserSignIn(String username, String password) async {
   try {

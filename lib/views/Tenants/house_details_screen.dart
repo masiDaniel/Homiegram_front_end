@@ -183,7 +183,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -253,24 +253,19 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      const Size(150, 60), // Adjust size for better button
                   backgroundColor: const Color(0xFF126E06), // Green color
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                    borderRadius: BorderRadius.circular(16), // Rounded corners
                   ),
-                  shadowColor: Colors.black.withOpacity(0.3), // Shadow effect
+
                   elevation: 8, // Increased depth for elevation
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15), // More padding for easier tap
-                  side: const BorderSide(
-                      color: Color(0xFF0B4B02),
-                      width: 2), // Border for more emphasis
+                      horizontal: 20,
+                      vertical: 10), // More padding for easier tap
                 ),
                 child: const Text(
                   'Bookmark',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
               const SizedBox(width: 20), // Space between buttons
@@ -326,19 +321,15 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(150, 100), // Increased size
                   backgroundColor: const Color(0xFF126E06), // Green color
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                    borderRadius: BorderRadius.circular(16), // Rounded corners
                   ),
-                  shadowColor: Colors.black.withOpacity(0.3), // Shadow effect
+
                   elevation: 8, // Depth for elevation
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15), // Increase padding for better touch
-                  side: const BorderSide(
-                      color: Color(0xFF0B4B02),
-                      width: 2), // Border for extra emphasis
+                      horizontal: 20,
+                      vertical: 10), // Increase padding for better touch
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,

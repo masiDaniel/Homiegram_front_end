@@ -16,7 +16,7 @@ Future<List<GetComments>> fetchComments(int houseId) async {
     };
 
     final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/comments/post/?house_id=$houseId'),
+        Uri.parse('$devUrl/comments/post/?house_id=$houseId'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

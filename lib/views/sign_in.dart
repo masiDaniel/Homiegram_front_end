@@ -1,9 +1,12 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Tenants/navigation_bar.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -15,6 +18,8 @@ class SignIn extends StatefulWidget {
 class SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isOffline = false;
+  bool _isLoading = false;
 
   /// this is a function that takes the input from the textfields and processes it
   /// once processed it calls the fetchUserRegistration with email and password as required parameters
@@ -22,8 +27,53 @@ class SignInState extends State<SignIn> {
   /// questions - (userRegistration class object?  what does the ? mean and do?)
   ///
 
-  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+    _listenForConnectivityChanges();
+  }
+
+  /// Check current connectivity status
+  void _checkConnectivity() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _isOffline = connectivityResult == ConnectivityResult.none;
+    });
+  }
+
+  /// Listen for connectivity changes
+  void _listenForConnectivityChanges() {
+    Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      setState(() {
+        _isOffline = connectivityResult == ConnectivityResult.none;
+      });
+
+      if (_isOffline) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('You are offline. Please check your internet connection.'),
+          backgroundColor: Colors.red,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Back online!'),
+          backgroundColor: Colors.green,
+        ));
+      }
+    });
+  }
+
   void _signIn() async {
+    if (_isOffline) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text('You are offline. Please connect to the internet to sign in.'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
@@ -37,28 +87,50 @@ class SignInState extends State<SignIn> {
         _isLoading = true;
       });
       try {
+        print("we are here");
+        // Add timeout logic here
         UserRegistration? userRegistration =
-            await fetchUserSignIn(email, password);
+            await fetchUserSignIn(email, password)
+                .timeout(const Duration(seconds: 10), onTimeout: () {
+          throw TimeoutException("Connection timed out. Please try again.");
+        });
+
+        print("we are here 1");
+
         if (userRegistration != null) {
-          // Check if the widget is still mounted before using the context
           if (!mounted) return;
-          //navigate to the homepage screen if sign in is succesfull
-          Navigator.pushNamed(context, '/homescreen');
+          // Navigator.pushReplacementNamed(context, '/homescreen');
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CustomBottomNavigartion(
+                      userType: userTypeCurrent,
+                    )),
+            (Route<dynamic> route) =>
+                false, // This removes all the previous routes
+          );
         } else {
-          // Check if the widget is still mounted before using the context
           if (!mounted) return;
-          // Show error message if the sign-in was unsuccessful
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Invalid email or password'),
           ));
         }
+      } on TimeoutException catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.message ?? 'Request timed out'),
+        ));
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('An error occurred. Please try again later.'),
+        ));
       } finally {
         setState(() {
-          _isLoading = false; // Hide loading indicator
+          _isLoading = false;
         });
       }
     } else {
-      // Show error message if one or both of the fields are not inputted or email format is invalid
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please enter a valid email and password'),
       ));
@@ -151,5 +223,12 @@ class SignInState extends State<SignIn> {
         ],
       )),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

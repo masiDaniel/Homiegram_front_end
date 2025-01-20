@@ -63,7 +63,11 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
+        leading: Container(
+          child: Image.asset(
+            'assets/images/splash.jpeg',
+          ),
+        ),
         title: TextField(
           decoration: const InputDecoration(hintText: 'Search houses...'),
           onChanged: (query) {
@@ -121,29 +125,26 @@ class _SearchPageState extends State<SearchPage> {
                                         'assets/images/splash.jpeg',
                                       ),
                                     Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        house.name,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child:
+                                          horizontal: 8.0, vertical: 8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            house.name,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(height: 4),
                                           Text("Location: ${house.location}"),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Text("Rent: ${house.rentAmount}"),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Text("Rating: ${house.rating}"),
+                                          const SizedBox(height: 4),
+                                          Text("Rent: ${house.rentAmount}"),
+                                          const SizedBox(height: 4),
+                                          Text("Rating: ${house.rating}"),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),

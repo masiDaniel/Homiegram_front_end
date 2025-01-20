@@ -1,34 +1,16 @@
 import 'package:flutter/material.dart';
 
-class VerticalLinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 2.0;
-
-    final path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(size.width / 2, size.height);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class Node {
   final String title;
   final String description;
   final IconData icon;
-  final List<Color> gradientColors;
+  final Color gradientColors;
 
   Node({
     required this.title,
     required this.description,
     this.icon = Icons.info,
-    this.gradientColors = const [Colors.greenAccent, Colors.green],
+    this.gradientColors = const Color(0xFF126E06),
   });
 }
 
@@ -63,9 +45,8 @@ class AboutHomiegram extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 146, 182, 142),
       body: CustomPaint(
-        painter: VerticalLinePainter(),
         child: ListView.builder(
           itemCount: nodes.length,
           itemBuilder: (context, index) {
@@ -89,12 +70,8 @@ class NodeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: node.gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: node.gradientColors,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -111,25 +88,29 @@ class NodeWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(node.icon, color: Colors.white, size: 24),
                 const SizedBox(width: 8),
                 Text(
                   node.title,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const Divider(
+              color: Colors.white,
+            ),
             Text(
               node.description,
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
+            ),
+            const Divider(
+              color: Colors.white,
             ),
           ],
         ),

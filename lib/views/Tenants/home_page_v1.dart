@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         "Homigram.",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 16, 90, 1),
+                            color: Color(0xFF105A01),
                             fontSize: 40,
                             fontWeight: FontWeight.w600),
                       ),
@@ -231,13 +231,14 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                          selected: true,
-                          selectedColor: Colors.green,
-                          backgroundColor: Colors.blue,
-                          checkmarkColor: Colors.red,
+                          selected: selectedFilter == 'All',
+                          selectedColor: const Color(0xFF105A01),
+                          backgroundColor: Colors.green,
+                          checkmarkColor: Colors.white,
                           onSelected: (bool selected) {
                             setState(() {
-                              selectedFilter = 'All'; // Update filter
+                              selectedFilter =
+                                  selected ? 'All' : ''; // Update filter
                             });
                           },
                         )
@@ -253,13 +254,14 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                          selected: true,
-                          selectedColor: Colors.green,
-                          backgroundColor: Colors.blue,
-                          checkmarkColor: Colors.red,
+                          selected: selectedFilter == 'unRead',
+                          selectedColor: const Color(0xFF105A01),
+                          backgroundColor: Colors.green,
+                          checkmarkColor: Colors.white,
                           onSelected: (bool selected) {
                             setState(() {
-                              selectedFilter = 'unRead'; // Update filter
+                              selectedFilter =
+                                  selected ? 'unRead' : ''; // Update filter
                             });
                           },
                         )
@@ -275,13 +277,14 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                          selected: true,
-                          selectedColor: Colors.green,
-                          backgroundColor: Colors.blue,
-                          checkmarkColor: Colors.red,
+                          selected: selectedFilter == 'Groups',
+                          selectedColor: const Color(0xFF105A01),
+                          backgroundColor: Colors.green,
+                          checkmarkColor: Colors.white,
                           onSelected: (bool selected) {
                             setState(() {
-                              selectedFilter = 'Groups'; // Update filter
+                              selectedFilter =
+                                  selected ? 'Groups' : ''; // Update filter
                             });
                           },
                         )

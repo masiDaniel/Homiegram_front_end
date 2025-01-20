@@ -11,7 +11,7 @@ Future<List<Ad>> fetchAds() async {
   };
 
   final response = await http.get(
-    Uri.parse('http://127.0.0.1:8000/houses/getAdverts/'),
+    Uri.parse('$devUrl/houses/getAdverts/'),
     headers: headers,
   );
 

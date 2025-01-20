@@ -14,7 +14,7 @@ class PostBookmark {
     };
     try {
       final response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/houses/bookmark/add/$houseId/"),
+        Uri.parse("$devUrl/houses/bookmark/add/$houseId/"),
         headers: headers,
       );
 
@@ -37,7 +37,7 @@ class PostBookmark {
     };
     try {
       final response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/houses/bookmark/remove/$houseId/"),
+        Uri.parse("$devUrl/houses/bookmark/remove/$houseId/"),
         headers: headers,
       );
 

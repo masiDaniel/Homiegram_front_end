@@ -16,8 +16,7 @@ Future<List<BusinessModel>> fetchBusinesses() async {
       'Authorization': 'Token $authToken',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/business/getBusiness/'),
+    final response = await http.get(Uri.parse('$devUrl/business/getBusiness/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
@@ -47,7 +46,7 @@ Future<bool> postBusiness(
     };
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/business/getBusiness/'),
+      Uri.parse('$devUrl/business/getBusiness/'),
       headers: headersWithToken,
       body: json.encode(businessData),
     );
@@ -100,8 +99,7 @@ Future<List<Products>> fetchProducts() async {
       'Authorization': 'Token $authToken',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/business/getProducts/'),
+    final response = await http.get(Uri.parse('$devUrl/business/getProducts/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

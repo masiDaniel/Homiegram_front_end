@@ -48,7 +48,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
       // Call the endpoint
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/accounts/getUsers/'),
+        Uri.parse('$devUrl/accounts/getUsers/'),
         headers: headers,
       );
 
@@ -92,7 +92,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
       // Call the endpoint
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/houses/assign-caretaker/'),
+        Uri.parse('$devUrl/houses/assign-caretaker/'),
         headers: headers,
         body: json.encode({
           'house_id': widget.house.houseId,
@@ -126,7 +126,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
       // Make DELETE request
       final response = await http.delete(
-        Uri.parse('http://127.0.0.1:8000/houses/remove-caretaker/'),
+        Uri.parse('$devUrl/houses/remove-caretaker/'),
         headers: headers,
         body: json.encode({
           'house_id': widget.house.houseId,
@@ -193,7 +193,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         'Authorization': 'Bearer YOUR_TOKEN_HERE',
       };
 
-      final uri = Uri.parse('http://127.0.0.1:8000/houses/uploadContract/');
+      final uri = Uri.parse('$devUrl/houses/uploadContract/');
       final request = http.MultipartRequest('POST', uri)
         ..headers.addAll(headers)
         ..fields['house_id'] =
@@ -381,25 +381,59 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: room.rentStatus
-                                  ? const Color(0xFF158518)
-                                  : const Color.fromARGB(255, 128, 14, 6),
+                              color: room.tenantId == 0
+                                  ? Colors.transparent
+                                  : (room.rentStatus
+                                      ? const Color(0xFF158518)
+                                      : const Color.fromARGB(255, 128, 14, 6)),
                               borderRadius: BorderRadius.circular(10),
+                              border: room.tenantId == 0
+                                  ? Border.all(
+                                      color: const Color(0xFF158518), width: 2)
+                                  : null,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Room Name: ${room.roomName}',
-                                  style: const TextStyle(color: Colors.white),
+                                  'Room Name: ${room.roomName}\nBedrooms: ${room.noOfBedrooms}',
+                                  style: TextStyle(
+                                    color: room.tenantId == 0
+                                        ? Colors
+                                            .black // Change text color when container is transparent
+                                        : Colors
+                                            .white, // White text for colored backgrounds
+                                  ),
                                 ),
                                 Text(
                                   'Bedrooms: ${room.noOfBedrooms}',
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: room.tenantId == 0
+                                        ? Colors
+                                            .black // Change text color when container is transparent
+                                        : Colors
+                                            .white, // White text for colored backgrounds
+                                  ),
                                 ),
                                 Text(
                                   'Rent: ${room.rentAmount}',
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: room.tenantId == 0
+                                        ? Colors
+                                            .black // Change text color when container is transparent
+                                        : Colors
+                                            .white, // White text for colored backgrounds
+                                  ),
+                                ),
+                                Text(
+                                  'Tenant: ${room.tenantId}',
+                                  style: TextStyle(
+                                    color: room.tenantId == 0
+                                        ? Colors
+                                            .black // Change text color when container is transparent
+                                        : Colors
+                                            .white, // White text for colored backgrounds
+                                  ),
                                 ),
                               ],
                             ),
@@ -423,7 +457,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         children: [
           SpeedDialChild(
             child: const Icon(Icons.add_home),
-            label: 'Add House',
+            label: 'Add Room',
             onTap: () {
               // Navigator.push(
               //   context,
@@ -434,6 +468,16 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
           SpeedDialChild(
             child: const Icon(Icons.tv),
             label: 'Advertise',
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => AddHousePage()),
+              // );
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.tv),
+            label: 'Statistics',
             onTap: () {
               // Navigator.push(
               //   context,
