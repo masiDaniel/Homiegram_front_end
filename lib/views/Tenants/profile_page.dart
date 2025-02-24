@@ -5,6 +5,7 @@ import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -26,12 +27,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _logout() async {
     try {
-      await logoutUser();
-      // Check if the widget is still mounted before using the context
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/');
+      await logoutUser(); // Your existing logout logic
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn'); // Remove login flag
+      await prefs.remove('userType'); // Remove user type
+
+      if (!mounted) return; // Ensure the widget is still mounted
+
+      Navigator.pushReplacementNamed(
+          context, '/'); // Navigate to the welcome screen
     } catch (e) {
-      log("error logging out: $e");
+      log("Error logging out: $e");
     }
   }
 

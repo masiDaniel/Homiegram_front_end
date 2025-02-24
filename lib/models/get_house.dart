@@ -13,6 +13,7 @@ class GetHouse {
   final List<int> amenities;
   final int landlordId;
   final int? caretakerId;
+  final String? contractUrl;
 
   GetHouse(
       {required this.houseId,
@@ -26,7 +27,8 @@ class GetHouse {
       required this.accountNumber,
       required this.amenities,
       required this.landlordId,
-      this.caretakerId});
+      this.caretakerId,
+      this.contractUrl});
 
   factory GetHouse.fromJSon(Map<String, dynamic> json) {
     List<String> images = [];
@@ -47,7 +49,8 @@ class GetHouse {
         accountNumber: json['payment_account_number'] ?? '',
         amenities: List<int>.from(json['amenities'] ?? []),
         landlordId: json['landlord_id'],
-        caretakerId: json['caretaker']);
+        caretakerId: json['caretaker'],
+        contractUrl: json['contract_file']);
   }
 
   Map<String, dynamic> tojson() {

@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
 
 class SearchPage extends StatefulWidget {
@@ -63,23 +63,40 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(
-          child: Image.asset(
-            'assets/images/splash.jpeg',
+          // leading: Container(
+          //   child: Image.asset(
+          //     'assets/images/splash.jpeg',
+          //   ),
+          // ),
+          title: TextField(
+            decoration: const InputDecoration(
+              hintText: 'Search houses...',
+              border: InputBorder.none,
+            ),
+            onChanged: (query) {
+              setState(() {
+                displayedHouses = allHouses
+                    .where((house) =>
+                        house.name.toLowerCase().contains(query.toLowerCase()))
+                    .toList();
+              });
+            },
           ),
-        ),
-        title: TextField(
-          decoration: const InputDecoration(hintText: 'Search houses...'),
-          onChanged: (query) {
-            setState(() {
-              displayedHouses = allHouses
-                  .where((house) =>
-                      house.name.toLowerCase().contains(query.toLowerCase()))
-                  .toList();
-            });
-          },
-        ),
-      ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.bookmark_added),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookmarkedHousesPage(
+                      userId: userId!,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ]),
       body: isLoadingHouses
           ? const Center(child: CircularProgressIndicator())
           : Column(

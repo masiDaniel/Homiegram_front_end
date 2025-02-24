@@ -4,6 +4,8 @@ import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Tenants/business_bookmarks.dart';
+import 'package:homi_2/views/Tenants/cart_page.dart';
 import 'package:homi_2/views/Tenants/products_page.dart';
 
 class MarketPlace extends StatefulWidget {
@@ -218,7 +220,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
+        // leading: Container(),
         title: TextField(
           decoration: const InputDecoration(
             hintText: 'Search Business...',
@@ -235,6 +237,30 @@ class _MarketPlaceState extends State<MarketPlace> {
           },
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              // Navigate to the cart screen or handle cart actions
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const CartScreen()), // Replace with your cart screen
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bookmark_added),
+            onPressed: () {
+              // Navigate to the cart screen or handle cart actions
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const BusinessBookmarks()), // Replace with your cart screen
+              );
+            },
+          ),
           IconButton(
             onPressed: () => _showPopup(context),
             icon: const Icon(Icons.add),

@@ -84,15 +84,25 @@ class ProductDetailPage extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text('Coming Soon!'),
+                          title: const Text('Purchase Options'),
                           content: const Text(
-                              'This feature will be available in future updates.'),
+                              'Would you like to buy directly or add this item to your cart?'),
                           actions: [
                             TextButton(
                               onPressed: () {
+                                // Add to Cart action logic here
                                 Navigator.of(context).pop(); // Close the dialog
+                                // For example: cartController.addItem(item);
                               },
-                              child: const Text('OK'),
+                              child: const Text('Add to Cart'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Buy Directly action logic here
+                                Navigator.of(context).pop(); // Close the dialog
+                                // For example: Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(item: item)));
+                              },
+                              child: const Text('Buy Now'),
                             ),
                           ],
                         );

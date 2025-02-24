@@ -1,11 +1,12 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
+import 'package:homi_2/services/fetch_bookmarks.dart';
+import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/rent_room_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
@@ -21,11 +22,26 @@ class SpecificHouseDetailsScreen extends StatefulWidget {
 
 class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   List<GetComments> _comments = []; // Local comments list
+  late Future<List<GetHouse>> bookmarkedHousesFuture;
+  bool isBookmarked = false;
 
   @override
   void initState() {
     super.initState();
     _fetchComments();
+
+    bookmarkedHousesFuture = fetchBookmarkedHouses();
+
+    // Check if the current house is bookmarked
+    bookmarkedHousesFuture.then((bookmarkedHouses) {
+      setState(() {
+        isBookmarked = bookmarkedHouses
+            .any((house) => house.houseId == widget.house.houseId);
+      });
+    }).catchError((error) {
+      // Handle errors gracefully
+      debugPrint("Error fetching bookmarked houses: $error");
+    });
   }
 
   Future<void> _fetchComments() async {
@@ -103,6 +119,26 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
   // This map will store the bookmark state for each house by its houseId
   Map<int, bool> bookmarkedHouses = {};
+
+  Future<List<GetHouse>> fetchBookmarkedHouses() async {
+    //Fetch the bookmarks for the user
+    final bookmarks = await fetchBookmarks();
+    List<GetHouse> allHouses = await fetchHouses();
+
+    // Extract the house IDs from the bookmarks
+    final houseIdsForCurrentUser = bookmarks
+        .where((bookmark) => bookmark.user == userId) // Filter by current user
+        .map((bookmark) => bookmark.house) // Extract house ID
+        .toList(); // Convert to a list
+
+    // Filter houses by matching ids
+    List<GetHouse> filteredHouses = allHouses.where((house) {
+      return houseIdsForCurrentUser
+          .contains(house.houseId); // Check if house ID is in the user's list
+    }).toList();
+
+    return filteredHouses;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,11 +228,11 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   int houseId = widget.house.houseId;
 
                   // Check if the house is already bookmarked
-                  if (bookmarkedHouses[houseId] == true) {
+                  if (isBookmarked) {
                     // Remove bookmark
                     PostBookmark.removeBookmark(houseId: houseId).then((_) {
                       setState(() {
-                        bookmarkedHouses[houseId] = false;
+                        isBookmarked = false;
                       });
 
                       // Show a success alert for unbookmarking
@@ -225,7 +261,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     // Add bookmark
                     PostBookmark.postBookmark(houseId: houseId).then((_) {
                       setState(() {
-                        bookmarkedHouses[houseId] = true;
+                        isBookmarked = true;
                       });
 
                       // Show a success alert for bookmarking
@@ -263,9 +299,9 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       horizontal: 20,
                       vertical: 10), // More padding for easier tap
                 ),
-                child: const Text(
-                  'Bookmark',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                child: Text(
+                  isBookmarked ? 'Remove Bookmark' : 'Bookmark',
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
               const SizedBox(width: 20), // Space between buttons
@@ -386,7 +422,7 @@ class CommentList extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: const Color(0xFF126E06)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(children: [

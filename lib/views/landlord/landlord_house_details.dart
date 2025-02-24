@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/get_users.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/landlord/addRoom.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class HouseDetailsPage extends StatefulWidget {
   final GetHouse house;
@@ -24,12 +27,14 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   GerUsers? selectedUser;
   bool isLoading = false;
   File? selectedFile; // Holds the selected file.
+  String? localFilePath;
 
   @override
   void initState() {
     super.initState();
     _fetchUsers();
     checkCaretakerStatus();
+    _downloadAndSaveFile('$devUrl${widget.house.contractUrl}');
   }
 
   ///
@@ -130,9 +135,14 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         headers: headers,
         body: json.encode({
           'house_id': widget.house.houseId,
-          'user_id': widget.house.caretakerId,
+          'caretaker_id': widget.house.caretakerId,
         }),
       );
+      var requestBody = json.encode({
+        'house_id': widget.house.houseId,
+        'caretaker_id': widget.house.caretakerId,
+      });
+      print("this is the body $requestBody");
 
       // Check if the widget is still mounted before using the context
       if (!mounted) return;
@@ -190,14 +200,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     try {
       final headers = {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer YOUR_TOKEN_HERE',
+        'Authorization': 'Token $authToken',
       };
 
-      final uri = Uri.parse('$devUrl/houses/uploadContract/');
-      final request = http.MultipartRequest('POST', uri)
+      final uri =
+          Uri.parse('$devUrl/houses/updateHouse/${widget.house.houseId}/');
+      final request = http.MultipartRequest('PATCH', uri)
         ..headers.addAll(headers)
-        ..fields['house_id'] =
-            widget.house.houseId.toString() // Include the house ID
         ..files.add(await http.MultipartFile.fromPath(
           'contract_file', // Backend expects this key for the file
           selectedFile!.path,
@@ -218,6 +227,39 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading file: $e')),
+      );
+    }
+  }
+
+  Future<void> _downloadAndSaveFile(String? url,
+      {bool allowDownload = false}) async {
+    try {
+      print('Downloading from: $url');
+      final response = await http.get(Uri.parse(url!));
+      if (response.statusCode == 200) {
+        final dir = allowDownload
+            ? await getApplicationDocumentsDirectory() // User-accessible directory
+            : await getTemporaryDirectory(); // Temp directory for viewing
+        final fileName = url.split('/').last;
+        final file = File('${dir.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+
+        if (allowDownload) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('File downloaded to: ${file.path}')),
+          );
+        }
+
+        setState(() {
+          localFilePath = file.path;
+        });
+      } else {
+        throw Exception('Failed to download file: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error downloading file: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }
@@ -278,6 +320,41 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   style: const TextStyle(fontSize: 14, color: Colors.green),
                 ),
               ),
+            SizedBox(
+              height: 300,
+              width: 300,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: localFilePath == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : PDFView(
+                            filePath: localFilePath!,
+                            enableSwipe: true, // Enable swipe gestures
+                            swipeHorizontal:
+                                false, // Set to true for horizontal scrolling
+                            autoSpacing: true, // Adds spacing between pages
+                            pageFling: true, // Smooth page transitions
+                            onRender: (pages) {
+                              print('PDF Rendered with $pages pages');
+                            },
+                            onError: (error) {
+                              print('Error loading PDF: $error');
+                            },
+                          ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Trigger file download
+                      _downloadAndSaveFile('$devUrl${widget.house.contractUrl}',
+                          allowDownload: true);
+                    },
+                    icon: const Icon(Icons.download),
+                    label: const Text('Download'),
+                  ),
+                ],
+              ),
+            ),
             ElevatedButton(
               onPressed: _uploadFile,
               style: ElevatedButton.styleFrom(
@@ -459,10 +536,10 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             child: const Icon(Icons.add_home),
             label: 'Add Room',
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => AddHousePage()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RoomInputPage()),
+              );
             },
           ),
           SpeedDialChild(

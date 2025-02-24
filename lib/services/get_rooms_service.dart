@@ -66,3 +66,26 @@ Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
     rethrow;
   }
 }
+
+Future<GetRooms> postRoomsByHouse(int houseId, GetRooms newRoom) async {
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $authToken',
+    };
+
+    final response = await http.post(
+      Uri.parse('$devUrl/houses/getRooms/'),
+      headers: headersWithToken,
+      body: jsonEncode(newRoom.tojson()),
+    );
+
+    if (response.statusCode == 201) {
+      return GetRooms.fromJSon(jsonDecode(response.body));
+    } else {
+      throw Exception('failed to post new room  ${response.statusCode}');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}

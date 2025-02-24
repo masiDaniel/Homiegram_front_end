@@ -18,7 +18,8 @@ class _HomePageState extends State<CustomBottomNavigartion> {
   int _selectedIndex = 0;
 
   List<Widget> get _pages {
-    if (widget.userType == 'landlord') {
+    // handling cases when usertype is null
+    if ((widget.userType ?? 'tenant') == 'landlord') {
       return const [
         HomePage(),
         SearchPage(),

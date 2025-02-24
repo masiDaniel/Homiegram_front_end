@@ -18,6 +18,7 @@ Future<List<Ad>> fetchAds() async {
   if (response.statusCode == 200) {
     List jsonResponse = json.decode(response.body);
     log("ad feting was succesful");
+
     return jsonResponse.map((ad) => Ad.fromJson(ad)).toList();
   } else {
     throw Exception('Failed to load advertisements');

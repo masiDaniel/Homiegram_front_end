@@ -23,7 +23,9 @@ Future<List<GetHouse>> fetchHouses() async {
 
     final response = await http.get(Uri.parse('$devUrl/houses/gethouses/'),
         headers: headersWithToken);
-   
+
+    print("auth token $authToken");
+
     if (response.statusCode == 200) {
       final List<dynamic> housesData = json.decode(response.body);
 

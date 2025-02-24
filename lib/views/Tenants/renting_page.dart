@@ -97,12 +97,12 @@ class _RentingPageState extends State<RentingPage> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15.0),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 3,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
+                                  color: Color(0xFF0C6601),
+                                  // spreadRadius: 3,
+                                  // blurRadius: 5,
+                                  // offset: Offset(0, 3),
                                 ),
                               ],
                             ),
@@ -130,7 +130,10 @@ class _RentingPageState extends State<RentingPage> {
                                 },
                                 errorBuilder: (context, error, stackTrace) {
                                   return const Center(
-                                      child: Text('Image not available'));
+                                      child: Text(
+                                    'Image not available',
+                                    style: TextStyle(color: Colors.white),
+                                  ));
                                 },
                               ),
                             ),
@@ -143,11 +146,11 @@ class _RentingPageState extends State<RentingPage> {
                             leading: const Icon(Icons.home,
                                 color: Color(0xFF126E06)),
                             title: const Text(
-                              'Room ID',
+                              'Room Name',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            subtitle: Text('${matchedRooms[index].roomId}'),
+                            subtitle: Text(matchedRooms[index].roomName),
                           ),
                           const Divider(),
 
@@ -205,6 +208,78 @@ class _RentingPageState extends State<RentingPage> {
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             subtitle: Text('${matchedRooms[index].rentStatus}'),
+                          ),
+
+                          const Divider(),
+
+                          // Contract termination Section
+                          Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF940B01),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.cut,
+                                    color: Color(0xFFFFFFFF)),
+                                title: const Text(
+                                  'Terminate contract',
+                                  style: TextStyle(
+                                      color: Color(0xFFFFFFFF),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                subtitle: const Text(
+                                  "Terminate Agreement",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onTap: () {
+                                  // Display the dialog
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Are you sure?'),
+                                        content: const Text(
+                                            'Do you really want to terminate the contract? This action cannot be undone.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the dialog
+                                            },
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 1, 73, 1)),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the dialog
+                                              print(
+                                                  "Contract termination initiated");
+                                              // Add your termination logic here
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color(0xFF940B01)),
+                                            child: const Text(
+                                              'Continue',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

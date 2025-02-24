@@ -33,6 +33,28 @@ class _SignUpState extends State<SignUp> {
     String password = passwordController.text.trim();
     String confirmPassword = confirmpaswordController.text.trim();
 
+    bool _isLoading = false; // Tracks loading state
+
+    /// Show loading dialog
+    void _showLoadingDialog() {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+    }
+
+    /// Close loading dialog
+    void _closeLoadingDialog() {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    }
+
     /// method to check if the email structure is valid
     bool isValidEmail(String email) {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -50,22 +72,43 @@ class _SignUpState extends State<SignUp> {
         lastName.isNotEmpty &&
         isValidEmail(email) &&
         isPasswordMatch(password, confirmPassword)) {
-      UserSignUp? userSignUp =
-          await fetchUserSignUp(firstName, lastName, email, password);
+      setState(() {
+        _isLoading = true; // Set loading state
+      });
 
-      if (userSignUp != null) {
-        // Check if the widget is still mounted before using the context
-        if (!mounted) return;
+      // Show the loading dialog
+      _showLoadingDialog();
 
-        // Sign in successful, navigate to the dignup screen
-        Navigator.pushNamed(context, '/signin');
-      } else {
-        // Check if the widget is still mounted before using the context
-        if (!mounted) return;
-        // Show error messageif the sign in was unsuccesful
+      try {
+        UserSignUp? userSignUp =
+            await fetchUserSignUp(firstName, lastName, email, password);
+
+        _closeLoadingDialog(); // Close the loading dialog
+
+        if (userSignUp != null) {
+          if (!mounted) return;
+
+          // Sign up successful, navigate to the sign-in screen
+          Navigator.pushNamed(context, '/signin');
+        } else {
+          if (!mounted) return;
+
+          // Show error message if sign-up was unsuccessful
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+                'An error occurred during signing up, please try again later'),
+          ));
+        }
+      } catch (e) {
+        _closeLoadingDialog(); // Close the loading dialog
+
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('An error occured during signing in, try again later'),
+          content: Text('An unexpected error occurred.'),
         ));
+      } finally {
+        setState(() {
+          _isLoading = false; // Reset loading state
+        });
       }
     } else {
       // Show error message if one or either of the fields in not inputed

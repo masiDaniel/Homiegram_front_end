@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
@@ -7,6 +6,7 @@ import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -18,7 +18,6 @@ class SignIn extends StatefulWidget {
 class SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isOffline = false;
   bool _isLoading = false;
 
   /// this is a function that takes the input from the textfields and processes it
@@ -30,50 +29,9 @@ class SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
-    _checkConnectivity();
-    _listenForConnectivityChanges();
-  }
-
-  /// Check current connectivity status
-  void _checkConnectivity() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    setState(() {
-      _isOffline = connectivityResult == ConnectivityResult.none;
-    });
-  }
-
-  /// Listen for connectivity changes
-  void _listenForConnectivityChanges() {
-    Connectivity().onConnectivityChanged.listen((connectivityResult) {
-      setState(() {
-        _isOffline = connectivityResult == ConnectivityResult.none;
-      });
-
-      if (_isOffline) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text('You are offline. Please check your internet connection.'),
-          backgroundColor: Colors.red,
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Back online!'),
-          backgroundColor: Colors.green,
-        ));
-      }
-    });
   }
 
   void _signIn() async {
-    if (_isOffline) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text('You are offline. Please connect to the internet to sign in.'),
-        backgroundColor: Colors.red,
-      ));
-      return;
-    }
-
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
@@ -98,7 +56,9 @@ class SignInState extends State<SignIn> {
         print("we are here 1");
 
         if (userRegistration != null) {
+          print("we are here 2");
           if (!mounted) return;
+          print("we are here 3");
           // Navigator.pushReplacementNamed(context, '/homescreen');
           Navigator.pushAndRemoveUntil(
             context,
@@ -109,8 +69,12 @@ class SignInState extends State<SignIn> {
             (Route<dynamic> route) =>
                 false, // This removes all the previous routes
           );
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true); // Set login status to true
         } else {
+          print("we are here 4");
           if (!mounted) return;
+          print("we are here 5s");
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Invalid email or password'),
           ));

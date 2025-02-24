@@ -23,10 +23,10 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
   @override
   void initState() {
     super.initState();
-    _bookmarkedHousesFuture = _fetchBookmarkedHouses();
+    _bookmarkedHousesFuture = fetchBookmarkedHouses();
   }
 
-  Future<List<GetHouse>> _fetchBookmarkedHouses() async {
+  Future<List<GetHouse>> fetchBookmarkedHouses() async {
     //Fetch the bookmarks for the user
     final bookmarks = await fetchBookmarks();
     List<GetHouse> allHouses = await fetchHouses();
@@ -143,7 +143,7 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                                       // Update the bookmarked houses and show a success alert
                                       setState(() {
                                         _bookmarkedHousesFuture =
-                                            _fetchBookmarkedHouses();
+                                            fetchBookmarkedHouses();
                                       });
 
                                       showDialog(

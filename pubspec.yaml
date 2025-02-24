@@ -48,6 +48,11 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   carousel_slider: ^5.0.0
   connectivity_plus: ^6.1.2
+  internet_connection_checker: ^3.0.1
+  flutter_pdfview: ^1.4.0
+  path_provider: ^2.1.5
+  shared_preferences: ^2.5.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -84,10 +89,10 @@ flutter_native_splash:
   android: true
   ios: true
   web: false
-  image: assets/images/logo.png
+  image: assets/images/production_splash.png
   color: "#FFFFFF"
   android_12:
-    image: assets/images/logo.png
+    image: assets/images/production_splash.png
     color: "#FFFFFF"
 
   # An image asset can refer to one or more resolution-specific "variants", see

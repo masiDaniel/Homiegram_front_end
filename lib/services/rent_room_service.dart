@@ -10,7 +10,7 @@ Future<String?> rentRoom(int houseId) async {
     };
 
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/houses/assign-tenant/$houseId/"),
+      Uri.parse("$devUrl/houses/assign-tenant/$houseId/"),
       headers: headers,
     );
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/providers/user_provider.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
@@ -11,20 +12,44 @@ import 'package:homi_2/views/landlord/management.dart';
 import 'package:homi_2/views/sign_in.dart';
 import 'package:homi_2/views/Shared/sign_up.dart';
 import 'package:homi_2/views/welcome_page.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Wait for SharedPreferences to be initialized before running the app
+  final initialRoute = await getInitialRoute();
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => UserProvider()..loadUserData()),
+  ], child: MyApp(initialRoute: initialRoute)));
+}
+
+///
+/// im having trouble with this
+/// will come to refactor
+Future<String> getInitialRoute() async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setBool('isLoggedIn', false);
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  print("Login status: $isLoggedIn");
+
+  return isLoggedIn ? '/homescreen' : '/'; // Go to homescreen if logged in
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+
+  const MyApp({Key? key, required this.initialRoute}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Homigram',
-      initialRoute: '/splash',
+      initialRoute: initialRoute,
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/': (context) => const WelcomePage(),
@@ -33,7 +58,8 @@ class MyApp extends StatelessWidget {
         '/about': (context) => AboutHomiegram(),
         '/homepage': (context) => const HomePage(),
         '/homescreen': (context) => CustomBottomNavigartion(
-              userType: userTypeCurrent,
+              userType:
+                  userTypeCurrent, // Assuming you have some userType logic
             ),
         '/allHouses': (context) => const AllHouses(),
         '/trialAllHouses': (context) => const HouseListScreen(),
@@ -56,7 +82,7 @@ class NotFoundPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("not found"),
+        title: const Text("Not Found"),
       ),
       body: Container(
         color: const Color(0xFF0b8793),

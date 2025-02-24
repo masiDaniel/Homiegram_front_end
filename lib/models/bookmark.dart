@@ -42,12 +42,12 @@ class PostBookmark {
       );
 
       if (response.statusCode == 200) {
-        log('comment posted succesfully!');
+        log('Bookmark removed succesfully!');
       } else {
-        log('failed to post comment: ${response.statusCode}');
+        log('failed to delete Bookmark: ${response.statusCode}');
       }
     } catch (e) {
-      log('error positng comment: $e');
+      log('error Deleting Bookmark: $e');
     }
   }
 }

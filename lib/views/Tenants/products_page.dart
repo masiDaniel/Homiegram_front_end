@@ -36,6 +36,7 @@ class _ProductsPageState extends State<ProductsPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('Products for ${widget.businessName}'),
+        actions: [],
       ),
       body: FutureBuilder<List<Products>>(
         future: futureProducts,
@@ -146,49 +147,79 @@ class _ProductsPageState extends State<ProductsPage>
           }
         },
       ),
-      floatingActionButton: userId == widget.businessOwnerId
-          ? SpeedDial(
-              animatedIcon: AnimatedIcons.menu_close,
-              backgroundColor: const Color(0xFF188B07),
-              foregroundColor: Colors.white,
-              overlayColor: const Color(0xFF188B07),
-              overlayOpacity: 0.5,
-              elevation: 8.0,
-              spaceBetweenChildren: 15,
-              children: [
-                SpeedDialChild(
-                  child: const Icon(
-                    Icons.add_shopping_cart,
-                    color: Colors.white,
+      floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          backgroundColor: const Color(0xFF188B07),
+          foregroundColor: Colors.white,
+          overlayColor: const Color.fromARGB(255, 11, 71, 1),
+          overlayOpacity: 0.8,
+          elevation: 8.0,
+          spaceBetweenChildren: 15,
+          children: userId == widget.businessOwnerId
+              ? [
+                  SpeedDialChild(
+                    child: const Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: const Color(0xFF03AA19),
+                    label: 'Add product',
+                    labelStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    labelBackgroundColor: Colors.white,
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                      // );
+                    },
                   ),
-                  backgroundColor: const Color(0xFF03AA19),
-                  label: 'Add product',
-                  labelStyle: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  SpeedDialChild(
+                    child: const Icon(Icons.tv),
+                    label: 'Advertise',
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                      // );
+                    },
                   ),
-                  labelBackgroundColor: Colors.white,
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => AddHousePage()),
-                    // );
-                  },
-                ),
-                SpeedDialChild(
-                  child: const Icon(Icons.tv),
-                  label: 'Advertise',
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => AddHousePage()),
-                    // );
-                  },
-                ),
-              ],
-            )
-          : null,
+                ]
+              : [
+                  SpeedDialChild(
+                    child: const Icon(
+                      Icons.info,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: const Color(0xFF03AA19),
+                    label: 'Business info',
+                    labelStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    labelBackgroundColor: Colors.white,
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                      // );
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(Icons.call),
+                    label: 'Call business',
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
+                      // );
+                    },
+                  ),
+                ]),
     );
   }
 }

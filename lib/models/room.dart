@@ -38,15 +38,11 @@ class GetRooms {
 
   Map<String, dynamic> tojson() {
     return {
-      "id": roomId,
+      "room_name": roomName,
       "number_of_bedrooms": noOfBedrooms,
       "size_in_sq_meters": sizeInSqMeters,
       "rent": rentAmount,
-      "occupied": occuiedStatus,
-      "nested_id": roomImages,
       "apartment": apartmentID,
-      "tenant": tenantId,
-      'rent_status': rentStatus
     };
   }
 }
