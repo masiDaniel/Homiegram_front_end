@@ -4,14 +4,19 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/get_users.dart';
+import 'package:homi_2/services/fetch_ads_service.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/addRoom.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
+
+final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
 class HouseDetailsPage extends StatefulWidget {
   final GetHouse house;
@@ -262,6 +267,149 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         SnackBar(content: Text('Error: $e')),
       );
     }
+  }
+
+  void showAdvertCreationDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController startDateController = TextEditingController();
+    final TextEditingController endDateController = TextEditingController();
+
+    Future<void> _selectDate(
+        BuildContext context, TextEditingController controller) async {
+      DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+
+      if (pickedDate != null) {
+        controller.text = pickedDate.toIso8601String().split('T')[0];
+        // Format: YYYY-MM-DD
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Submit an Ad'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildTextField(
+                      titleController, 'Ad Title', 'Please enter the ad title'),
+                  _buildTextField(descriptionController, 'Description',
+                      'Please enter a description'),
+                  _buildDatePickerField(
+                      context, startDateController, 'Start Date', _selectDate),
+                  _buildDatePickerField(
+                      context, endDateController, 'End Date', _selectDate),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Close dialog
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  AdRequest businessData = AdRequest(
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    startDate: dateFormat
+                        .format(DateTime.parse(startDateController.text)),
+                    endDate: dateFormat
+                        .format(DateTime.parse(endDateController.text)),
+                  );
+
+                  postAds(businessData).then((_) {
+                    _showSuccessDialog(context);
+                  }).catchError((error) {
+                    _showErrorDialog(context, error.toString());
+                  });
+                }
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      String validationMessage) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      validator: (value) =>
+          value == null || value.isEmpty ? validationMessage : null,
+    );
+  }
+
+  Widget _buildDatePickerField(BuildContext context,
+      TextEditingController controller, String label, Function pickerFunction) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.calendar_today),
+          onPressed: () => pickerFunction(context, controller),
+        ),
+      ),
+      readOnly: true, // Prevent manual typing
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Please select a date' : null,
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Success'),
+          content: const Text('Ad submitted successfully!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close success dialog
+                Navigator.of(context).pop(); // Close main dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -546,10 +694,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             child: const Icon(Icons.tv),
             label: 'Advertise',
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => AddHousePage()),
-              // );
+              showAdvertCreationDialog(context);
             },
           ),
           SpeedDialChild(

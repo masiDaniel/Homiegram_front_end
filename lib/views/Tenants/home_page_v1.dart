@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final bool isConditionMet = true;
+  final bool isConditionMet = false;
 
   //this will hold the current filter selection
   String selectedFilter = 'All';
@@ -217,116 +217,165 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
                   children: [
-                    Wrap(
-                      runSpacing: 8,
-                      spacing: 8,
-                      children: [
-                        FilterChip(
-                          label: const Text("All"),
-                          labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          selected: selectedFilter == 'All',
-                          selectedColor: const Color(0xFF105A01),
-                          backgroundColor: Colors.green,
-                          checkmarkColor: Colors.white,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedFilter =
-                                  selected ? 'All' : ''; // Update filter
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                    Wrap(
-                      runSpacing: 8,
-                      spacing: 8,
-                      children: [
-                        FilterChip(
-                          label: Text("unRead - ${unRead.length}"),
-                          labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          selected: selectedFilter == 'unRead',
-                          selectedColor: const Color(0xFF105A01),
-                          backgroundColor: Colors.green,
-                          checkmarkColor: Colors.white,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedFilter =
-                                  selected ? 'unRead' : ''; // Update filter
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                    Wrap(
-                      runSpacing: 8,
-                      spacing: 8,
-                      children: [
-                        FilterChip(
-                          label: const Text("Groups - 1"),
-                          labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          selected: selectedFilter == 'Groups',
-                          selectedColor: const Color(0xFF105A01),
-                          backgroundColor: Colors.green,
-                          checkmarkColor: Colors.white,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedFilter =
-                                  selected ? 'Groups' : ''; // Update filter
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 500,
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: AnimatedSwitcher(
+                    AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
                       child: isConditionMet
-                          ? ListView.builder(
-                              key: ValueKey(selectedFilter),
-                              itemCount: filteredChats.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    _markChatAsRead(index);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChatPage(
-                                            chat: filteredChats[index]),
-                                      ),
-                                    );
-                                  },
-                                  child: ChatCard(chat: filteredChats[index]),
-                                );
-                              },
+                          ? Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label: const Text("All"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'All',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'All' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label:
+                                              Text("unRead - ${unRead.length}"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'unRead',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'unRead' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label: const Text("Groups - 1"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'Groups',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'Groups' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                  child: Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: filteredChats.isNotEmpty
+                                          ? ListView.builder(
+                                              key: ValueKey(selectedFilter),
+                                              itemCount: filteredChats.length,
+                                              itemBuilder: (context, index) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    _markChatAsRead(index);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ChatPage(
+                                                                chat:
+                                                                    filteredChats[
+                                                                        index]),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: ChatCard(
+                                                      chat:
+                                                          filteredChats[index]),
+                                                );
+                                              },
+                                            )
+                                          : const Center(
+                                              key: ValueKey('noChats'),
+                                              child: Text(
+                                                'No Chats Available',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             )
-                          : const Center(
-                              key: ValueKey('animation'),
-                              child:
-                                  CircularProgressIndicator(), // Example animation, can be any other widget
+                          : const Padding(
+                              padding: EdgeInsets.all(100.0),
+                              child: Center(
+                                key: ValueKey('comingSoon'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.build_circle,
+                                        size: 50, color: Color(0xFF026B13)),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Chat Feature Unavailable\nComing Soon!',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                     ),
-                  ),
-                ),
+                  ],
+                )
               ],
             ),
           ),

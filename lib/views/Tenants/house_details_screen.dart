@@ -204,6 +204,14 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     onPressed: () {
                       _submitComment(commentController);
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF126E06), // Green color
+                      foregroundColor: Colors.white, // Text color
+                      shadowColor:
+                          const Color.fromARGB(255, 9, 17, 9), // Shadow color
+                      elevation:
+                          5, // Optional: Adjust elevation for shadow effect
+                    ),
                     child: const Text('Post Comment'),
                   ),
                 ],
@@ -434,7 +442,7 @@ class CommentList extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.delete,
-                      color: Colors.black,
+                      color: Color(0xFF126E06),
                     ),
                   ),
               ]),

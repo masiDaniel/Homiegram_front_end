@@ -24,3 +24,27 @@ Future<List<Ad>> fetchAds() async {
     throw Exception('Failed to load advertisements');
   }
 }
+
+Future<AdRequest> postAds(AdRequest adRequest) async {
+  final Map<String, String> headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Token $authToken',
+  };
+  print('this is the body ${jsonEncode(adRequest.toJson())}');
+
+  final response = await http.post(
+    Uri.parse('$devUrl/houses/submitAdvertisment/'),
+    headers: headers,
+    body: jsonEncode(adRequest.toJson()), // Properly encode the body
+  );
+
+  if (response.statusCode == 202) {
+    log("Ad submission was successful");
+
+    final Map<String, dynamic> jsonResponse = json.decode(response.body);
+    return AdRequest.fromJson(jsonResponse); // Correct parsing
+  } else {
+    log("Failed to submit advertisement: ${response.body}");
+    throw Exception('Failed to submit advertisements');
+  }
+}
