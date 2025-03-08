@@ -3,6 +3,8 @@ import 'package:homi_2/models/room.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 
 class RoomInputPage extends StatefulWidget {
+  const RoomInputPage({super.key});
+
   @override
   _RoomInputPageState createState() => _RoomInputPageState();
 }
@@ -35,8 +37,10 @@ class _RoomInputPageState extends State<RoomInputPage> {
 
     try {
       await postRoomsByHouse(_apartmentController.text as int, newRoom);
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Room posted successfully!')),
+        const SnackBar(content: Text('Room posted successfully!')),
       );
       _clearForm();
     } catch (e) {
@@ -89,14 +93,16 @@ class _RoomInputPageState extends State<RoomInputPage> {
       padding: const EdgeInsets.only(bottom: 10.0),
       child: TextFormField(
         controller: controller,
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration: InputDecoration(
+            labelText: label, border: const OutlineInputBorder()),
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         validator: (value) {
-          if (value == null || value.trim().isEmpty)
+          if (value == null || value.trim().isEmpty) {
             return 'This field is required';
-          if (isNumeric && int.tryParse(value) == null)
+          }
+          if (isNumeric && int.tryParse(value) == null) {
             return 'Enter a valid number';
+          }
           return null;
         },
       ),

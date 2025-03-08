@@ -33,10 +33,10 @@ class _SignUpState extends State<SignUp> {
     String password = passwordController.text.trim();
     String confirmPassword = confirmpaswordController.text.trim();
 
-    bool _isLoading = false; // Tracks loading state
+    bool isLoading = false; // Tracks loading state
 
     /// Show loading dialog
-    void _showLoadingDialog() {
+    void showLoadingDialog() {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -49,7 +49,7 @@ class _SignUpState extends State<SignUp> {
     }
 
     /// Close loading dialog
-    void _closeLoadingDialog() {
+    void closeLoadingDialog() {
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
@@ -73,17 +73,17 @@ class _SignUpState extends State<SignUp> {
         isValidEmail(email) &&
         isPasswordMatch(password, confirmPassword)) {
       setState(() {
-        _isLoading = true; // Set loading state
+        isLoading = true; // Set loading state
       });
 
       // Show the loading dialog
-      _showLoadingDialog();
+      showLoadingDialog();
 
       try {
         UserSignUp? userSignUp =
             await fetchUserSignUp(firstName, lastName, email, password);
 
-        _closeLoadingDialog(); // Close the loading dialog
+        closeLoadingDialog(); // Close the loading dialog
 
         if (userSignUp != null) {
           if (!mounted) return;
@@ -100,14 +100,14 @@ class _SignUpState extends State<SignUp> {
           ));
         }
       } catch (e) {
-        _closeLoadingDialog(); // Close the loading dialog
+        closeLoadingDialog(); // Close the loading dialog
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('An unexpected error occurred.'),
         ));
       } finally {
         setState(() {
-          _isLoading = false; // Reset loading state
+          isLoading = false; // Reset loading state
         });
       }
     } else {

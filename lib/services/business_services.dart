@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,10 +11,11 @@ const Map<String, String> headers = {
 };
 
 Future<List<BusinessModel>> fetchBusinesses() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/business/getBusiness/'),
@@ -38,10 +40,11 @@ Future<bool> postBusiness(
   Map<String, Object?> businessData,
   BuildContext context,
 ) async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
       'Content-Type': 'application/json',
     };
 
@@ -68,10 +71,11 @@ Future<bool> postBusiness(
 }
 
 Future<List<Category>> fetchCategorys() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/business/getCategorys/'),
@@ -93,10 +97,11 @@ Future<List<Category>> fetchCategorys() async {
 }
 
 Future<List<Products>> fetchProducts() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/business/getProducts/'),
@@ -120,14 +125,15 @@ Future<List<Products>> fetchProducts() async {
 Future<bool> postProducts(
   Map<String, Object?> productData,
 ) async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/business/postProducts/'),
+      Uri.parse('$devUrl/business/postProducts/'),
       headers: headersWithToken,
       body: json.encode(productData),
     );

@@ -260,9 +260,8 @@ class _RentingPageState extends State<RentingPage> {
                                             onPressed: () {
                                               Navigator.of(context)
                                                   .pop(); // Close the dialog
-                                              print(
-                                                  "Contract termination initiated");
-                                              // Add your termination logic here
+                                              ("Contract termination initiated");
+                                              // Add your terminatprintion logic here
                                             },
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:

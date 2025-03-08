@@ -21,6 +21,8 @@ class StudentDashboardViewState extends State<StudentDashboardView> {
   Future<void> _logout() async {
     try {
       await logoutUser();
+
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       log("error logging out: $e");

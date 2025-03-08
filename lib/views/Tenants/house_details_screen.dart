@@ -8,6 +8,7 @@ import 'package:homi_2/services/comments_service.dart';
 import 'package:homi_2/services/fetch_bookmarks.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/rent_room_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -79,10 +80,11 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   /// how should i refactor this?
   /// have it in a seperate file?
   Future<void> deleteComment(int commentId) async {
+    String? token = await UserPreferences.getAuthToken();
     String url = '$devUrl/comments/deleteComments/$commentId/';
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     try {
@@ -253,10 +255,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                                 'This house has been removed from your bookmarks.'),
                             actions: [
                               TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        WidgetStateProperty.all<Color>(
+                                            const Color(0xFF186E1B))),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           );
@@ -282,10 +291,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                                 '${widget.house.name} has been added to your bookmarks.'),
                             actions: [
                               TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        WidgetStateProperty.all<Color>(
+                                            const Color(0xFF186E1B))),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           );
@@ -326,10 +342,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                           content: const Text('Landlords cannot rent rooms.'),
                           actions: [
                             TextButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.all<Color>(
+                                          const Color(0xFF186E1B))),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('OK'),
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ],
                         );
@@ -353,10 +376,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                               Text(message ?? 'An unexpected error occurred.'),
                           actions: [
                             TextButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.all<Color>(
+                                          const Color(0xFF186E1B))),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('OK'),
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ],
                         );

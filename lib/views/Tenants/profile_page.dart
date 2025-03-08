@@ -1,6 +1,6 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
@@ -15,14 +15,61 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String? currentUserType;
+  int? currentUserId;
+  String? currentUserFirstName;
+  String? currentUserName;
+  String? currentUserLastName;
+  String? currentUserEmail;
+  int? currentserIdNumber;
+  String? currentUserPhoneNumber;
+  String? currentUserProfilePicture;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
   // this is a function that takes the first letter from the name of the user
   String extractInitials(String name) {
+    if (name.isEmpty) {
+      return 'HG'; // Default to Homigram initials if name is empty
+    }
     List<String> nameParts = name.split(' ');
     if (nameParts.isNotEmpty) {
       return nameParts[0][0].toUpperCase(); //first name, first letter
     } else {
       return 'HG'; // Return Homiegram initials if name is empty
     }
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    String? type = await UserPreferences.getUserType();
+    String? firstName = await UserPreferences.getFirstName();
+    String? userName = await UserPreferences.getUserName();
+    String? lastName = await UserPreferences.getLastName();
+    String? email = await UserPreferences.getUserEmail();
+    String? phoneNumber = await UserPreferences.getPhoneNumber();
+    int? idNumber = await UserPreferences.getIdNumber();
+    String? profilePicture = await UserPreferences.getProfilePicture();
+
+    setState(() {
+      currentUserId = id;
+      currentUserType = type;
+      currentUserFirstName = firstName;
+      currentUserName = userName;
+      currentUserLastName = lastName;
+      currentUserEmail = email;
+      currentUserPhoneNumber = phoneNumber;
+      currentserIdNumber = idNumber;
+      currentUserProfilePicture = profilePicture;
+    });
+    print('this is the user id $currentUserId');
+    print('this is the user type $currentUserType');
+    print('this is the users first name $currentUserFirstName');
+    print('this is the user type $currentUserEmail');
+    print('this is the users profile $currentUserProfilePicture');
   }
 
   Future<void> _logout() async {
@@ -144,15 +191,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   });
                 }
               },
+
+              // handle this error and logic flow
               child: CircleAvatar(
                 backgroundColor: const Color.fromARGB(255, 2, 75, 50),
                 radius: 60,
-                backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                    ? NetworkImage('$devUrl$imageUrl')
-                    : null,
-                child: imageUrl == null || imageUrl!.isEmpty
+                backgroundImage: (currentUserProfilePicture != null &&
+                        currentUserProfilePicture!.isNotEmpty)
+                    ? NetworkImage('$devUrl$currentUserProfilePicture')
+                    : const AssetImage('assets/images/splash.jpeg')
+                        as ImageProvider,
+                child: (currentUserProfilePicture == null)
                     ? Text(
-                        extractInitials(firstName!),
+                        extractInitials(currentUserFirstName ?? ''),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -176,21 +227,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   ListTile(
                     leading: const Icon(Icons.person, color: Color(0xFF126E06)),
                     title: const Text('User ID'),
-                    subtitle: Text('$userId'),
+                    subtitle: Text('$currentUserId'),
                   ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.account_circle,
                         color: Color(0xFF126E06)),
                     title: const Text('Username'),
-                    subtitle: Text('$userName'),
+                    subtitle: Text('$currentUserName'),
                   ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.person_outline,
                         color: Color(0xFF126E06)),
                     title: const Text('First Name'),
-                    subtitle: Text('$firstName'),
+                    subtitle: Text('$currentUserFirstName'),
                   ),
                   const Divider(),
                   ListTile(
@@ -225,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => BookmarkedHousesPage(
-                            userId: userId!,
+                            userId: currentUserId!,
                           ),
                         ),
                       );
@@ -241,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 20),
-          if (userTypeCurrent != "landlord")
+          if (currentUserType != "landlord")
             ElevatedButton.icon(
               onPressed: () async {
                 Map<String, dynamic> updateData = {};

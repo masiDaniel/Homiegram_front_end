@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:homi_2/models/comments.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,14 +9,14 @@ const Map<String, String> headers = {
 };
 
 Future<List<GetComments>> fetchUsers() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/accounts/getUsers/'),
+    final response = await http.get(Uri.parse('$devUrl/accounts/getUsers/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {

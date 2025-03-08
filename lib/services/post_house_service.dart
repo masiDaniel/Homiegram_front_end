@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -9,12 +10,13 @@ class PostHouseService {
   final String apiUrl = '${devUrl}houses/gethouses/';
 
   Future<bool> addHouse(GetHouse house) async {
+    String? token = await UserPreferences.getAuthToken();
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Token $authToken',
+        'Authorization': 'Token $token',
       },
       body: jsonEncode(house.tojson()),
     );
@@ -63,14 +65,14 @@ class PostHouseService {
         ));
       }
     }
-
+    String? token = await UserPreferences.getAuthToken();
     try {
       final response = await dio.post(
         '$devUrl/houses/gethouses/',
         data: formData,
         options: Options(
           headers: {
-            'Authorization': 'Token $authToken',
+            'Authorization': 'Token $token',
           },
         ),
       );

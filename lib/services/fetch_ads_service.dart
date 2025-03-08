@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:homi_2/models/ads.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Ad>> fetchAds() async {
+  String? token = await UserPreferences.getAuthToken();
+
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Token $authToken',
+    'Authorization': 'Token $token',
   };
 
   final response = await http.get(
@@ -26,11 +29,11 @@ Future<List<Ad>> fetchAds() async {
 }
 
 Future<AdRequest> postAds(AdRequest adRequest) async {
+  String? token = await UserPreferences.getAuthToken();
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Token $authToken',
+    'Authorization': 'Token $token',
   };
-  print('this is the body ${jsonEncode(adRequest.toJson())}');
 
   final response = await http.post(
     Uri.parse('$devUrl/houses/submitAdvertisment/'),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:homi_2/models/locations.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,10 +9,11 @@ const Map<String, String> headers = {
 };
 
 Future<List<Locations>> fetchLocations() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/houses/getLocation/'),

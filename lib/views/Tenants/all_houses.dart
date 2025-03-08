@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,12 +23,12 @@ class AllHousesState extends State<AllHouses> {
 
   // this is used in this class only
   Future<void> fetchHouses() async {
+    String? token = await UserPreferences.getAuthToken();
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/houses/gethouses/'),
+    final response = await http.get(Uri.parse('$devUrl/houses/gethouses/'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
@@ -60,7 +61,7 @@ class AllHousesState extends State<AllHouses> {
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(
-                'http://127.0.0.1:8000${house['image']}',
+                '$devUrl${house['image']}',
               ),
               maxRadius: 30,
             ),

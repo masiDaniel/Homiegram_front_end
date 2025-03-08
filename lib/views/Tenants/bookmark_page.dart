@@ -156,10 +156,20 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                                                 'This house has been removed from your bookmarks.'),
                                             actions: [
                                               TextButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        WidgetStateProperty.all<
+                                                                Color>(
+                                                            const Color(
+                                                                0xFF186E1B))),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: const Text('OK'),
+                                                child: const Text(
+                                                  'OK',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
                                               ),
                                             ],
                                           );

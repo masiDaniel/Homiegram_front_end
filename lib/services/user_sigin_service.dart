@@ -41,50 +41,44 @@ Future fetchUserSignIn(String username, String password) async {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print("we are here 200");
-      print("Response for Wendy: ${response.body}");
-      // print("Response for Daniel: ${response.body}");
-      // final prefs = await SharedPreferences.getInstance();
-      final userData = json.decode(response.body);
-      await UserPreferences.saveUserData(userData);
-      print("User data decoded: $userData");
-      final registration = UserRegistration.fromJSon(userData);
-      print("Parsed UserRegistration: $registration");
-      String? token = await UserPreferences.getAuthToken();
-      // final token = userData['token'];
-      final currentUserId = userData['id'];
-      // await prefs.setString('authToken', token);
+    print(' we are just about to hit gold');
 
-      // handle this in a better manner.
-      userId = currentUserId;
+    if (response.statusCode == 200) {
+      print(' we have hit gold');
+      print('Raw response body: ${response.body}');
+      final userData = json.decode(response.body);
+      print('Decoded response: $userData');
+
+      // how to handle saving of data well
+      await UserPreferences.saveUserData(userData);
+
       imageUrl = userData['profile_pic'];
-      authToken = token;
       firstName = userData['first_name'];
       lastName = userData['last_name'];
       userName = userData['username'];
       userEmail = userData['email'];
       idNumber = userData['id_number'];
       phoneNumber = userData['phone_number'];
-      userTypeCurrent = await UserPreferences.getUserType();
+
+      print('Raw response body second : ${response.body}');
 
       final userDataShared = json.decode(response.body);
-      final tokenData = userData['token'];
+      print('Decoded response: $userDataShared');
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('authToken', tokenData);
-      await prefs.setInt('userId', userDataShared['id']);
-      await prefs.setString('userName', userDataShared['username']);
-      await prefs.setString('firstName', userDataShared['first_name']);
-      await prefs.setString('lastName', userDataShared['last_name']);
-      await prefs.setString('userEmail', userDataShared['email']);
-      await prefs.setString('userType', userDataShared['user_type']);
-      await prefs.setBool('isLoggedIn', true); // Set login status to true
-      // return UserRegistration.fromJSon(userData);
-
-      print("we are here inside 200");
-      print("this is the data ${UserRegistration.fromJSon(userData)}");
-
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', userDataShared['token']);
+        await prefs.setInt('userId', userDataShared['id']);
+        await prefs.setString('userName', userDataShared['username']);
+        await prefs.setString('firstName', userDataShared['first_name']);
+        await prefs.setString('lastName', userDataShared['last_name']);
+        await prefs.setString('userEmail', userDataShared['email']);
+        await prefs.setString('userType', userDataShared['user_type']);
+        await prefs.setBool('isLoggedIn', true);
+        print('Preferences saved successfully!');
+      } catch (e) {
+        print('Error saving preferences: $e');
+      }
       return UserRegistration.fromJSon(userData);
     }
   } catch (e) {
@@ -95,12 +89,13 @@ Future fetchUserSignIn(String username, String password) async {
 }
 
 Future updateUserInfo(Map<String, dynamic> updateData) async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     // Convert Set to List if necessary
     log("this is the data $updateData");
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
     final response = await http
         .patch(

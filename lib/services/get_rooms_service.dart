@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:homi_2/models/room.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 import 'package:http/http.dart' as http;
@@ -13,10 +14,11 @@ String? houseId;
 // /this is used in the home_page class(commented out) and the house list page
 
 Future<List<GetRooms>> fetchRooms() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/houses/getRooms/'),
@@ -38,10 +40,11 @@ Future<List<GetRooms>> fetchRooms() async {
 }
 
 Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/houses/getRooms/'),
@@ -68,10 +71,11 @@ Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
 }
 
 Future<GetRooms> postRoomsByHouse(int houseId, GetRooms newRoom) async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.post(

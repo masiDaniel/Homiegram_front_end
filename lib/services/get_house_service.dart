@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 // import 'package:homi_2/services/user_sigin_service.dart';
 
@@ -15,16 +16,15 @@ String? houseId;
 // /this is used in the home_page class(commented out) and the house list page
 
 Future<List<GetHouse>> fetchHouses() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
     final response = await http.get(Uri.parse('$devUrl/houses/gethouses/'),
         headers: headersWithToken);
-
-    print("auth token $authToken");
 
     if (response.statusCode == 200) {
       final List<dynamic> housesData = json.decode(response.body);

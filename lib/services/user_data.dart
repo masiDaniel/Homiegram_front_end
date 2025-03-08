@@ -10,7 +10,9 @@ class UserPreferences {
   static const String _keyUserEmail = 'userEmail';
   static const String _keyUserType = 'userType';
   static const String _keyIsLoggedIn = 'isLoggedIn';
-  // static const String _keyProfilePic = 'profilePicture';
+  static const String _keyPhoneNumber = 'phoneNumber';
+  static const String _keyIdNumber = 'idNumber';
+  static const String _keyProfilePic = 'profilePicture';
 
   // Save data example:
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
@@ -22,7 +24,10 @@ class UserPreferences {
     await prefs.setString(_keyLastName, userData['last_name']);
     await prefs.setString(_keyUserEmail, userData['email']);
     await prefs.setString(_keyUserType, userData['user_type']);
-    // await prefs.setString(_keyProfilePic, userData['profile_pic']);
+    await prefs.setString(_keyPhoneNumber, userData['phone_number']);
+    await prefs.setInt(_keyIdNumber, userData['id_number']);
+    await prefs.setString(
+        _keyProfilePic, userData['profile_pic'] ?? 'homiGram');
     await prefs.setBool(_keyIsLoggedIn, true);
   }
 
@@ -60,6 +65,21 @@ class UserPreferences {
   static Future<String?> getUserType() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyUserType);
+  }
+
+  static Future<String?> getPhoneNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPhoneNumber);
+  }
+
+  static Future<int?> getIdNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyIdNumber);
+  }
+
+  static Future<String?> getProfilePicture() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyProfilePic);
   }
 
   static Future<bool> isLoggedIn() async {

@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -45,36 +46,41 @@ class SignInState extends State<SignIn> {
         _isLoading = true;
       });
       try {
-        print("we are here");
-        // Add timeout logic here
+        print("we have gotten into the begining ");
         UserRegistration? userRegistration =
             await fetchUserSignIn(email, password)
                 .timeout(const Duration(seconds: 10), onTimeout: () {
           throw TimeoutException("Connection timed out. Please try again.");
         });
-
-        print("we are here 1");
+        print("this is the user registration object $userRegistration");
 
         if (userRegistration != null) {
-          print("we are here 2");
+          print("we are inside the valid response");
           if (!mounted) return;
-          print("we are here 3");
+          String? usertypeShared = await UserPreferences.getUserType();
+
+          print("this is the user type $usertypeShared");
+
           // Navigator.pushReplacementNamed(context, '/homescreen');
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CustomBottomNavigartion(
-                      userType: userTypeCurrent,
-                    )),
-            (Route<dynamic> route) =>
-                false, // This removes all the previous routes
-          );
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('isLoggedIn', true); // Set login status to true
-        } else {
-          print("we are here 4");
+
           if (!mounted) return;
-          print("we are here 5s");
+          {
+            print("we are navigating to the home page");
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CustomBottomNavigartion(
+                        userType: usertypeShared,
+                      )),
+              (Route<dynamic> route) =>
+                  false, // This removes all the previous routes
+            );
+          }
+        } else {
+          if (!mounted) return;
+          print("we are outside the valid response");
+
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Invalid email or password'),
           ));

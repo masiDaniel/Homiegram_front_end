@@ -9,8 +9,9 @@ import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/get_users.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/landlord/addRoom.dart';
+import 'package:homi_2/views/landlord/add_room.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -48,12 +49,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     setState(() {
       isLoading = true;
     });
+    String? token = await UserPreferences.getAuthToken();
 
     try {
       // Define your headers
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Token $authToken',
+        'Authorization': 'Token $token',
       };
 
       // Call the endpoint
@@ -92,12 +94,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       );
       return;
     }
+    String? token = await UserPreferences.getAuthToken();
 
     try {
       // Define your headers
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Token $authToken',
+        'Authorization': 'Token $token',
       };
 
       // Call the endpoint
@@ -120,6 +123,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception('Failed to assign caretaker');
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error assigning caretaker: $e')),
       );
@@ -127,11 +131,12 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   }
 
   Future<void> _removeCaretaker() async {
+    String? token = await UserPreferences.getAuthToken();
     try {
       // Define headers
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Token $authToken',
+        'Authorization': 'Token $token',
       };
 
       // Make DELETE request
@@ -143,11 +148,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
           'caretaker_id': widget.house.caretakerId,
         }),
       );
-      var requestBody = json.encode({
-        'house_id': widget.house.houseId,
-        'caretaker_id': widget.house.caretakerId,
-      });
-      print("this is the body $requestBody");
 
       // Check if the widget is still mounted before using the context
       if (!mounted) return;
@@ -160,6 +160,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception(error);
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error removing caretaker: $e')),
       );
@@ -202,10 +203,12 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       return;
     }
 
+    String? token = await UserPreferences.getAuthToken();
+
     try {
       final headers = {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Token $authToken',
+        'Authorization': 'Token $token',
       };
 
       final uri =
@@ -230,6 +233,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception('Failed to upload contract');
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading file: $e')),
       );
@@ -239,7 +243,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   Future<void> _downloadAndSaveFile(String? url,
       {bool allowDownload = false}) async {
     try {
-      print('Downloading from: $url');
       final response = await http.get(Uri.parse(url!));
       if (response.statusCode == 200) {
         final dir = allowDownload
@@ -250,6 +253,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         await file.writeAsBytes(response.bodyBytes);
 
         if (allowDownload) {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('File downloaded to: ${file.path}')),
           );
@@ -262,7 +266,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception('Failed to download file: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error downloading file: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -276,7 +280,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     final TextEditingController startDateController = TextEditingController();
     final TextEditingController endDateController = TextEditingController();
 
-    Future<void> _selectDate(
+    Future<void> selectDate(
         BuildContext context, TextEditingController controller) async {
       DateTime? pickedDate = await showDatePicker(
         context: context,
@@ -307,9 +311,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   _buildTextField(descriptionController, 'Description',
                       'Please enter a description'),
                   _buildDatePickerField(
-                      context, startDateController, 'Start Date', _selectDate),
+                      context, startDateController, 'Start Date', selectDate),
                   _buildDatePickerField(
-                      context, endDateController, 'End Date', _selectDate),
+                      context, endDateController, 'End Date', selectDate),
                 ],
               ),
             ),
@@ -422,7 +426,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
               child: Text(
@@ -438,7 +442,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             const SizedBox(height: 20),
             Center(
               child: Text(
-                'Upload Contract',
+                'Contract',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.grey[700],
@@ -449,6 +453,8 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             ElevatedButton(
               onPressed: _pickFile,
               style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF013803),
+                foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
@@ -457,7 +463,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               ),
               child: const Text(
                 'Choose File',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
             ),
             if (selectedFile != null)
@@ -468,44 +476,90 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   style: const TextStyle(fontSize: 14, color: Colors.green),
                 ),
               ),
-            SizedBox(
-              height: 300,
-              width: 300,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: localFilePath == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : PDFView(
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.green, // Outline color
+                  width: 2.0, // Outline thickness
+                ),
+                borderRadius:
+                    BorderRadius.circular(8), // Optional: Rounded corners
+              ),
+              child: SizedBox(
+                height: 300,
+                width: 400,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: FutureBuilder(
+                        future: Future.delayed(const Duration(
+                            seconds: 3)), // Show loading for 3 seconds
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            // Show CircularProgressIndicator for 3 seconds
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          // After 3 seconds, check if the file exists
+                          if (localFilePath == null) {
+                            return const Center(
+                              child: Text(
+                                "No contract available",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          }
+
+                          // If file exists, show the PDF
+                          return PDFView(
                             filePath: localFilePath!,
-                            enableSwipe: true, // Enable swipe gestures
-                            swipeHorizontal:
-                                false, // Set to true for horizontal scrolling
-                            autoSpacing: true, // Adds spacing between pages
-                            pageFling: true, // Smooth page transitions
-                            onRender: (pages) {
-                              print('PDF Rendered with $pages pages');
-                            },
-                            onError: (error) {
-                              print('Error loading PDF: $error');
-                            },
-                          ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Trigger file download
-                      _downloadAndSaveFile('$devUrl${widget.house.contractUrl}',
-                          allowDownload: true);
-                    },
-                    icon: const Icon(Icons.download),
-                    label: const Text('Download'),
-                  ),
-                ],
+                            enableSwipe: true,
+                            swipeHorizontal: false,
+                            autoSpacing: true,
+                            pageFling: true,
+                            onRender: (pages) {},
+                            onError: (error) {},
+                          );
+                        },
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF013803),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        // Trigger file download
+                        _downloadAndSaveFile(
+                            '$devUrl${widget.house.contractUrl}',
+                            allowDownload: true);
+                      },
+                      icon: const Icon(
+                        Icons.download,
+                        color: Colors.white,
+                      ),
+                      label: const Text('Download'),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _uploadFile,
               style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF013803),
+                foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
@@ -556,8 +610,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                backgroundColor:
-                    isCaretakerAssigned ? Colors.red : Colors.green,
+                backgroundColor: isCaretakerAssigned
+                    ? const Color.fromARGB(255, 124, 15, 5)
+                    : const Color(0xFF013803),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -677,7 +732,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: const Color.fromARGB(255, 24, 139, 7),
+        backgroundColor: const Color(0xFF013803),
         foregroundColor: Colors.white,
         children: [
           SpeedDialChild(
@@ -700,12 +755,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
           SpeedDialChild(
             child: const Icon(Icons.tv),
             label: 'Statistics',
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => AddHousePage()),
-              // );
-            },
+            onTap: () {},
           ),
         ],
       ),
@@ -724,39 +774,92 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
   Widget _buildHouseDetailsCard() {
     return Card(
-      elevation: 4,
+      elevation: 6,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Name: ${widget.house.name}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+      color: const Color(0xFF013803),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image Slider using PageView
+
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: PageView.builder(
+              itemCount: widget.house.images!.length,
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(12)),
+                  child: Image.network(
+                    "${devUrl}${widget.house.images![index]}",
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 200,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.image_not_supported,
+                          size: 50, color: Colors.grey),
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Location: ${widget.house.location}',
-              style: const TextStyle(fontSize: 16),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.house.name,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on,
+                        color: Colors.redAccent, size: 18),
+                    const SizedBox(width: 5),
+                    Text(widget.house.location,
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.white)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.attach_money,
+                        color: Colors.green, size: 18),
+                    const SizedBox(width: 5),
+                    Text('\$${widget.house.rentAmount}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.person, color: Colors.blue, size: 18),
+                    const SizedBox(width: 5),
+                    Text('Caretaker ID: ${widget.house.caretakerId}',
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.white)),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Rent: \$${widget.house.rentAmount}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'caretakert: \$${widget.house.caretakerId}',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

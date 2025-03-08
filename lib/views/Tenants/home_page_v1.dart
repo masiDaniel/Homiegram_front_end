@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   late PageController _pageController;
   int _currentPage = 0;
   Timer? _timer;
+  bool _isPaused = false;
   late List<Ad> ads;
 
   @override
@@ -89,8 +90,9 @@ class _HomePageState extends State<HomePage> {
 
   void _startAutoScroll() {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_pageController.hasClients) {
+      if (!_isPaused && _pageController.hasClients) {
         _currentPage++;
+
         if (_currentPage >= ads.length) {
           _currentPage = 0; // Reset to the first ad
         }
@@ -103,6 +105,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onAdTap(int index) {
+    setState(() {
+      _isPaused = !_isPaused; // Toggle pause state
+      _currentPage = index;
+    });
+    if (_isPaused) {
+      _timer?.cancel(); // Stop auto-scrolling
+    } else {
+      _startAutoScroll(); // Resume auto-scrolling
+    }
+  }
+
+// remove this for now
   Future<void> initializeVideoPlayer(String videoUrl) async {
     _videoController = VideoPlayerController.network(videoUrl);
     await _videoController!.initialize();
@@ -169,44 +184,105 @@ class _HomePageState extends State<HomePage> {
                           itemCount: ads.length,
                           itemBuilder: (context, index) {
                             final ad = ads[index];
-                            return Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                border: Border.all(
-                                  color: Colors.green,
-                                  width: 2.0,
+                            bool isSelected =
+                                _isPaused && _currentPage == index;
+                            return GestureDetector(
+                              onTap: () => _onAdTap(index),
+                              child: Stack(children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    border: Border.all(
+                                      color: Colors.green,
+                                      width: 2.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  child: ClipRect(
+                                    child: ad.imageUrl != null
+                                        ? Image.network(
+                                            '$devUrl${ad.imageUrl!}',
+                                            fit: BoxFit.fill,
+                                          )
+                                        : ad.videoUrl != null
+                                            ? FutureBuilder(
+                                                future: initializeVideoPlayer(
+                                                    ad.videoUrl!),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    return AspectRatio(
+                                                      aspectRatio:
+                                                          _videoController!
+                                                              .value
+                                                              .aspectRatio,
+                                                      child: VideoPlayer(
+                                                          _videoController!),
+                                                    );
+                                                  } else {
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+                                                },
+                                              )
+                                            : Center(
+                                                child: Image.asset(
+                                                  'assets/images/splash.jpeg', // Fallback image path
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: ad.imageUrl != null
-                                  ? Image.network(
-                                      '$devUrl${ad.imageUrl!}',
-                                      fit: BoxFit.fill,
-                                    )
-                                  : ad.videoUrl != null
-                                      ? FutureBuilder(
-                                          future: initializeVideoPlayer(
-                                              ad.videoUrl!),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.done) {
-                                              return AspectRatio(
-                                                aspectRatio: _videoController!
-                                                    .value.aspectRatio,
-                                                child: VideoPlayer(
-                                                    _videoController!),
-                                              );
-                                            } else {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            }
-                                          },
-                                        )
-                                      : const Center(
-                                          child: Text("No content available")),
+                                // Title Overlay
+                                Positioned(
+                                  bottom: 10,
+                                  left: 10,
+                                  right: 10,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    color: Colors.black.withOpacity(0.5),
+                                    child: Text(
+                                      ad.title,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+
+                                // Description, Start Date, End Date when clicked
+                                if (isSelected)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.black.withOpacity(0.7),
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(ad.title,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                          const SizedBox(height: 10),
+                                          Text(ad.description,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16)),
+                                          const SizedBox(height: 10),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ]),
                             );
                           },
                         ),

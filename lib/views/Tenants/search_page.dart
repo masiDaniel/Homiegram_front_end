@@ -4,6 +4,7 @@ import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
@@ -27,6 +28,14 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     _loadAllHouses();
     _fetchAmenities();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userId = id;
+    });
   }
 
   Future<void> _loadAllHouses() async {
@@ -63,11 +72,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // leading: Container(
-          //   child: Image.asset(
-          //     'assets/images/splash.jpeg',
-          //   ),
-          // ),
+          automaticallyImplyLeading: false,
           title: TextField(
             decoration: const InputDecoration(
               hintText: 'Search houses...',

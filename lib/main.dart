@@ -26,17 +26,12 @@ void main() async {
   ], child: MyApp(initialRoute: initialRoute)));
 }
 
-///
-/// im having trouble with this
-/// will come to refactor
 Future<String> getInitialRoute() async {
   final prefs = await SharedPreferences.getInstance();
-  prefs.setBool('isLoggedIn', false);
+  // await prefs.clear();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-  print("Login status: $isLoggedIn");
-
-  return isLoggedIn ? '/homescreen' : '/'; // Go to homescreen if logged in
+  // Go to homescreen if logged in
+  return isLoggedIn ? '/homescreen' : '/';
 }
 
 class MyApp extends StatelessWidget {
@@ -50,6 +45,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Homigram',
       initialRoute: initialRoute,
+      // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/': (context) => const WelcomePage(),

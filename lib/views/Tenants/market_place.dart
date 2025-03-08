@@ -220,7 +220,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading: Container(),
+        automaticallyImplyLeading: false,
         title: TextField(
           decoration: const InputDecoration(
             hintText: 'Search Business...',

@@ -36,7 +36,7 @@ class _ProductsPageState extends State<ProductsPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('Products for ${widget.businessName}'),
-        actions: [],
+        // actions: [],
       ),
       body: FutureBuilder<List<Products>>(
         future: futureProducts,

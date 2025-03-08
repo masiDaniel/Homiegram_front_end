@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:homi_2/models/amenities.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 import 'package:http/http.dart' as http;
@@ -9,14 +10,14 @@ const Map<String, String> headers = {
 };
 
 Future<List<Amenities>> fetchAmenities() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/houses/getAmenities'),
+    final response = await http.get(Uri.parse('$devUrl/houses/getAmenities'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
@@ -35,14 +36,14 @@ Future<List<Amenities>> fetchAmenities() async {
 }
 
 Future<List<Amenities>> fetchAllAmenities() async {
+  String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
       ...headers,
-      'Authorization': 'Token $authToken',
+      'Authorization': 'Token $token',
     };
 
-    final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/houses/getAmenities'),
+    final response = await http.get(Uri.parse('$devUrl/houses/getAmenities'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
