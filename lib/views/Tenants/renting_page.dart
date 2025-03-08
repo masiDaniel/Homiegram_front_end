@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/room.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 class RentingPage extends StatefulWidget {
@@ -12,11 +13,20 @@ class RentingPage extends StatefulWidget {
 
 class _RentingPageState extends State<RentingPage> {
   late Future<List<GetRooms>> futureRooms;
+  int? userId;
 
   @override
   void initState() {
     super.initState();
     futureRooms = fetchRooms();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userId = id ?? 0; // Default to 'tenant' if null
+    });
   }
 
   @override

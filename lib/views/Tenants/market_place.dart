@@ -3,6 +3,7 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/business_bookmarks.dart';
 import 'package:homi_2/views/Tenants/cart_page.dart';
@@ -170,7 +171,8 @@ class _MarketPlaceState extends State<MarketPlace> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                int? id = await UserPreferences.getUserId();
                 if (formKey.currentState!.validate()) {
                   final businessData = {
                     'name': businessNameController.text,
@@ -178,7 +180,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                     'email': businessEmailController.text,
                     'location':
                         int.tryParse(businessAddressController.text) ?? 0,
-                    'owner': userId, // Replace with actual owner ID
+                    'owner': id, // Replace with actual owner ID
                   };
                   postBusiness(businessData, context).then((success) {
                     if (success) {
@@ -274,7 +276,21 @@ class _MarketPlaceState extends State<MarketPlace> {
             future: futureLocations,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: const Center(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Colors.green, // Custom color
+                        strokeWidth: 6.0, // Thicker stroke
+                      ),
+                      SizedBox(height: 10),
+                      Text("Loading, please wait...",
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                    ],
+                  )),
+                );
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Error loading locations'));
               } else if (snapshot.hasData && snapshot.data != null) {

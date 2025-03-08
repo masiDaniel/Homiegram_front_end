@@ -81,7 +81,20 @@ class _SplashScreenState extends State<SplashScreen> {
                       aspectRatio: _videoController!.value.aspectRatio,
                       child: VideoPlayer(_videoController!),
                     )
-                  : const CircularProgressIndicator(), // Show a loader until the video is ready
+                  : const Center(
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: Colors.green, // Custom color
+                          strokeWidth: 6.0, // Thicker stroke
+                        ),
+                        SizedBox(height: 10),
+                        Text("Loading, please wait...",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
+                      ],
+                    )), // Show a loader until the video is ready
         ),
       ),
     );

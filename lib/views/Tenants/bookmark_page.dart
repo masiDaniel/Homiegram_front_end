@@ -55,7 +55,21 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
         future: _bookmarkedHousesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: const Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.green, // Custom color
+                    strokeWidth: 6.0, // Thicker stroke
+                  ),
+                  SizedBox(height: 10),
+                  Text("Loading, please wait...",
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
+                ],
+              )),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {

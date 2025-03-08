@@ -22,6 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   List<Amenities> amenities = [];
   bool isLoadingHouses = true;
   bool isLoadingAmenities = true;
+  int? userId;
 
   @override
   void initState() {
@@ -103,7 +104,19 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ]),
       body: isLoadingHouses
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.green, // Custom color
+                  strokeWidth: 6.0, // Thicker stroke
+                ),
+                SizedBox(height: 10),
+                Text("Loading, please wait...",
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+              ],
+            ))
           : Column(
               children: [
                 Expanded(

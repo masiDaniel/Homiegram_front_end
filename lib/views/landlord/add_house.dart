@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/post_house_service.dart';
-import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddHousePage extends StatefulWidget {
@@ -21,9 +21,22 @@ class AddHousePageState extends State<AddHousePage> {
   String _bankName = '';
   String __accountNumber = '';
   final List<String> _imageUrls = [];
+  int? userIdShared;
 
   final PostHouseService postHouseService = PostHouseService();
   final ImagePicker _picker = ImagePicker();
+
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userIdShared = id ?? 0; // Default to 'tenant' if null
+    });
+  }
 
   Future<void> _pickImages() async {
     if (_imageUrls.length >= 4) {
@@ -233,7 +246,7 @@ class AddHousePageState extends State<AddHousePage> {
                       location: _location,
                       images: _imageUrls, // Assuming a list of images
                       amenities: [1], // Include if you have amenities
-                      landlordId: userId as int,
+                      landlordId: userIdShared as int,
                       houseId: 0,
                       bankName: _bankName,
                       accountNumber:

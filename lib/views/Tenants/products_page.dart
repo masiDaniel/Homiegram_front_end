@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 
@@ -23,12 +24,21 @@ class ProductsPage extends StatefulWidget {
 class _ProductsPageState extends State<ProductsPage>
     with TickerProviderStateMixin {
   late Future<List<Products>> futureProducts;
+  int? userId;
 
   @override
   void initState() {
     super.initState();
     // Fetch the products when the page loads
     futureProducts = fetchProducts();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userId = id ?? 0; // Default to 'tenant' if null
+    });
   }
 
   @override
@@ -43,7 +53,21 @@ class _ProductsPageState extends State<ProductsPage>
         builder: (context, snapshot) {
           // Loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: const Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.green, // Custom color
+                    strokeWidth: 6.0, // Thicker stroke
+                  ),
+                  SizedBox(height: 10),
+                  Text("Loading, please wait...",
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
+                ],
+              )),
+            );
           }
           // Error state
           else if (snapshot.hasError) {

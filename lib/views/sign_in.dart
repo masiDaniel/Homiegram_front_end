@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
@@ -58,7 +57,6 @@ class SignInState extends State<SignIn> {
           print("we are inside the valid response");
           if (!mounted) return;
           String? usertypeShared = await UserPreferences.getUserType();
-
           print("this is the user type $usertypeShared");
 
           // Navigator.pushReplacementNamed(context, '/homescreen');
@@ -181,12 +179,20 @@ class SignInState extends State<SignIn> {
           // Loading overlay
           if (_isLoading)
             Container(
-              color: Colors.black54,
+              color: const Color.fromARGB(255, 9, 63, 2),
               child: const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF126E06)),
-                ),
-              ),
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.green, // Custom color
+                    strokeWidth: 6.0, // Thicker stroke
+                  ),
+                  SizedBox(height: 10),
+                  Text("Loading, please wait...",
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
+                ],
+              )),
             ),
         ],
       )),

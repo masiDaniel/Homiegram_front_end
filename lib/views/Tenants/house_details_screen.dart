@@ -25,11 +25,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   List<GetComments> _comments = []; // Local comments list
   late Future<List<GetHouse>> bookmarkedHousesFuture;
   bool isBookmarked = false;
+  int? userId;
 
   @override
   void initState() {
     super.initState();
     _fetchComments();
+    _loadUserId();
 
     bookmarkedHousesFuture = fetchBookmarkedHouses();
 
@@ -42,6 +44,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     }).catchError((error) {
       // Handle errors gracefully
       debugPrint("Error fetching bookmarked houses: $error");
+    });
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userId = id ?? 0; // Default to 'tenant' if null
     });
   }
 
@@ -123,13 +132,14 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   Map<int, bool> bookmarkedHouses = {};
 
   Future<List<GetHouse>> fetchBookmarkedHouses() async {
+    int? id = await UserPreferences.getUserId();
     //Fetch the bookmarks for the user
     final bookmarks = await fetchBookmarks();
     List<GetHouse> allHouses = await fetchHouses();
 
     // Extract the house IDs from the bookmarks
     final houseIdsForCurrentUser = bookmarks
-        .where((bookmark) => bookmark.user == userId) // Filter by current user
+        .where((bookmark) => bookmark.user == id) // Filter by current user
         .map((bookmark) => bookmark.house) // Extract house ID
         .toList(); // Convert to a list
 
@@ -331,8 +341,9 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               const SizedBox(width: 20), // Space between buttons
               ElevatedButton(
                 onPressed: () async {
+                  String? userTypeShared = await UserPreferences.getUserType();
                   // Assuming you have a variable `userType` that holds the user's type
-                  if (userTypeCurrent == "landlord") {
+                  if (userTypeShared == "landlord") {
                     // Show an error dialog to inform the landlord they cannot rent a room
                     showDialog(
                       context: context,
@@ -425,7 +436,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   }
 }
 
-class CommentList extends StatelessWidget {
+class CommentList extends StatefulWidget {
   final List<GetComments> comments;
   final Function(int) onDelete; // Callback for deleting comments
 
@@ -434,6 +445,26 @@ class CommentList extends StatelessWidget {
     required this.onDelete,
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<CommentList> createState() => _CommentListState();
+}
+
+class _CommentListState extends State<CommentList> {
+  int? userId;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userId = id ?? 0; // Default to 'tenant' if null
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -451,9 +482,9 @@ class CommentList extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: comments.length,
+          itemCount: widget.comments.length,
           itemBuilder: (context, index) {
-            final comment = comments.reversed.toList()[
+            final comment = widget.comments.reversed.toList()[
                 index]; // reverse the list inorder to show the latest comments first
 
             return Container(
@@ -468,7 +499,7 @@ class CommentList extends StatelessWidget {
                 if (comment.userId == userId)
                   IconButton(
                     onPressed: () {
-                      onDelete(comment.commentId); // Use the callback
+                      widget.onDelete(comment.commentId); // Use the callback
                     },
                     icon: const Icon(
                       Icons.delete,

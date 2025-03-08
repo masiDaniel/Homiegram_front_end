@@ -500,7 +500,19 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                               ConnectionState.done) {
                             // Show CircularProgressIndicator for 3 seconds
                             return const Center(
-                                child: CircularProgressIndicator());
+                                child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  color: Colors.green, // Custom color
+                                  strokeWidth: 6.0, // Thicker stroke
+                                ),
+                                SizedBox(height: 10),
+                                Text("Loading, please wait...",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white)),
+                              ],
+                            ));
                           }
 
                           // After 3 seconds, check if the file exists

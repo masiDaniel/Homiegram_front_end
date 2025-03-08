@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:homi_2/services/user_sigin_service.dart';
+
 import 'package:homi_2/services/user_signout_service.dart';
 
 class StudentDashboardView extends StatefulWidget {
@@ -72,33 +72,33 @@ class StudentDashboardViewState extends State<StudentDashboardView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          backgroundColor: const Color.fromARGB(255, 2, 75, 50),
-                          maxRadius: 25,
-                          backgroundImage: imageUrl != null
-                              ? NetworkImage('$devUrl$imageUrl')
-                              : null,
-                          child: imageUrl == null
-                              ? Text(
-                                  extractInitials('$firstName'),
-                                  style: const TextStyle(color: Colors.white),
-                                )
-                              : null,
-                        ),
+                        // CircleAvatar(
+                        //   backgroundColor: const Color.fromARGB(255, 2, 75, 50),
+                        //   maxRadius: 25,
+                        //   backgroundImage: imageUrl != null
+                        //       ? NetworkImage('$devUrl$imageUrl')
+                        //       : null,
+                        //   child: imageUrl == null
+                        //       ? Text(
+                        //           extractInitials('$firstName'),
+                        //           style: const TextStyle(color: Colors.white),
+                        //         )
+                        //       : null,
+                        // ),
                         const SizedBox(
                           width: 20,
                         ),
-                        Text(
-                          'hi, $firstName\n Today is  ${DateTime.now().toString().substring(0, 10)}',
-                          style: const TextStyle(fontSize: 20),
-                        ),
+                        // Text(
+                        //   'hi, $firstName\n Today is  ${DateTime.now().toString().substring(0, 10)}',
+                        //   style: const TextStyle(fontSize: 20),
+                        // ),
                       ],
                     ),
                   ),
-                  Text(
-                    'Your rent is due in, $firstName days',
-                    style: const TextStyle(fontSize: 20),
-                  ),
+                  // Text(
+                  //   'Your rent is due in, $firstName days',
+                  //   style: const TextStyle(fontSize: 20),
+                  // ),
                   const SizedBox(
                     height: 50,
                   ),

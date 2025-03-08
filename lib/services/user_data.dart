@@ -31,21 +31,21 @@ class UserPreferences {
     await prefs.setBool(_keyIsLoggedIn, true);
   }
 
-  Future<void> checkSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
+  // Future<void> checkSavedData() async {
+  //   final prefs = await SharedPreferences.getInstance();
 
-    print('Auth Token: ${prefs.getString(_keyAuthToken)}');
-    print('User ID: ${prefs.getInt(_keyUserId)}');
-    print('Username: ${prefs.getString(_keyUserName)}');
-    print('First Name: ${prefs.getString(_keyFirstName)}');
-    print('Last Name: ${prefs.getString(_keyLastName)}');
-    print('Email: ${prefs.getString(_keyUserEmail)}');
-    print('User Type: ${prefs.getString(_keyUserType)}');
-    print('Phone Number: ${prefs.getString(_keyPhoneNumber)}');
-    print('ID Number: ${prefs.getInt(_keyIdNumber)}');
-    print('Profile Pic: ${prefs.getString(_keyProfilePic)}');
-    print('Is Logged In: ${prefs.getBool(_keyIsLoggedIn)}');
-  }
+  //   print('Auth Token: ${prefs.getString(_keyAuthToken)}');
+  //   print('User ID: ${prefs.getInt(_keyUserId)}');
+  //   print('Username: ${prefs.getString(_keyUserName)}');
+  //   print('First Name: ${prefs.getString(_keyFirstName)}');
+  //   print('Last Name: ${prefs.getString(_keyLastName)}');
+  //   print('Email: ${prefs.getString(_keyUserEmail)}');
+  //   print('User Type: ${prefs.getString(_keyUserType)}');
+  //   print('Phone Number: ${prefs.getString(_keyPhoneNumber)}');
+  //   print('ID Number: ${prefs.getInt(_keyIdNumber)}');
+  //   print('Profile Pic: ${prefs.getString(_keyProfilePic)}');
+  //   print('Is Logged In: ${prefs.getBool(_keyIsLoggedIn)}');
+  // }
 
   // Getters to retrieve stored data
   static Future<String?> getAuthToken() async {
@@ -96,6 +96,12 @@ class UserPreferences {
   static Future<String?> getProfilePicture() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyProfilePic);
+  }
+
+  static Future<bool> setProfilePicture(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(_keyProfilePic, path);
+    return true;
   }
 
   static Future<bool> isLoggedIn() async {

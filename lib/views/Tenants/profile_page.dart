@@ -190,11 +190,13 @@ class _ProfilePageState extends State<ProfilePage> {
           Center(
             child: GestureDetector(
               onTap: () async {
+                String? imageUrl = await UserPreferences.getProfilePicture();
                 // Implement profile picture selection
                 final ImagePicker picker = ImagePicker();
                 final XFile? pickedFile =
                     await picker.pickImage(source: ImageSource.gallery);
                 if (pickedFile != null) {
+                  // await UserPreferences.setProfilePicture(pickedFile.path);
                   setState(() {
                     imageUrl = pickedFile
                         .path; // Update imageUrl with the selected image path

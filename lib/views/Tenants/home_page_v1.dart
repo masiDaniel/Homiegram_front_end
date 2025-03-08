@@ -166,7 +166,18 @@ class _HomePageState extends State<HomePage> {
                   future: futureAds,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: Colors.green, // Custom color
+                            strokeWidth: 6.0, // Thicker stroke
+                          ),
+                          SizedBox(height: 10),
+                          Text("Loading, please wait...",
+                              style: TextStyle(fontSize: 16)),
+                        ],
+                      );
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Image.asset(
@@ -224,8 +235,26 @@ class _HomePageState extends State<HomePage> {
                                                     );
                                                   } else {
                                                     return const Center(
-                                                        child:
-                                                            CircularProgressIndicator());
+                                                        child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        CircularProgressIndicator(
+                                                          color: Colors
+                                                              .green, // Custom color
+                                                          strokeWidth:
+                                                              6.0, // Thicker stroke
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        Text(
+                                                            "Loading, please wait...",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors
+                                                                    .white)),
+                                                      ],
+                                                    ));
                                                   }
                                                 },
                                               )
