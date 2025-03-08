@@ -27,7 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserId();
+    loadUserId();
+    debugSharedPreferences();
   }
 
   // this is a function that takes the first letter from the name of the user
@@ -43,7 +44,15 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _loadUserId() async {
+  Future<void> debugSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    print('Stored Last Name: ${prefs.getString('lastName')}');
+    print('Stored Email: ${prefs.getString('userEmail')}');
+    print('Stored ID Number: ${prefs.getInt('idNumber')}');
+    print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
+  }
+
+  Future<void> loadUserId() async {
     int? id = await UserPreferences.getUserId();
     String? type = await UserPreferences.getUserType();
     String? firstName = await UserPreferences.getFirstName();
@@ -68,6 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
     print('this is the user id $currentUserId');
     print('this is the user type $currentUserType');
     print('this is the users first name $currentUserFirstName');
+    print('this is the users first name $currentUserLastName');
     print('this is the user type $currentUserEmail');
     print('this is the users profile $currentUserProfilePicture');
   }
@@ -248,26 +258,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: const Icon(Icons.person_outline,
                         color: Color(0xFF126E06)),
                     title: const Text('Last Name'),
-                    subtitle: Text('$lastName'),
+                    subtitle: Text('$currentUserLastName'),
                   ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.email, color: Color(0xFF126E06)),
                     title: const Text('Email'),
-                    subtitle: Text('$userEmail'),
+                    subtitle: Text('$currentUserEmail'),
                   ),
                   const Divider(),
                   ListTile(
                     leading:
                         const Icon(Icons.credit_card, color: Color(0xFF126E06)),
                     title: const Text('ID Number'),
-                    subtitle: Text('$idNumber'),
+                    subtitle: Text('$currentserIdNumber'),
                   ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.phone, color: Color(0xFF126E06)),
                     title: const Text('Phone Number'),
-                    subtitle: Text('$phoneNumber'),
+                    subtitle: Text('$currentUserPhoneNumber'),
                   ),
                   const Divider(),
                   GestureDetector(

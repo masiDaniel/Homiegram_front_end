@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/views/Tenants/home_page_v1.dart';
 import 'package:homi_2/views/Tenants/market_place.dart';
 import 'package:homi_2/views/Tenants/profile_page.dart';
@@ -8,8 +9,7 @@ import 'package:homi_2/views/Tenants/search_page.dart';
 import 'package:homi_2/views/landlord/management.dart';
 
 class CustomBottomNavigartion extends StatefulWidget {
-  final String? userType; // Add a userType parameter
-  const CustomBottomNavigartion({super.key, required this.userType});
+  const CustomBottomNavigartion({super.key});
 
   @override
   State<CustomBottomNavigartion> createState() => _HomePageState();
@@ -17,10 +17,26 @@ class CustomBottomNavigartion extends StatefulWidget {
 
 class _HomePageState extends State<CustomBottomNavigartion> {
   int _selectedIndex = 0;
+  String? userType; // Store userType
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    String? type = await UserPreferences.getUserType();
+    setState(() {
+      userType = type ?? 'tenant'; // Default to 'tenant' if null
+    });
+    print('Loaded userType: $userType');
+  }
 
   List<Widget> get _pages {
     // handling cases when usertype is null
-    if ((widget.userType ?? 'tenant') == 'landlord') {
+    print('this is the usertype $userType');
+    if ((userType ?? 'tenant') == 'landlord') {
       return const [
         HomePage(),
         SearchPage(),

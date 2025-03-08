@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/landlord_house_details.dart';
 import 'package:homi_2/views/landlord/add_house.dart';
@@ -15,11 +16,21 @@ class LandlordManagement extends StatefulWidget {
 
 class _LandlordManagementState extends State<LandlordManagement> {
   late Future<List<GetHouse>> futureLandlordHouses;
+  int? userIdShared;
 
   @override
   void initState() {
     super.initState();
     futureLandlordHouses = fetchHouses();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    int? id = await UserPreferences.getUserId();
+    setState(() {
+      userIdShared = id ?? 0; // Default to 'tenant' if null
+    });
+    print('Loaded userType: $userIdShared');
   }
 
   @override
@@ -43,8 +54,9 @@ class _LandlordManagementState extends State<LandlordManagement> {
           final houses = snapshot.data!;
 
           // Filter houses where the landlord_id matches the user ID
-          final filteredHouses =
-              houses.where((house) => house.landlordId == userId).toList();
+          final filteredHouses = houses
+              .where((house) => house.landlordId == userIdShared)
+              .toList();
 
           return ListView.builder(
             itemCount: filteredHouses.length,

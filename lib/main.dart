@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/providers/user_provider.dart';
-import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
@@ -53,10 +52,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/about': (context) => AboutHomiegram(),
         '/homepage': (context) => const HomePage(),
-        '/homescreen': (context) => CustomBottomNavigartion(
-              userType:
-                  userTypeCurrent, // Assuming you have some userType logic
-            ),
+        '/homescreen': (context) => const CustomBottomNavigartion(),
         '/allHouses': (context) => const AllHouses(),
         '/trialAllHouses': (context) => const HouseListScreen(),
         '/searchPage': (context) => const SearchPage(),

@@ -52,6 +52,9 @@ Future fetchUserSignIn(String username, String password) async {
       // how to handle saving of data well
       await UserPreferences.saveUserData(userData);
 
+      UserPreferences userPreferences = UserPreferences();
+      await userPreferences.checkSavedData();
+
       imageUrl = userData['profile_pic'];
       firstName = userData['first_name'];
       lastName = userData['last_name'];
@@ -76,6 +79,7 @@ Future fetchUserSignIn(String username, String password) async {
         await prefs.setString('userType', userDataShared['user_type']);
         await prefs.setBool('isLoggedIn', true);
         print('Preferences saved successfully!');
+        print('All keys: ${prefs.getKeys()}');
       } catch (e) {
         print('Error saving preferences: $e');
       }

@@ -70,9 +70,7 @@ class SignInState extends State<SignIn> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => CustomBottomNavigartion(
-                        userType: usertypeShared,
-                      )),
+                  builder: (context) => const CustomBottomNavigartion()),
               (Route<dynamic> route) =>
                   false, // This removes all the previous routes
             );
