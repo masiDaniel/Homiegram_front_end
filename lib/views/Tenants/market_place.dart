@@ -57,11 +57,18 @@ class _MarketPlaceState extends State<MarketPlace> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
                 onPressed: () => showBusinessCreationDialog(context),
-                child: const Text('Create a Business'),
+                child: const Text(
+                  'Create a Business',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               const SizedBox(height: 10),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -72,17 +79,26 @@ class _MarketPlaceState extends State<MarketPlace> {
                             'This feature will be available in future updates.'),
                         actions: [
                           TextButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 6, 95, 9)),
                             onPressed: () {
                               Navigator.of(context).pop(); // Close the dialog
                             },
-                            child: const Text('OK'),
+                            child: const Text(
+                              'OK',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ],
                       );
                     },
                   );
                 },
-                child: const Text('Sell a Product'),
+                child: const Text(
+                  'Sell a Product',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -168,9 +184,14 @@ class _MarketPlaceState extends State<MarketPlace> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Color.fromARGB(255, 2, 51, 4)),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
               onPressed: () async {
                 int? id = await UserPreferences.getUserId();
                 if (formKey.currentState!.validate()) {
@@ -210,7 +231,10 @@ class _MarketPlaceState extends State<MarketPlace> {
                   });
                 }
               },
-              child: const Text('Create'),
+              child: const Text(
+                'Create',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -323,6 +347,8 @@ class _MarketPlaceState extends State<MarketPlace> {
                                       businessId: business.businessId,
                                       businessName: business.businessName,
                                       businessOwnerId: business.businessOwnerId,
+                                      businessPhoneNumber:
+                                          business.contactNumber,
                                     ),
                                   ),
                                 );

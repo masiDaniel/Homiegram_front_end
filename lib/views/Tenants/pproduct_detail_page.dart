@@ -53,6 +53,8 @@ class ProductDetailPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
                   onPressed: () {
                     // Handle bookmark functionality
                     showDialog(
@@ -74,10 +76,18 @@ class ProductDetailPage extends StatelessWidget {
                       },
                     );
                   },
-                  icon: const Icon(Icons.bookmark),
-                  label: const Text('Bookmark'),
+                  icon: const Icon(
+                    Icons.bookmark,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Bookmark',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF065F09)),
                   onPressed: () {
                     // Handle buy functionality
                     showDialog(
@@ -89,28 +99,42 @@ class ProductDetailPage extends StatelessWidget {
                               'Would you like to buy directly or add this item to your cart?'),
                           actions: [
                             TextButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF065F09)),
                               onPressed: () {
                                 // Add to Cart action logic here
                                 Navigator.of(context).pop(); // Close the dialog
                                 // For example: cartController.addItem(item);
                               },
-                              child: const Text('Add to Cart'),
+                              child: const Text(
+                                'Add to Cart',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                             TextButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF065F09)),
                               onPressed: () {
                                 // Buy Directly action logic here
                                 Navigator.of(context).pop(); // Close the dialog
                                 // For example: Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(item: item)));
                               },
-                              child: const Text('Buy Now'),
+                              child: const Text(
+                                'Buy Now',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ],
                         );
                       },
                     );
                   },
-                  icon: const Icon(Icons.shopping_cart),
-                  label: const Text('Buy'),
+                  icon: const Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                  ),
+                  label:
+                      const Text('Buy', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

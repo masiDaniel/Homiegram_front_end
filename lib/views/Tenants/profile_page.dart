@@ -28,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     loadUserId();
-    debugSharedPreferences();
   }
 
   // this is a function that takes the first letter from the name of the user
@@ -44,13 +43,13 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> debugSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    print('Stored Last Name: ${prefs.getString('lastName')}');
-    print('Stored Email: ${prefs.getString('userEmail')}');
-    print('Stored ID Number: ${prefs.getInt('idNumber')}');
-    print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
-  }
+  // Future<void> debugSharedPreferences() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   print('Stored Last Name: ${prefs.getString('lastName')}');
+  //   print('Stored Email: ${prefs.getString('userEmail')}');
+  //   print('Stored ID Number: ${prefs.getInt('idNumber')}');
+  //   print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
+  // }
 
   Future<void> loadUserId() async {
     int? id = await UserPreferences.getUserId();
@@ -74,12 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
       currentserIdNumber = idNumber;
       currentUserProfilePicture = profilePicture;
     });
-    print('this is the user id $currentUserId');
-    print('this is the user type $currentUserType');
-    print('this is the users first name $currentUserFirstName');
-    print('this is the users first name $currentUserLastName');
-    print('this is the user type $currentUserEmail');
-    print('this is the users profile $currentUserProfilePicture');
   }
 
   Future<void> _logout() async {
@@ -190,7 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
           Center(
             child: GestureDetector(
               onTap: () async {
-                String? imageUrl = await UserPreferences.getProfilePicture();
                 // Implement profile picture selection
                 final ImagePicker picker = ImagePicker();
                 final XFile? pickedFile =
@@ -198,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (pickedFile != null) {
                   // await UserPreferences.setProfilePicture(pickedFile.path);
                   setState(() {
-                    imageUrl = pickedFile
+                    currentUserProfilePicture = pickedFile
                         .path; // Update imageUrl with the selected image path
                   });
                 }

@@ -23,15 +23,34 @@ Future<List<GetRooms>> fetchRooms() async {
 
     final response = await http.get(Uri.parse('$devUrl/houses/getRooms/'),
         headers: headersWithToken);
-
+    print('we are getting here 1');
     if (response.statusCode == 200) {
+      print('we are getting here 2');
       final List<dynamic> roomData = json.decode(response.body);
 
-      final List<GetRooms> rooms =
-          roomData.map((json) => GetRooms.fromJSon(json)).toList();
-      allRooms = rooms;
-      return rooms;
+      // final List<GetRooms> rooms =
+      //     roomData.map((json) => GetRooms.fromJSon(json)).toList();
+      // allRooms = rooms;
+      // print('respose body get roomms : $allRooms');
+
+      try {
+        print("Raw roomData before parsing: $roomData");
+
+        final List<GetRooms> rooms = roomData.map((json) {
+          print("Processing room: $json"); // Print each room before parsing
+          return GetRooms.fromJSon(json);
+        }).toList();
+
+        allRooms = rooms;
+        print("Successfully parsed rooms: $allRooms");
+      } catch (e, stackTrace) {
+        print("Error while parsing rooms: $e");
+        print("StackTrace: $stackTrace");
+      }
+
+      return allRooms;
     } else {
+      print('we are gettig here');
       throw Exception('failed to fetch arguments');
     }
   } catch (e) {
@@ -61,6 +80,7 @@ Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
           rooms.where((room) => room.apartmentID == houseId).toList();
 
       allRooms = rooms;
+
       return filteredRooms;
     } else {
       throw Exception('failed to fetch arguments');
@@ -70,7 +90,7 @@ Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
   }
 }
 
-Future<GetRooms> postRoomsByHouse(int houseId, GetRooms newRoom) async {
+Future<String> postRoomsByHouse(int houseId, GetRooms newRoom) async {
   String? token = await UserPreferences.getAuthToken();
   try {
     final headersWithToken = {
@@ -81,11 +101,11 @@ Future<GetRooms> postRoomsByHouse(int houseId, GetRooms newRoom) async {
     final response = await http.post(
       Uri.parse('$devUrl/houses/getRooms/'),
       headers: headersWithToken,
-      body: jsonEncode(newRoom.tojson()),
+      body: jsonEncode([newRoom.tojson()]),
     );
 
     if (response.statusCode == 201) {
-      return GetRooms.fromJSon(jsonDecode(response.body));
+      return response.body;
     } else {
       throw Exception('failed to post new room  ${response.statusCode}');
     }

@@ -641,6 +641,8 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             FutureBuilder(
               future: fetchRoomsByHouse(widget.house.houseId),
               builder: (context, snapshot) {
+                print(
+                    'this is what we get from the function ${fetchRoomsByHouse(widget.house.houseId)}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -753,7 +755,10 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RoomInputPage()),
+                MaterialPageRoute(
+                    builder: (context) => RoomInputPage(
+                          apartmentId: widget.house.houseId,
+                        )),
               );
             },
           ),

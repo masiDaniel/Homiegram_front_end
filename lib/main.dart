@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Homigram',
+      title: '',
       initialRoute: initialRoute,
       // should refactor on this to user flutters way
       routes: {

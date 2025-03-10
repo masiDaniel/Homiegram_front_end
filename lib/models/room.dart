@@ -26,9 +26,9 @@ class GetRooms {
     return GetRooms(
         roomId: json['id'] ?? 0,
         roomName: json['room_name'] ?? '',
-        noOfBedrooms: json['number_of_bedrooms'] ?? 0,
-        sizeInSqMeters: json['size_in_sq_meters'] ?? '',
-        rentAmount: json['rent'] ?? '',
+        noOfBedrooms: json['number_of_bedrooms'],
+        sizeInSqMeters: json['size_in_sq_meters'],
+        rentAmount: json['rent'],
         occuiedStatus: json['occupied'] ?? false,
         roomImages: json['room_images'] ?? '',
         apartmentID: json['apartment'] ?? 0,

@@ -125,6 +125,8 @@ class _SearchPageState extends State<SearchPage> {
                       : ListView.builder(
                           itemCount: displayedHouses.length,
                           itemBuilder: (context, index) {
+                            displayedHouses
+                                .sort((a, b) => b.rating.compareTo(a.rating));
                             final house = displayedHouses[index];
                             return Card(
                               margin: const EdgeInsets.symmetric(

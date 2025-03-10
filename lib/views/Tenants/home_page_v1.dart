@@ -307,6 +307,9 @@ class _HomePageState extends State<HomePage> {
                                                   color: Colors.white,
                                                   fontSize: 16)),
                                           const SizedBox(height: 10),
+                                          ElevatedButton(
+                                              onPressed: () {},
+                                              child: const Text('Go to page'))
                                         ],
                                       ),
                                     ),

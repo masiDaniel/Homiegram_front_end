@@ -5,17 +5,20 @@ import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductsPage extends StatefulWidget {
   final int businessId;
   final String businessName;
   final int businessOwnerId;
+  final String businessPhoneNumber;
 
   const ProductsPage(
       {super.key,
       required this.businessId,
       required this.businessName,
-      required this.businessOwnerId});
+      required this.businessOwnerId,
+      required this.businessPhoneNumber});
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -39,6 +42,15 @@ class _ProductsPageState extends State<ProductsPage>
     setState(() {
       userId = id ?? 0; // Default to 'tenant' if null
     });
+  }
+
+  void makePhoneCall(String phoneNumber) async {
+    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
   }
 
   @override
@@ -147,6 +159,9 @@ class _ProductsPageState extends State<ProductsPage>
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 6, 95, 9)),
                             onPressed: () {
                               // Handle tap event, e.g., navigating to product details
                               Navigator.push(
@@ -157,7 +172,10 @@ class _ProductsPageState extends State<ProductsPage>
                                 ),
                               );
                             },
-                            child: const Text('View Details'),
+                            child: const Text(
+                              'View Details',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                       ],
@@ -173,7 +191,7 @@ class _ProductsPageState extends State<ProductsPage>
       ),
       floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
-          backgroundColor: const Color(0xFF188B07),
+          backgroundColor: const Color(0xFF065F09),
           foregroundColor: Colors.white,
           overlayColor: const Color.fromARGB(255, 11, 71, 1),
           overlayOpacity: 0.8,
@@ -194,12 +212,7 @@ class _ProductsPageState extends State<ProductsPage>
                       color: Colors.black,
                     ),
                     labelBackgroundColor: Colors.white,
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
-                      // );
-                    },
+                    onTap: () {},
                   ),
                   SpeedDialChild(
                     child: const Icon(Icons.tv),
@@ -237,10 +250,7 @@ class _ProductsPageState extends State<ProductsPage>
                     child: const Icon(Icons.call),
                     label: 'Call business',
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
-                      // );
+                      makePhoneCall(widget.businessPhoneNumber);
                     },
                   ),
                 ]),

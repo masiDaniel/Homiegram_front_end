@@ -3,7 +3,9 @@ import 'package:homi_2/models/room.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 
 class RoomInputPage extends StatefulWidget {
-  const RoomInputPage({super.key});
+  final int apartmentId;
+
+  const RoomInputPage({super.key, required this.apartmentId});
 
   @override
   _RoomInputPageState createState() => _RoomInputPageState();
@@ -17,7 +19,6 @@ class _RoomInputPageState extends State<RoomInputPage> {
       TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
   final TextEditingController _rentController = TextEditingController();
-  final TextEditingController _apartmentController = TextEditingController();
 
   Future<void> _postRoomData() async {
     if (!_formKey.currentState!.validate()) return;
@@ -30,13 +31,14 @@ class _RoomInputPageState extends State<RoomInputPage> {
       rentAmount: _rentController.text.trim(),
       occuiedStatus: false,
       roomImages: '',
-      apartmentID: int.parse(_apartmentController.text),
+      apartmentID: widget.apartmentId,
       tenantId: 0,
       rentStatus: false,
     );
 
     try {
-      await postRoomsByHouse(_apartmentController.text as int, newRoom);
+      print('the eidget id ${widget.apartmentId}');
+      await postRoomsByHouse(widget.apartmentId, newRoom);
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +57,6 @@ class _RoomInputPageState extends State<RoomInputPage> {
     _numberOfBedroomsController.clear();
     _sizeController.clear();
     _rentController.clear();
-    _apartmentController.clear();
   }
 
   @override
@@ -73,8 +74,6 @@ class _RoomInputPageState extends State<RoomInputPage> {
                   isNumeric: true),
               _buildTextField(_sizeController, 'Size (in sq meters)'),
               _buildTextField(_rentController, 'Rent Amount', isNumeric: true),
-              _buildTextField(_apartmentController, 'Apartment ID',
-                  isNumeric: true),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _postRoomData,
@@ -115,7 +114,6 @@ class _RoomInputPageState extends State<RoomInputPage> {
     _numberOfBedroomsController.dispose();
     _sizeController.dispose();
     _rentController.dispose();
-    _apartmentController.dispose();
     super.dispose();
   }
 }
