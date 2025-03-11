@@ -67,8 +67,8 @@ class StudentDashboardViewState extends State<StudentDashboardView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -85,7 +85,7 @@ class StudentDashboardViewState extends State<StudentDashboardView> {
                         //         )
                         //       : null,
                         // ),
-                        const SizedBox(
+                        SizedBox(
                           width: 20,
                         ),
                         // Text(

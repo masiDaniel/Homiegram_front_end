@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
-import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
 
@@ -45,26 +44,19 @@ class SignInState extends State<SignIn> {
         _isLoading = true;
       });
       try {
-        print("we have gotten into the begining ");
         UserRegistration? userRegistration =
             await fetchUserSignIn(email, password)
                 .timeout(const Duration(seconds: 10), onTimeout: () {
           throw TimeoutException("Connection timed out. Please try again.");
         });
-        print("this is the user registration object $userRegistration");
 
         if (userRegistration != null) {
-          print("we are inside the valid response");
           if (!mounted) return;
-          String? usertypeShared = await UserPreferences.getUserType();
-          print("this is the user type $usertypeShared");
 
           // Navigator.pushReplacementNamed(context, '/homescreen');
 
           if (!mounted) return;
           {
-            print("we are navigating to the home page");
-
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -75,7 +67,6 @@ class SignInState extends State<SignIn> {
           }
         } else {
           if (!mounted) return;
-          print("we are outside the valid response");
 
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Invalid email or password'),

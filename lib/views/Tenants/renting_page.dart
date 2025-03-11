@@ -203,7 +203,7 @@ class _RentingPageState extends State<RentingPage> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            subtitle: Text('${matchedRooms[index].rentAmount}'),
+                            subtitle: Text(matchedRooms[index].rentAmount),
                           ),
                           const Divider(),
 

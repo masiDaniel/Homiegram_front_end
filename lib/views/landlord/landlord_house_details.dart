@@ -641,8 +641,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             FutureBuilder(
               future: fetchRoomsByHouse(widget.house.houseId),
               builder: (context, snapshot) {
-                print(
-                    'this is what we get from the function ${fetchRoomsByHouse(widget.house.houseId)}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -811,7 +809,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(12)),
                   child: Image.network(
-                    "${devUrl}${widget.house.images![index]}",
+                    "$devUrl${widget.house.images![index]}",
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,

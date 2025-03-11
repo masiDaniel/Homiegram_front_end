@@ -301,7 +301,7 @@ class _MarketPlaceState extends State<MarketPlace> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  child: const Center(
+                  child: Center(
                       child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

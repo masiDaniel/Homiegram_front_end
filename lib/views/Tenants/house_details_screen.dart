@@ -454,7 +454,6 @@ class _CommentListState extends State<CommentList> {
   int? userId;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadUserId();
   }

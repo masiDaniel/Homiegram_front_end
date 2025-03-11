@@ -30,12 +30,11 @@ class _HomePageState extends State<CustomBottomNavigartion> {
     setState(() {
       userType = type ?? 'tenant'; // Default to 'tenant' if null
     });
-    print('Loaded userType: $userType');
   }
 
   List<Widget> get _pages {
     // handling cases when usertype is null
-    print('this is the usertype $userType');
+
     if ((userType ?? 'tenant') == 'landlord') {
       return const [
         HomePage(),

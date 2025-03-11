@@ -26,6 +26,7 @@ class AddHousePageState extends State<AddHousePage> {
   final PostHouseService postHouseService = PostHouseService();
   final ImagePicker _picker = ImagePicker();
 
+  @override
   void initState() {
     super.initState();
     _loadUserId();

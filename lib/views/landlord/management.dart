@@ -30,7 +30,6 @@ class _LandlordManagementState extends State<LandlordManagement> {
     setState(() {
       userIdShared = id ?? 0; // Default to 'tenant' if null
     });
-    print('Loaded userType: $userIdShared');
   }
 
   @override

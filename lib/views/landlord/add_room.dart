@@ -8,10 +8,10 @@ class RoomInputPage extends StatefulWidget {
   const RoomInputPage({super.key, required this.apartmentId});
 
   @override
-  _RoomInputPageState createState() => _RoomInputPageState();
+  RoomInputPageState createState() => RoomInputPageState();
 }
 
-class _RoomInputPageState extends State<RoomInputPage> {
+class RoomInputPageState extends State<RoomInputPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _roomNameController = TextEditingController();
@@ -37,7 +37,7 @@ class _RoomInputPageState extends State<RoomInputPage> {
     );
 
     try {
-      print('the eidget id ${widget.apartmentId}');
+  
       await postRoomsByHouse(widget.apartmentId, newRoom);
 
       if (!mounted) return;
