@@ -29,6 +29,7 @@ class UserPreferences {
     await prefs.setString(
         _keyProfilePic, userData['profile_pic'] ?? 'homiGram');
     await prefs.setBool(_keyIsLoggedIn, true);
+    await prefs.setInt('login_time', DateTime.now().millisecondsSinceEpoch);
   }
 
   // Future<void> checkSavedData() async {

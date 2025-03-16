@@ -81,204 +81,209 @@ class AddHousePageState extends State<AddHousePage> {
       appBar: AppBar(
         title: const Text('Add House'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'House Name',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'House Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a house name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _houseName = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a house name';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _houseName = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Rent Amount',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Rent Amount',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a rent amount';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _rentAmount = value!;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a rent amount';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _rentAmount = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Location',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a location';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _location = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a location';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _location = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              // Button to pick images
-              ElevatedButton(
-                onPressed: _pickImages,
-                child: const Text('Select Images'),
-              ),
-              const SizedBox(height: 16),
-              // Display selected images with restriction and deselect option
-              _imageUrls.isNotEmpty
-                  ? Wrap(
-                      spacing: 8.0,
-                      children: _imageUrls.take(4).map((url) {
-                        // Limit to 4 images
-                        return Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Image.file(
-                              File(url),
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: 4,
-                              right: 4,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _imageUrls.remove(
-                                        url); // Remove the image from the list
-                                  });
-                                },
-                                // ignore: prefer_const_constructors
-                                child: CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Colors.red,
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: Colors.white,
+                const SizedBox(height: 16),
+                // Button to pick images
+                ElevatedButton(
+                  onPressed: _pickImages,
+                  child: const Text('Select Images'),
+                ),
+                const SizedBox(height: 16),
+                // Display selected images with restriction and deselect option
+                _imageUrls.isNotEmpty
+                    ? Wrap(
+                        spacing: 8.0,
+                        children: _imageUrls.take(4).map((url) {
+                          // Limit to 4 images
+                          return Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Image.file(
+                                File(url),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                top: 4,
+                                right: 4,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _imageUrls.remove(
+                                          url); // Remove the image from the list
+                                    });
+                                  },
+                                  // ignore: prefer_const_constructors
+                                  child: CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: Colors.red,
+                                    child: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    )
-                  : const Center(child: Text('No images selected.')),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'descripion',
-                  border: OutlineInputBorder(),
+                            ],
+                          );
+                        }).toList(),
+                      )
+                    : const Center(child: Text('No images selected.')),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'descripion',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a descriptiom';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _description = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a descriptiom';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _description = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Bank Name',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Bank Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a bank name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _bankName = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bank name';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _bankName = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'account number',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'account number',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an account number';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    __accountNumber = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an account number';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  __accountNumber = value!;
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // Create a new house instance
-                    final newHouse = GetHouse(
-                      name: _houseName,
-                      rentAmount: _rentAmount,
-                      rating: 2, // Assuming a default rating
-                      description: _description, // Add description if available
-                      location: _location,
-                      images: _imageUrls, // Assuming a list of images
-                      amenities: [1], // Include if you have amenities
-                      landlordId: userIdShared as int,
-                      houseId: 0,
-                      bankName: _bankName,
-                      accountNumber:
-                          __accountNumber, // Set the correct landlord ID
-                    );
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      // Create a new house instance
+                      final newHouse = GetHouse(
+                        name: _houseName,
+                        rentAmount: _rentAmount,
+                        rating: 2, // Assuming a default rating
+                        description:
+                            _description, // Add description if available
+                        location: _location,
+                        images: _imageUrls, // Assuming a list of images
+                        amenities: [1], // Include if you have amenities
+                        landlordId: userIdShared as int,
+                        houseId: 0,
+                        bankName: _bankName,
+                        accountNumber:
+                            __accountNumber, // Set the correct landlord ID
+                      );
+                      print('this is the data ${newHouse}');
+                      // Call the addHouse method and await the response
+                      bool success =
+                          await postHouseService.postHouseWithImages(newHouse);
 
-                    // Call the addHouse method and await the response
-                    bool success =
-                        await postHouseService.postHouseWithImages(newHouse);
-
-                    if (success) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('House added successfully!')),
-                        );
-                        Navigator.pop(
-                            context); // Navigate back or clear the form
-                      }
-                    } else {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Failed to add house.')),
-                        );
+                      if (success) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('House added successfully!')),
+                          );
+                          Navigator.pop(
+                              context); // Navigate back or clear the form
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Failed to add house.')),
+                          );
+                        }
                       }
                     }
-                  }
-                },
-                child: const Text('Add House'),
-              ),
-            ],
+                  },
+                  child: const Text('Add House'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

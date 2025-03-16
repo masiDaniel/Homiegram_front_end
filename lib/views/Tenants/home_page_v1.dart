@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final bool isConditionMet = false;
+  final bool isConditionMet = true;
 
   //this will hold the current filter selection
   String selectedFilter = 'All';
@@ -178,11 +178,24 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(fontSize: 16)),
                         ],
                       );
-                    } else if (snapshot.hasError) {
+                    } else if (!snapshot.hasData ||
+                        snapshot.data == null ||
+                        snapshot.data!.isEmpty) {
                       return Center(
-                        child: Image.asset(
-                          'assets/images/splash.jpeg', // Fallback image path
-                          fit: BoxFit.contain,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/splash.jpeg', // Fallback image path
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              "No advertisements available",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                       );
                     } else {
@@ -309,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                                           const SizedBox(height: 10),
                                           ElevatedButton(
                                               onPressed: () {},
-                                              child: const Text('Go to page'))
+                                              child: const Text('Go to page')),
                                         ],
                                       ),
                                     ),

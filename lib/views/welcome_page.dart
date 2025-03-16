@@ -29,6 +29,32 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(
               height: 50,
             ),
+            Container(
+              width: 150, // Set desired width
+              height: 150, // Set desired height
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color
+                borderRadius: BorderRadius.circular(15), // Rounded corners
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.asset(
+                  "assets/images/production_splash.png", // Replace with your image path
+                  fit: BoxFit
+                      .cover, // Ensures image fits well inside the container
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
             Wrap(
               alignment: WrapAlignment.center,
               children: [

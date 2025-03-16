@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/providers/user_provider.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
+import 'package:homi_2/views/Shared/video_splash_screen.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
 import 'package:homi_2/views/Tenants/all_houses.dart';
 import 'package:homi_2/views/Tenants/home_page_v1.dart';
@@ -44,10 +45,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '',
       initialRoute: initialRoute,
+      home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),
-        '/': (context) => const WelcomePage(),
+        '/welcome': (context) => const WelcomePage(),
         '/signin': (context) => const SignIn(),
         '/signup': (context) => const SignUp(),
         '/about': (context) => AboutHomiegram(),

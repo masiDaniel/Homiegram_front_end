@@ -120,6 +120,7 @@ class _SearchPageState extends State<SearchPage> {
           : Column(
               children: [
                 Expanded(
+                  // create an animation for this
                   child: displayedHouses.isEmpty
                       ? const Center(child: Text('No houses found.'))
                       : ListView.builder(

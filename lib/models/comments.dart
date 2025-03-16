@@ -3,17 +3,18 @@ class GetComments {
   final int houseId;
   final int userId;
   final String comment;
-  final bool nested;
-  final String nestedId;
+  final int? parent;
+  final int likes;
+  final int dislikes;
 
-  GetComments({
-    required this.commentId,
-    required this.houseId,
-    required this.userId,
-    required this.comment,
-    required this.nested,
-    required this.nestedId,
-  });
+  GetComments(
+      {required this.commentId,
+      required this.houseId,
+      required this.userId,
+      required this.comment,
+      this.parent,
+      required this.likes,
+      required this.dislikes});
 
   factory GetComments.fromJSon(Map<String, dynamic> json) {
     return GetComments(
@@ -21,8 +22,9 @@ class GetComments {
       houseId: json['house_id'] ?? 0,
       userId: json['user_id'] ?? 0,
       comment: json['comment'] ?? '',
-      nested: json['nested'] ?? false,
-      nestedId: json['nested_id'] ?? 0,
+      parent: json['parent'],
+      likes: json['total_likes'] ?? 0,
+      dislikes: json['total_dislikes'] ?? 0,
     );
   }
 
@@ -32,8 +34,6 @@ class GetComments {
       "house_id": houseId,
       "user_id": userId,
       "comment": comment,
-      "nested": nested,
-      "nested_id": nestedId
     };
   }
 }

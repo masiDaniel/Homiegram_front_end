@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/bookmark.dart';
@@ -152,6 +153,45 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     return filteredHouses;
   }
 
+  Future<void> onReact(int commentId, String action) async {
+    final userId = await UserPreferences.getUserId(); // Retrieve user ID
+    if (userId == null) return; // Ensure user ID is available
+
+    final url = Uri.parse(
+        "https://your-api-url.com/comments/react/"); // Update with your API endpoint
+
+    final response = await http.put(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "comment_id": commentId,
+        "action": action, // "like" or "dislike"
+        "user_id": userId
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print(data["message"]); // "Comment liked" or "Comment disliked"
+
+      // Update UI
+      setState(() {
+        // final index = widget.comments.indexWhere((c) => c.commentId == commentId);
+        // if (index != -1) {
+        //   if (action == "like") {
+        //     widget.comments[index].likes?.add(userId);
+        //     widget.comments[index].dislikes?.remove(userId);
+        //   } else if (action == "dislike") {
+        //     widget.comments[index].dislikes?.add(userId);
+        //     widget.comments[index].likes?.remove(userId);
+        //   }
+        // }
+      });
+    } else {
+      print("Failed to react: ${response.body}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
@@ -232,7 +272,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
             const SizedBox(height: 10),
             CommentList(
               comments: _comments,
-              onDelete: deleteComment, // Pass the delete function
+              onDelete: deleteComment,
+              onReact: onReact,
             ),
           ],
         ),
@@ -438,11 +479,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
 class CommentList extends StatefulWidget {
   final List<GetComments> comments;
-  final Function(int) onDelete; // Callback for deleting comments
+  final Function(int) onDelete;
+  final Function(int, String) onReact; // Callback for like/dislike
 
   const CommentList({
     required this.comments,
     required this.onDelete,
+    required this.onReact, // New callback
     Key? key,
   }) : super(key: key);
 
@@ -452,6 +495,7 @@ class CommentList extends StatefulWidget {
 
 class _CommentListState extends State<CommentList> {
   int? userId;
+
   @override
   void initState() {
     super.initState();
@@ -461,12 +505,22 @@ class _CommentListState extends State<CommentList> {
   Future<void> _loadUserId() async {
     int? id = await UserPreferences.getUserId();
     setState(() {
-      userId = id ?? 0; // Default to 'tenant' if null
+      userId = id ?? 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<int?, List<GetComments>> groupedComments = {};
+
+    // Group comments by parent ID
+    for (var comment in widget.comments) {
+      groupedComments.putIfAbsent(comment.parent, () => []).add(comment);
+    }
+
+    List<GetComments> rootComments =
+        groupedComments[null] ?? []; // Root level comments
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -480,36 +534,73 @@ class _CommentListState extends State<CommentList> {
         const SizedBox(height: 10),
         ListView.builder(
           shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: widget.comments.length,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: rootComments.length,
           itemBuilder: (context, index) {
-            final comment = widget.comments.reversed.toList()[
-                index]; // reverse the list inorder to show the latest comments first
-
-            return Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF126E06)),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(children: [
-                Expanded(child: Text(comment.comment)),
-                if (comment.userId == userId)
-                  IconButton(
-                    onPressed: () {
-                      widget.onDelete(comment.commentId); // Use the callback
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Color(0xFF126E06),
-                    ),
-                  ),
-              ]),
-            );
+            final comment = rootComments.reversed.toList()[index];
+            print('this is a comment ${comment}');
+            return _buildCommentTile(comment, groupedComments);
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildCommentTile(
+      GetComments comment, Map<int?, List<GetComments>> groupedComments,
+      {int depth = 0}) {
+    return Padding(
+      padding: EdgeInsets.only(left: depth * 20.0), // Indent replies
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF126E06)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Expanded(child: Text(comment.comment)),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => widget.onReact(comment.commentId, "like"),
+                    icon: const Icon(Icons.thumb_up, color: Colors.grey),
+                  ),
+                  Text("${comment.likes}"), // Display total likes
+
+                  IconButton(
+                    onPressed: () =>
+                        widget.onReact(comment.commentId, "dislike"),
+                    icon: const Icon(Icons.thumb_down, color: Colors.grey),
+                  ),
+                  Text("${comment.dislikes}"), // Display total dislikes
+                ],
+              ),
+              if (comment.userId == userId)
+                IconButton(
+                  onPressed: () {
+                    widget.onDelete(comment.commentId);
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Color(0xFF126E06),
+                  ),
+                ),
+            ]),
+            // Render replies if any
+            if (groupedComments.containsKey(comment.commentId))
+              Column(
+                children: groupedComments[comment.commentId]!
+                    .map((reply) => _buildCommentTile(reply, groupedComments,
+                        depth: depth + 1))
+                    .toList(),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

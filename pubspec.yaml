@@ -86,15 +86,15 @@ flutter:
   
 
 
-flutter_native_splash:
-  android: true
-  ios: true
-  web: false
-  image: assets/images/production_splash.png
-  color: "#FFFFFF"
-  android_12:
-    image: assets/images/production_splash.png
-    color: "#FFFFFF"
+# flutter_native_splash:
+#   android: true
+#   ios: true
+#   web: false
+#   image: assets/images/production_splash.png
+#   color: "#FFFFFF"
+#   android_12:
+#     image: assets/images/production_splash.png
+#     color: "#FFFFFF"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
