@@ -8,6 +8,7 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:homi_2/views/Tenants/house_details_screen.dart';
+import 'package:lottie/lottie.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -28,7 +29,6 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _loadAllHouses();
-    _fetchAmenities();
     _loadUserId();
   }
 
@@ -55,19 +55,19 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  Future<void> _fetchAmenities() async {
-    try {
-      amenities = await fetchAmenities();
-      setState(() {
-        isLoadingAmenities = false;
-      });
-    } catch (e) {
-      log('Error fetching amenities: $e');
-      setState(() {
-        isLoadingAmenities = false;
-      });
-    }
-  }
+  // Future<void> _fetchAmenities() async {
+  //   try {
+  //     amenities = await fetchAmenities();
+  //     setState(() {
+  //       isLoadingAmenities = false;
+  //     });
+  //   } catch (e) {
+  //     log('Error fetching amenities: $e');
+  //     setState(() {
+  //       isLoadingAmenities = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,10 @@ class _SearchPageState extends State<SearchPage> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.bookmark_added),
+              icon: const Icon(
+                Icons.bookmark_added,
+                color: Color(0xFF126E06),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -122,7 +125,14 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   // create an animation for this
                   child: displayedHouses.isEmpty
-                      ? const Center(child: Text('No houses found.'))
+                      ? Center(
+                          child: Lottie.asset(
+                            'assets/animations/notFound.json', // Path to your animation file
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                        )
                       : ListView.builder(
                           itemCount: displayedHouses.length,
                           itemBuilder: (context, index) {

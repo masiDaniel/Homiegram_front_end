@@ -6,6 +6,7 @@ import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _rememberMe = false;
 
   /// this is a function that takes the input from the textfields and processes it
   /// once processed it calls the fetchUserRegistration with email and password as required parameters
@@ -28,6 +30,7 @@ class SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
+    _loadSavedCredentials();
   }
 
   void _signIn() async {
@@ -57,6 +60,7 @@ class SignInState extends State<SignIn> {
 
           if (!mounted) return;
           {
+            _saveCredentials();
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -91,6 +95,28 @@ class SignInState extends State<SignIn> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please enter a valid email and password'),
       ));
+    }
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _emailController.text = prefs.getString('username') ?? '';
+      _passwordController.text = prefs.getString('password') ?? '';
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+    });
+  }
+
+  Future<void> _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString('username', _emailController.text);
+      await prefs.setString('password', _passwordController.text);
+      await prefs.setBool('rememberMe', _rememberMe);
+    } else {
+      await prefs.remove('username');
+      await prefs.remove('password');
+      await prefs.setBool('rememberMe', false);
     }
   }
 
@@ -131,6 +157,20 @@ class SignInState extends State<SignIn> {
                     obscureText: true,
                     suffixIcon: Icons.password,
                     onChanged: (value) {},
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Remember Me'),
+                      Checkbox(
+                        value: _rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            _rememberMe = value ?? false;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 25),
                   const Text(

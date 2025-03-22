@@ -123,6 +123,33 @@ Future<List<Products>> fetchProducts() async {
   }
 }
 
+Future<List<Products>> fetchProductsSeller() async {
+  String? token = await UserPreferences.getAuthToken();
+  try {
+    final headersWithToken = {
+      ...headers,
+      'Authorization': 'Token $token',
+    };
+
+    final response = await http.get(
+        Uri.parse('$devUrl/business/getProducts/?business=null'),
+        headers: headersWithToken);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> productsData = json.decode(response.body);
+
+      final List<Products> products =
+          productsData.map((json) => Products.fromJSon(json)).toList();
+
+      return products;
+    } else {
+      throw Exception('failed to fetch arguments');
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
 Future<bool> postProducts(
   Map<String, Object?> productData,
 ) async {

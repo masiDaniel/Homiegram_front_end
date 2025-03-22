@@ -38,14 +38,14 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+    fetchUsers();
     checkCaretakerStatus();
     _downloadAndSaveFile('$devUrl${widget.house.contractUrl}');
   }
 
   ///
   ///how will i transfer this to its own individual file?
-  Future<void> _fetchUsers() async {
+  Future<void> fetchUsers() async {
     setState(() {
       isLoading = true;
     });
@@ -539,28 +539,28 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                         },
                       ),
                     ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF013803),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        // Trigger file download
-                        _downloadAndSaveFile(
-                            '$devUrl${widget.house.contractUrl}',
-                            allowDownload: true);
-                      },
-                      icon: const Icon(
-                        Icons.download,
-                        color: Colors.white,
-                      ),
-                      label: const Text('Download'),
-                    ),
+                    // ElevatedButton.icon(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: const Color(0xFF013803),
+                    //     foregroundColor: Colors.white,
+                    //     padding: const EdgeInsets.symmetric(
+                    //         vertical: 12, horizontal: 20),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //   ),
+                    //   onPressed: () {
+                    //     // Trigger file download
+                    //     _downloadAndSaveFile(
+                    //         '$devUrl${widget.house.contractUrl}',
+                    //         allowDownload: true);
+                    //   },
+                    //   icon: const Icon(
+                    //     Icons.download,
+                    //     color: Colors.white,
+                    //   ),
+                    //   label: const Text('Download'),
+                    // ),
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -767,11 +767,11 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               showAdvertCreationDialog(context);
             },
           ),
-          SpeedDialChild(
-            child: const Icon(Icons.tv),
-            label: 'Statistics',
-            onTap: () {},
-          ),
+          // SpeedDialChild(
+          //   child: const Icon(Icons.tv),
+          //   label: 'Statistics',
+          //   onTap: () {},
+          // ),
         ],
       ),
     );
@@ -853,7 +853,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                     const Icon(Icons.attach_money,
                         color: Colors.green, size: 18),
                     const SizedBox(width: 5),
-                    Text('\$${widget.house.rentAmount}',
+                    Text('ksh ${widget.house.rentAmount}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

@@ -6,6 +6,7 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/landlord_house_details.dart';
 import 'package:homi_2/views/landlord/add_house.dart';
+import 'package:lottie/lottie.dart';
 
 class LandlordManagement extends StatefulWidget {
   const LandlordManagement({super.key});
@@ -59,7 +60,14 @@ class _LandlordManagementState extends State<LandlordManagement> {
               )),
             );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Lottie.asset(
+                'assets/animations/notFound.json', // Path to your animation file
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No houses available.'));
           }
@@ -123,7 +131,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      Text('Rent: \$${house.rentAmount}'),
+                      Text('Rent: Ksh${house.rentAmount}'),
                       const SizedBox(height: 4),
                       Text('Location: ${house.location}'),
                       // Add more details as needed
@@ -150,16 +158,16 @@ class _LandlordManagementState extends State<LandlordManagement> {
               );
             },
           ),
-          SpeedDialChild(
-            child: const Icon(Icons.tv),
-            label: 'Advertise',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddHousePage()),
-              );
-            },
-          ),
+          // SpeedDialChild(
+          //   child: const Icon(Icons.tv),
+          //   label: 'Advertise',
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => const AddHousePage()),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

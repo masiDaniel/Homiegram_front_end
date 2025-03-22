@@ -4,6 +4,7 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Tenants/add_product_screen.dart';
 import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -212,7 +213,15 @@ class _ProductsPageState extends State<ProductsPage>
                       color: Colors.black,
                     ),
                     labelBackgroundColor: Colors.white,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddProductPage(
+                                  businessId: widget.businessId,
+                                )),
+                      );
+                    },
                   ),
                   SpeedDialChild(
                     child: const Icon(Icons.tv),

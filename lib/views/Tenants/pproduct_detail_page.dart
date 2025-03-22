@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:lottie/lottie.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Products product;
@@ -52,39 +53,42 @@ class ProductDetailPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
-                  onPressed: () {
-                    // Handle bookmark functionality
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Coming Soon!'),
-                          content: const Text(
-                              'This feature will be available in future updates.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.bookmark,
-                    color: Colors.white,
-                  ),
-                  label: const Text(
-                    'Bookmark',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                ///
+                /// will return this after playstore verifies
+                ///
+                // ElevatedButton.icon(
+                //   style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
+                //   onPressed: () {
+                //     // Handle bookmark functionality
+                //     showDialog(
+                //       context: context,
+                //       builder: (BuildContext context) {
+                //         return AlertDialog(
+                //           title: const Text('Coming Soon!'),
+                //           content: const Text(
+                //               'This feature will be available in future updates.'),
+                //           actions: [
+                //             TextButton(
+                //               onPressed: () {
+                //                 Navigator.of(context).pop(); // Close the dialog
+                //               },
+                //               child: const Text('OK'),
+                //             ),
+                //           ],
+                //         );
+                //       },
+                //     );
+                //   },
+                //   icon: const Icon(
+                //     Icons.bookmark,
+                //     color: Colors.white,
+                //   ),
+                //   label: const Text(
+                //     'Bookmark',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                // ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF065F09)),
@@ -98,26 +102,47 @@ class ProductDetailPage extends StatelessWidget {
                           content: const Text(
                               'Would you like to buy directly or add this item to your cart?'),
                           actions: [
+                            // TextButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //       backgroundColor: const Color(0xFF065F09)),
+                            //   onPressed: () {
+                            //     // Add to Cart action logic here
+                            //     Navigator.of(context).pop(); // Close the dialog
+                            //     // For example: cartController.addItem(item);
+                            //   },
+                            //   child: const Text(
+                            //     'Add to Cart',
+                            //     style: TextStyle(color: Colors.white),
+                            //   ),
+                            // ),
                             TextButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF065F09)),
                               onPressed: () {
-                                // Add to Cart action logic here
-                                Navigator.of(context).pop(); // Close the dialog
-                                // For example: cartController.addItem(item);
-                              },
-                              child: const Text(
-                                'Add to Cart',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            TextButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF065F09)),
-                              onPressed: () {
-                                // Buy Directly action logic here
-                                Navigator.of(context).pop(); // Close the dialog
-                                // For example: Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(item: item)));
+                                Navigator.of(context)
+                                    .pop(); // Close the first dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Lottie.asset(
+                                              'assets/animations/moneySuccess.json',
+                                              width: 100,
+                                              height: 100),
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                              "Product purchased successfully!",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               child: const Text(
                                 'Buy Now',

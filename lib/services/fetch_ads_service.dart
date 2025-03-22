@@ -41,7 +41,7 @@ Future<AdRequest> postAds(AdRequest adRequest) async {
     body: jsonEncode(adRequest.toJson()), // Properly encode the body
   );
 
-  if (response.statusCode == 202) {
+  if (response.statusCode == 201) {
     log("Ad submission was successful");
 
     final Map<String, dynamic> jsonResponse = json.decode(response.body);

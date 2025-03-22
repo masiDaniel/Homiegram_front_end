@@ -3,19 +3,25 @@ class Ad {
   late String description;
   final String? imageUrl;
   final String? videoUrl;
+  final String startDate;
+  final String endDate;
 
   Ad(
       {this.imageUrl,
       this.videoUrl,
       required this.title,
-      required this.description});
+      required this.description,
+      required this.startDate,
+      required this.endDate});
 
   factory Ad.fromJson(Map<String, dynamic> json) {
     return Ad(
         imageUrl: json['image'] as String?,
         videoUrl: json['video_file'] as String?,
         title: json['title'] as String,
-        description: json['description'] as String);
+        description: json['description'] as String,
+        startDate: json['start_date'],
+        endDate: json['end_date']);
   }
 }
 

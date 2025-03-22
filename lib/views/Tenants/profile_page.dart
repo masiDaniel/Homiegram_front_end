@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -28,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     loadUserId();
+    debugSharedPreferences();
   }
 
   // this is a function that takes the first letter from the name of the user
@@ -43,13 +45,14 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Future<void> debugSharedPreferences() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   print('Stored Last Name: ${prefs.getString('lastName')}');
-  //   print('Stored Email: ${prefs.getString('userEmail')}');
-  //   print('Stored ID Number: ${prefs.getInt('idNumber')}');
-  //   print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
-  // }
+  Future<void> debugSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    print('Stored Last Name: ${prefs.getString('lastName')}');
+    print('Stored Email: ${prefs.getString('userEmail')}');
+    print('Stored ID Number: ${prefs.getInt('idNumber')}');
+    print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
+    print('Stored profile photo: ${prefs.getString('profilePicture')}');
+  }
 
   Future<void> loadUserId() async {
     int? id = await UserPreferences.getUserId();
@@ -155,8 +158,70 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<void> pickImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          currentUserProfilePicture = pickedFile.path;
+        });
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Failed to select image. Please try again.")),
+      );
+    }
+  }
+
+  void showFullImage() {
+    if (currentUserProfilePicture != null &&
+        currentUserProfilePicture!.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          child:
+              Image(image: NetworkImage(('$devUrl$currentUserProfilePicture'))),
+        ),
+      );
+    }
+  }
+
+  ImageProvider<Object> getProfileImage(String? profilePicture, String devUrl) {
+    // Default fallback image
+    const defaultImage = AssetImage('assets/images/default_avatar.jpeg');
+    const splashImage = AssetImage('assets/images/splash.jpeg');
+
+    // If profile picture is missing or set to "homigram", return splash image
+    if (profilePicture == null ||
+        profilePicture.isEmpty ||
+        profilePicture == "homigram") {
+      return splashImage;
+    }
+
+    // If stored profile picture follows "/media/photo.jpeg" format, attach devUrl
+    if (profilePicture.startsWith("/media/")) {
+      return NetworkImage('$devUrl$profilePicture');
+    }
+
+    // If the stored profile picture is a valid local file, return it
+    final file = File(profilePicture);
+    if (file.existsSync()) {
+      return FileImage(file);
+    }
+
+    // If nothing works, return the default avatar
+    return defaultImage;
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool showInitials = currentUserProfilePicture == "homigram";
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile Page',
@@ -181,40 +246,39 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(16.0),
         children: [
           Center(
-            child: GestureDetector(
-              onTap: () async {
-                // Implement profile picture selection
-                final ImagePicker picker = ImagePicker();
-                final XFile? pickedFile =
-                    await picker.pickImage(source: ImageSource.gallery);
-                if (pickedFile != null) {
-                  // await UserPreferences.setProfilePicture(pickedFile.path);
-                  setState(() {
-                    currentUserProfilePicture = pickedFile
-                        .path; // Update imageUrl with the selected image path
-                  });
-                }
-              },
-
-              // handle this error and logic flow
-              child: CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 2, 75, 50),
-                radius: 60,
-                backgroundImage: (currentUserProfilePicture != null &&
-                        currentUserProfilePicture!.isNotEmpty)
-                    ? NetworkImage('$devUrl$currentUserProfilePicture')
-                    : const AssetImage('assets/images/splash.jpeg')
-                        as ImageProvider,
-                child: (currentUserProfilePicture == null)
-                    ? Text(
-                        extractInitials(currentUserFirstName ?? ''),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                        ),
-                      )
-                    : null,
-              ),
+            child: Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: CircleAvatar(
+                    backgroundColor: const Color.fromARGB(255, 2, 75, 50),
+                    radius: 60,
+                    backgroundImage:
+                        getProfileImage(currentUserProfilePicture, devUrl),
+                    child: showInitials
+                        ? Text(
+                            extractInitials(currentUserFirstName ?? ''),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                            ),
+                          )
+                        : null,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: pickImage,
+                    child: const CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.edit, color: Colors.black, size: 20),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -228,11 +292,11 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.person, color: Color(0xFF126E06)),
-                    title: const Text('User ID'),
-                    subtitle: Text('$currentUserId'),
-                  ),
+                  // ListTile(
+                  //   leading: const Icon(Icons.person, color: Color(0xFF126E06)),
+                  //   title: const Text('User ID'),
+                  //   subtitle: Text('$currentUserId'),
+                  // ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.account_circle,
@@ -289,6 +353,24 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: Icon(Icons.bookmark_add_outlined,
                           color: Color(0xFF126E06)),
                       title: Text('bookmarks'),
+                    ),
+                  ),
+                  const Divider(),
+                  GestureDetector(
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => BookmarkedHousesPage(
+                      //       userId: currentUserId!,
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    child: const ListTile(
+                      leading:
+                          Icon(Icons.money_off_sharp, color: Color(0xFF126E06)),
+                      title: Text('Purchases'),
                     ),
                   ),
                 ],

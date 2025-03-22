@@ -154,15 +154,16 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   }
 
   Future<void> onReact(int commentId, String action) async {
-    final userId = await UserPreferences.getUserId(); // Retrieve user ID
-    if (userId == null) return; // Ensure user ID is available
-
-    final url = Uri.parse(
-        "https://your-api-url.com/comments/react/"); // Update with your API endpoint
-
+    final userId = await UserPreferences.getUserId();
+    String? token = await UserPreferences.getAuthToken();
+    if (userId == null) return;
+    final url = Uri.parse("$devUrl/comments/post/");
     final response = await http.put(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Token $token',
+      },
       body: jsonEncode({
         "comment_id": commentId,
         "action": action, // "like" or "dislike"
@@ -479,13 +480,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
 class CommentList extends StatefulWidget {
   final List<GetComments> comments;
+  final Function(int, String) onReact;
   final Function(int) onDelete;
-  final Function(int, String) onReact; // Callback for like/dislike
 
   const CommentList({
     required this.comments,
+    required this.onReact,
     required this.onDelete,
-    required this.onReact, // New callback
     Key? key,
   }) : super(key: key);
 
@@ -495,11 +496,14 @@ class CommentList extends StatefulWidget {
 
 class _CommentListState extends State<CommentList> {
   int? userId;
+  Map<int, int> likesMap = {}; // Store likes count
+  Map<int, int> dislikesMap = {}; // Store dislikes count
 
   @override
   void initState() {
     super.initState();
     _loadUserId();
+    _initializeReactionCounts();
   }
 
   Future<void> _loadUserId() async {
@@ -509,17 +513,35 @@ class _CommentListState extends State<CommentList> {
     });
   }
 
+  void _initializeReactionCounts() {
+    for (var comment in widget.comments) {
+      likesMap[comment.commentId] = comment.likes;
+      dislikesMap[comment.commentId] = comment.dislikes;
+    }
+  }
+
+  void _handleReact(int commentId, String reactionType) {
+    setState(() {
+      if (reactionType == "like") {
+        likesMap[commentId] = (likesMap[commentId] ?? 0) + 1;
+      } else {
+        dislikesMap[commentId] = (dislikesMap[commentId] ?? 0) + 1;
+      }
+    });
+
+    // Call backend to update database
+    widget.onReact(commentId, reactionType);
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<int?, List<GetComments>> groupedComments = {};
 
-    // Group comments by parent ID
     for (var comment in widget.comments) {
       groupedComments.putIfAbsent(comment.parent, () => []).add(comment);
     }
 
-    List<GetComments> rootComments =
-        groupedComments[null] ?? []; // Root level comments
+    List<GetComments> rootComments = groupedComments[null] ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -538,7 +560,6 @@ class _CommentListState extends State<CommentList> {
           itemCount: rootComments.length,
           itemBuilder: (context, index) {
             final comment = rootComments.reversed.toList()[index];
-            print('this is a comment ${comment}');
             return _buildCommentTile(comment, groupedComments);
           },
         ),
@@ -550,7 +571,7 @@ class _CommentListState extends State<CommentList> {
       GetComments comment, Map<int?, List<GetComments>> groupedComments,
       {int depth = 0}) {
     return Padding(
-      padding: EdgeInsets.only(left: depth * 20.0), // Indent replies
+      padding: EdgeInsets.only(left: depth * 20.0),
       child: Container(
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -566,31 +587,23 @@ class _CommentListState extends State<CommentList> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () => widget.onReact(comment.commentId, "like"),
+                    onPressed: () => _handleReact(comment.commentId, "like"),
                     icon: const Icon(Icons.thumb_up, color: Colors.grey),
                   ),
-                  Text("${comment.likes}"), // Display total likes
-
+                  Text("${likesMap[comment.commentId] ?? comment.likes}"),
                   IconButton(
-                    onPressed: () =>
-                        widget.onReact(comment.commentId, "dislike"),
+                    onPressed: () => _handleReact(comment.commentId, "dislike"),
                     icon: const Icon(Icons.thumb_down, color: Colors.grey),
                   ),
-                  Text("${comment.dislikes}"), // Display total dislikes
+                  Text("${dislikesMap[comment.commentId] ?? comment.dislikes}"),
                 ],
               ),
               if (comment.userId == userId)
                 IconButton(
-                  onPressed: () {
-                    widget.onDelete(comment.commentId);
-                  },
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Color(0xFF126E06),
-                  ),
+                  onPressed: () => widget.onDelete(comment.commentId),
+                  icon: const Icon(Icons.delete, color: Color(0xFF126E06)),
                 ),
             ]),
-            // Render replies if any
             if (groupedComments.containsKey(comment.commentId))
               Column(
                 children: groupedComments[comment.commentId]!

@@ -17,7 +17,7 @@ Future<List<Amenities>> fetchAmenities() async {
       'Authorization': 'Token $token',
     };
 
-    final response = await http.get(Uri.parse('$devUrl/houses/getAmenities'),
+    final response = await http.get(Uri.parse('$devUrl/houses/amenities'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
@@ -43,7 +43,7 @@ Future<List<Amenities>> fetchAllAmenities() async {
       'Authorization': 'Token $token',
     };
 
-    final response = await http.get(Uri.parse('$devUrl/houses/getAmenities'),
+    final response = await http.get(Uri.parse('$devUrl/houses/amenities'),
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
