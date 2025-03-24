@@ -42,7 +42,6 @@ Future<bool> postBusiness(
 ) async {
   String? token = await UserPreferences.getAuthToken();
   try {
-    print('this is the business data ${businessData}');
     final headersWithToken = {
       ...headers,
       'Authorization': 'Token $token',

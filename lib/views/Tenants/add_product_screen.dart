@@ -11,15 +11,15 @@ import 'package:lottie/lottie.dart';
 class AddProductPage extends StatefulWidget {
   final int businessId;
 
-  AddProductPage({
+  const AddProductPage({
     super.key,
     required this.businessId,
   });
   @override
-  _AddProductPageState createState() => _AddProductPageState();
+  AddProductPageState createState() => AddProductPageState();
 }
 
-class _AddProductPageState extends State<AddProductPage> {
+class AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController productNameController = TextEditingController();
@@ -33,7 +33,6 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchCategories();
   }
@@ -44,13 +43,10 @@ class _AddProductPageState extends State<AddProductPage> {
       setState(() {
         categories = fetchedCategories;
         isLoading = false;
-        print(
-            "Fetched categories: ${categories.map((c) => c.categoryName).toList()}");
       });
     } catch (e) {
-      print('Error fetching categories: $e');
       setState(() {
-        isLoading = false; // ✅ Stop loading even if there's an error
+        isLoading = false;
       });
     }
   }

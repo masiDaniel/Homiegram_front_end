@@ -49,17 +49,17 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  Future<void> _addItemsToCart(List<int> productIds) async {
-    final cart = await userCartFuture;
-    if (cart == null) return;
+  // Future<void> _addItemsToCart(List<int> productIds) async {
+  //   final cart = await userCartFuture;
+  //   if (cart == null) return;
 
-    bool success = await cartService.addToCart(cart.id, productIds);
-    if (success) {
-      setState(() {
-        userCartFuture = _loadCart(); // Refresh the cart
-      });
-    }
-  }
+  //   bool success = await cartService.addToCart(cart.id, productIds);
+  //   if (success) {
+  //     setState(() {
+  //       userCartFuture = _loadCart(); // Refresh the cart
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

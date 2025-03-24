@@ -256,7 +256,7 @@ class AddHousePageState extends State<AddHousePage> {
                         accountNumber:
                             __accountNumber, // Set the correct landlord ID
                       );
-                      print('this is the data ${newHouse}');
+
                       // Call the addHouse method and await the response
                       bool success =
                           await postHouseService.postHouseWithImages(newHouse);

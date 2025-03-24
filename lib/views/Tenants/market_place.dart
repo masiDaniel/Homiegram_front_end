@@ -6,7 +6,6 @@ import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/add_product_screen.dart';
-import 'package:homi_2/views/Tenants/business_bookmarks.dart';
 import 'package:homi_2/views/Tenants/cart_page.dart';
 import 'package:homi_2/views/Tenants/products_page.dart';
 import 'package:lottie/lottie.dart';
@@ -97,7 +96,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddProductPage(
+                        builder: (context) => const AddProductPage(
                               businessId: 0,
                             )),
                   );

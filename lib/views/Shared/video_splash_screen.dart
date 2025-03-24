@@ -6,10 +6,10 @@ class VideoSplashScreen extends StatefulWidget {
   const VideoSplashScreen({Key? key}) : super(key: key);
 
   @override
-  _VideoSplashScreenState createState() => _VideoSplashScreenState();
+  VideoSplashScreenState createState() => VideoSplashScreenState();
 }
 
-class _VideoSplashScreenState extends State<VideoSplashScreen> {
+class VideoSplashScreenState extends State<VideoSplashScreen> {
   late VideoPlayerController _controller;
 
   @override

@@ -172,8 +172,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      print(data["message"]); // "Comment liked" or "Comment disliked"
+      // final data = jsonDecode(response.body);
 
       // Update UI
       setState(() {
@@ -189,7 +188,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
         // }
       });
     } else {
-      print("Failed to react: ${response.body}");
+      log("Failed to react: ${response.body}");
     }
   }
 

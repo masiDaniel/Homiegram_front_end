@@ -161,7 +161,7 @@ class SignInState extends State<SignIn> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Remember Me'),
+                      const Text('Remember Me'),
                       Checkbox(
                         value: _rememberMe,
                         onChanged: (value) {

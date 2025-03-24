@@ -21,7 +21,7 @@ String devUrl = 'https://hommiegram.azurewebsites.net';
 
 Future fetchUserSignIn(String username, String password) async {
   try {
-    print("this is the url: $devUrl/accounts/login/");
+  
     final response = await http.post(
       Uri.parse("$devUrl/accounts/login/"),
       headers: headers,
@@ -33,7 +33,7 @@ Future fetchUserSignIn(String username, String password) async {
 
     if (response.statusCode == 200) {
       final userData = json.decode(response.body);
-      print('this is the user data ${userData}');
+ 
 
       // how to handle saving of data well
       await UserPreferences.saveUserData(userData);

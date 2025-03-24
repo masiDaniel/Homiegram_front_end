@@ -67,7 +67,6 @@ class PostHouseService {
     }
     String? token = await UserPreferences.getAuthToken();
     try {
-      print("Form data: ${formData}");
       final response = await dio.post(
         '$devUrl/houses/gethouses/',
         data: formData,
@@ -77,7 +76,9 @@ class PostHouseService {
           },
         ),
       );
-      print("Response: ${response.data}");
+      if (response.statusCode == 200) {
+        return true;
+      }
       return true;
     } on DioException catch (e) {
       log('Failed to post house: ${e.response?.data}');

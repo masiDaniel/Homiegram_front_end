@@ -4,8 +4,6 @@ import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/Shared/chat_page.dart';
-import 'package:homi_2/views/Tenants/chat_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:video_player/video_player.dart';
 
@@ -57,11 +55,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _markChatAsRead(int index) {
-    setState(() {
-      chats[index].markAsRead();
-    });
-  }
+  // void _markChatAsRead(int index) {
+  //   setState(() {
+  //     chats[index].markAsRead();
+  //   });
+  // }
 
   late Future<List<Ad>> futureAds;
   VideoPlayerController? _videoController;
@@ -123,19 +121,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-// remove this for now
-  Future<void> initializeVideoPlayer(String videoUrl) async {
-    _videoController = VideoPlayerController.network(videoUrl);
-    await _videoController!.initialize();
-    setState(() {});
-    _videoController!.play();
-  }
-
   @override
   Widget build(BuildContext context) {
-    List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
+    // List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
 
-    final filteredChats = _getFilteredChats();
+    // final filteredChats = _getFilteredChats();
 
     return SafeArea(
       child: Scaffold(
@@ -244,33 +234,9 @@ class _HomePageState extends State<HomePage> {
                                                 '$devUrl${ad.imageUrl!}',
                                                 fit: BoxFit.cover,
                                               )
-                                            : ad.videoUrl != null
-                                                ? FutureBuilder(
-                                                    future:
-                                                        initializeVideoPlayer(
-                                                            ad.videoUrl!),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        return VideoPlayer(
-                                                            _videoController!);
-                                                      } else {
-                                                        return const Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                            color: Colors.green,
-                                                            strokeWidth: 4.0,
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                  )
-                                                : Image.asset(
-                                                    'assets/images/splash.jpeg',
-                                                    fit: BoxFit.cover),
+                                            : Image.asset(
+                                                'assets/images/splash.jpeg',
+                                                fit: BoxFit.cover),
                                       ),
                                     ),
                                   ),
@@ -309,9 +275,8 @@ class _HomePageState extends State<HomePage> {
                                         opacity: 1.0,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                    255, 11, 17, 12)
-                                                .withOpacity(0.8),
+                                            color: const Color(0xFF0B110C)
+                                                .withAlpha((0.5 * 255).toInt()),
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),

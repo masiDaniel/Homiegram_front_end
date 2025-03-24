@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -242,35 +243,56 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
   Future<void> _downloadAndSaveFile(String? url,
       {bool allowDownload = false}) async {
+    if (url == null || url.isEmpty) {
+      _showMessage("Invalid file URL");
+      return;
+    }
+
     try {
-      final response = await http.get(Uri.parse(url!));
+      _showLoadingMessage("Downloading file...");
+
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
+
       if (response.statusCode == 200) {
         final dir = allowDownload
-            ? await getApplicationDocumentsDirectory() // User-accessible directory
-            : await getTemporaryDirectory(); // Temp directory for viewing
+            ? await getApplicationDocumentsDirectory()
+            : await getTemporaryDirectory();
         final fileName = url.split('/').last;
         final file = File('${dir.path}/$fileName');
         await file.writeAsBytes(response.bodyBytes);
 
-        if (allowDownload) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('File downloaded to: ${file.path}')),
-          );
-        }
-
         setState(() {
           localFilePath = file.path;
         });
+
+        _showMessage(allowDownload
+            ? "File saved to: ${file.path}"
+            : "File downloaded for temporary viewing.");
       } else {
-        throw Exception('Failed to download file: ${response.reasonPhrase}');
+        _showMessage("Failed to download file. Please try again.");
       }
+    } on SocketException {
+      _showMessage("No internet connection. Please check your network.");
+    } on TimeoutException {
+      _showMessage("Request timed out. Please try again.");
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showMessage("An unexpected error occurred.");
     }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _showLoadingMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 1)),
+    );
   }
 
   void showAdvertCreationDialog(BuildContext context) {
@@ -336,9 +358,13 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                   );
 
                   postAds(businessData).then((_) {
-                    _showSuccessDialog(context);
+                    if (context.mounted) {
+                      _showSuccessDialog(context);
+                    }
                   }).catchError((error) {
-                    _showErrorDialog(context, error.toString());
+                    if (context.mounted) {
+                      _showErrorDialog(context, error.toString());
+                    }
                   });
                 }
               },

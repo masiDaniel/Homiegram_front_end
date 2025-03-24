@@ -6,6 +6,7 @@ import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,7 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     loadUserId();
-    debugSharedPreferences();
   }
 
   // this is a function that takes the first letter from the name of the user
@@ -45,14 +45,14 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> debugSharedPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    print('Stored Last Name: ${prefs.getString('lastName')}');
-    print('Stored Email: ${prefs.getString('userEmail')}');
-    print('Stored ID Number: ${prefs.getInt('idNumber')}');
-    print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
-    print('Stored profile photo: ${prefs.getString('profilePicture')}');
-  }
+  // Future<void> debugSharedPreferences() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   print('Stored Last Name: ${prefs.getString('lastName')}');
+  //   print('Stored Email: ${prefs.getString('userEmail')}');
+  //   print('Stored ID Number: ${prefs.getInt('idNumber')}');
+  //   print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
+  //   print('Stored profile photo: ${prefs.getString('profilePicture')}');
+  // }
 
   Future<void> loadUserId() async {
     int? id = await UserPreferences.getUserId();
@@ -170,7 +170,6 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     } catch (e) {
-      print("Error picking image: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("Failed to select image. Please try again.")),
@@ -385,7 +384,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 updateData['user_type'] = 'landlord';
                 bool? success = await updateUserInfo(updateData);
                 if (success == true) {
-                  log('Profile updated successfully!');
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Lottie.asset('assets/animations/fix.json',
+                              width: 200, height: 200),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "You are now a landlord with us!",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+
+                  await Future.delayed(const Duration(seconds: 2));
+                  Navigator.of(context).pop(); // Close the dialog
+                  _logout();
                 } else {
                   log('Failed to update profile.');
                 }

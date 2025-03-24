@@ -101,7 +101,8 @@ class _LandlordManagementState extends State<LandlordManagement> {
                     borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: const Color(0xFFA0A5A8)
+                            .withAlpha((0.5 * 255).toInt()),
                         spreadRadius: 2,
                         blurRadius: 5,
                       ),

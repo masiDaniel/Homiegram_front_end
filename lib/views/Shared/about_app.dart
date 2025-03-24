@@ -74,7 +74,7 @@ class NodeWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: const Color(0xFF000000).withAlpha((0.5 * 255).toInt()),
             blurRadius: 12,
             spreadRadius: 2,
             offset: const Offset(4, 4),

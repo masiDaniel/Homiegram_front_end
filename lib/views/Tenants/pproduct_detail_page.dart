@@ -22,105 +22,97 @@ class ProductDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              productImage,
-              errorBuilder: (context, error, stackTrace) {
-                // Handle any errors in loading the image
-                return Image.asset(
-                  'assets/images/ad2.jpeg', // Default image
-                  width: double.infinity,
-                  height: 300,
-                  fit: BoxFit.cover,
-                );
-              },
+            // Product Image with error handling
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                productImage,
+                width: double.infinity,
+                height: 300,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/images/ad2.jpeg', // Default image
+                    width: double.infinity,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 16.0),
+
+            // Product Name
             Text(
               product.productName,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
             const SizedBox(height: 8.0),
-            Text(product.productDescription),
-            const SizedBox(height: 16.0),
-            Text('Price: \$${product.productPrice}'),
-            const SizedBox(height: 16.0),
-            Text('Stock: ${product.stockAvailable}'),
 
-            // Spacer to push buttons to the bottom
-            const Spacer(),
+            // Product Description
+            Text(
+              product.productDescription,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
 
-            // Buttons: Bookmark and Buy
+            const SizedBox(height: 16.0),
+
+            // Price
+            Text(
+              'Price: \$${product.productPrice}',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+
+            const SizedBox(height: 16.0),
+
+            // Stock Availability
+            Text(
+              'Stock: ${product.stockAvailable}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const Spacer(), // Pushes buttons to the bottom
+
+            // Buttons: Buy Now
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ///
-                /// will return this after playstore verifies
-                ///
-                // ElevatedButton.icon(
-                //   style: ElevatedButton.styleFrom(
-                //       backgroundColor: const Color.fromARGB(255, 6, 95, 9)),
-                //   onPressed: () {
-                //     // Handle bookmark functionality
-                //     showDialog(
-                //       context: context,
-                //       builder: (BuildContext context) {
-                //         return AlertDialog(
-                //           title: const Text('Coming Soon!'),
-                //           content: const Text(
-                //               'This feature will be available in future updates.'),
-                //           actions: [
-                //             TextButton(
-                //               onPressed: () {
-                //                 Navigator.of(context).pop(); // Close the dialog
-                //               },
-                //               child: const Text('OK'),
-                //             ),
-                //           ],
-                //         );
-                //       },
-                //     );
-                //   },
-                //   icon: const Icon(
-                //     Icons.bookmark,
-                //     color: Colors.white,
-                //   ),
-                //   label: const Text(
-                //     'Bookmark',
-                //     style: TextStyle(color: Colors.white),
-                //   ),
-                // ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF065F09)),
+                    backgroundColor: const Color(0xFF065F09),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                  ),
                   onPressed: () {
-                    // Handle buy functionality
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: const Text('Purchase Options'),
                           content: const Text(
-                              'Would you like to buy directly or add this item to your cart?'),
+                            'Would you like to buy directly or add this item to your cart?',
+                          ),
                           actions: [
-                            // TextButton(
-                            //   style: ElevatedButton.styleFrom(
-                            //       backgroundColor: const Color(0xFF065F09)),
-                            //   onPressed: () {
-                            //     // Add to Cart action logic here
-                            //     Navigator.of(context).pop(); // Close the dialog
-                            //     // For example: cartController.addItem(item);
-                            //   },
-                            //   child: const Text(
-                            //     'Add to Cart',
-                            //     style: TextStyle(color: Colors.white),
-                            //   ),
-                            // ),
                             TextButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF065F09)),
+                              style: TextButton.styleFrom(
+                                backgroundColor: const Color(0xFF065F09),
+                              ),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .pop(); // Close the first dialog
+                                Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -129,15 +121,18 @@ class ProductDetailPage extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Lottie.asset(
-                                              'assets/animations/moneySuccess.json',
-                                              width: 100,
-                                              height: 100),
+                                            'assets/animations/moneySuccess.json',
+                                            width: 100,
+                                            height: 100,
+                                          ),
                                           const SizedBox(height: 10),
                                           const Text(
-                                              "Product purchased successfully!",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold)),
+                                            "Product purchased successfully!",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     );
@@ -158,8 +153,10 @@ class ProductDetailPage extends StatelessWidget {
                     Icons.shopping_cart,
                     color: Colors.white,
                   ),
-                  label:
-                      const Text('Buy', style: TextStyle(color: Colors.white)),
+                  label: const Text(
+                    'Buy',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),

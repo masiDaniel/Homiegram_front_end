@@ -2,8 +2,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
-import 'package:homi_2/services/get_amenities.dart';
+import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/bookmark_page.dart';
@@ -21,6 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   List<GetHouse> allHouses = [];
   List<GetHouse> displayedHouses = [];
   List<Amenities> amenities = [];
+  List<Locations> locations = [];
   bool isLoadingHouses = true;
   bool isLoadingAmenities = true;
   int? userId;
@@ -30,6 +32,7 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     _loadAllHouses();
     _loadUserId();
+    _fetchLocations();
   }
 
   Future<void> _loadUserId() async {
@@ -55,19 +58,27 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  // Future<void> _fetchAmenities() async {
-  //   try {
-  //     amenities = await fetchAmenities();
-  //     setState(() {
-  //       isLoadingAmenities = false;
-  //     });
-  //   } catch (e) {
-  //     log('Error fetching amenities: $e');
-  //     setState(() {
-  //       isLoadingAmenities = false;
-  //     });
-  //   }
-  // }
+  Future<void> _fetchLocations() async {
+    try {
+      List<Locations> fetchedLocations = await fetchLocations();
+      setState(() {
+        locations = fetchedLocations;
+      });
+    } catch (e) {
+      log('error fetching locations!');
+    }
+  }
+
+  String getLocationName(int locationId) {
+    final location = locations.firstWhere(
+      (loc) => loc.locationId == locationId,
+      orElse: () => Locations(
+        locationId: 0,
+        area: "unknown",
+      ), // Default value if not found
+    );
+    return '${location.area}, ${location.town}, ${location.county}';
+  }
 
   @override
   Widget build(BuildContext context) {
