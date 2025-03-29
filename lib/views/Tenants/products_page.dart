@@ -223,16 +223,6 @@ class _ProductsPageState extends State<ProductsPage>
                       );
                     },
                   ),
-                  SpeedDialChild(
-                    child: const Icon(Icons.tv),
-                    label: 'Advertise',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => AddHousePage()),
-                      // );
-                    },
-                  ),
                 ]
               : [
                   SpeedDialChild(
