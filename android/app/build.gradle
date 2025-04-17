@@ -34,8 +34,8 @@ android {
         applicationId = "com.homigram.android.abc"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 4
-        versionName = "Homigram 2.1"
+        versionCode = 6
+        versionName = "2025.04.08+3"
     }
 
     signingConfigs {
