@@ -4,6 +4,8 @@ import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Shared/chat_page.dart';
+import 'package:homi_2/views/Tenants/chat_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:video_player/video_player.dart';
 
@@ -55,11 +57,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // void _markChatAsRead(int index) {
-  //   setState(() {
-  //     chats[index].markAsRead();
-  //   });
-  // }
+  void _markChatAsRead(int index) {
+    setState(() {
+      chats[index].markAsRead();
+    });
+  }
 
   late Future<List<Ad>> futureAds;
   VideoPlayerController? _videoController;
@@ -123,9 +125,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
+    List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
 
-    // final filteredChats = _getFilteredChats();
+    final filteredChats = _getFilteredChats();
 
     return SafeArea(
       child: Scaffold(
@@ -181,15 +183,42 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              'assets/images/splash.jpeg', // Fallback image path
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              "No advertisements available",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            // Image.asset(
+                            //   'assets/images/splash.jpeg', // Fallback image path
+                            //   fit: BoxFit.contain,
+                            // ),
+                            // const SizedBox(height: 10),
+                            Center(
+                              child: Container(
+                                width: double.infinity,
+                                height: 250, // Or any specific height you need
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF105A01),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      size: 48,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(height: 12),
+                                    Text(
+                                      "No advertisements available",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -345,163 +374,163 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Column(
                   children: [
-                    Lottie.asset('assets/animations/chatFeature.json',
-                        width: double.infinity, height: 200),
-                    const SizedBox(height: 10),
-                    const Text("Lets manage your living space!",
-                        style: TextStyle(fontSize: 18)),
-                    // AnimatedSwitcher(
-                    //   duration: const Duration(milliseconds: 500),
-                    //   child: isConditionMet
-                    //       ? Column(
-                    //           children: [
-                    //             Row(
-                    //               mainAxisAlignment:
-                    //                   MainAxisAlignment.spaceEvenly,
-                    //               crossAxisAlignment: CrossAxisAlignment.center,
-                    //               children: [
-                    //                 Wrap(
-                    //                   runSpacing: 8,
-                    //                   spacing: 8,
-                    //                   children: [
-                    //                     FilterChip(
-                    //                       label: const Text("All"),
-                    //                       labelStyle: const TextStyle(
-                    //                         fontWeight: FontWeight.bold,
-                    //                         color: Colors.white,
-                    //                       ),
-                    //                       selected: selectedFilter == 'All',
-                    //                       selectedColor:
-                    //                           const Color(0xFF105A01),
-                    //                       backgroundColor: Colors.green,
-                    //                       checkmarkColor: Colors.white,
-                    //                       onSelected: (bool selected) {
-                    //                         setState(() {
-                    //                           selectedFilter =
-                    //                               selected ? 'All' : '';
-                    //                         });
-                    //                       },
-                    //                     )
-                    //                   ],
-                    //                 ),
-                    //                 Wrap(
-                    //                   runSpacing: 8,
-                    //                   spacing: 8,
-                    //                   children: [
-                    //                     FilterChip(
-                    //                       label:
-                    //                           Text("unRead - ${unRead.length}"),
-                    //                       labelStyle: const TextStyle(
-                    //                         fontWeight: FontWeight.bold,
-                    //                         color: Colors.white,
-                    //                       ),
-                    //                       selected: selectedFilter == 'unRead',
-                    //                       selectedColor:
-                    //                           const Color(0xFF105A01),
-                    //                       backgroundColor: Colors.green,
-                    //                       checkmarkColor: Colors.white,
-                    //                       onSelected: (bool selected) {
-                    //                         setState(() {
-                    //                           selectedFilter =
-                    //                               selected ? 'unRead' : '';
-                    //                         });
-                    //                       },
-                    //                     )
-                    //                   ],
-                    //                 ),
-                    //                 Wrap(
-                    //                   runSpacing: 8,
-                    //                   spacing: 8,
-                    //                   children: [
-                    //                     FilterChip(
-                    //                       label: const Text("Groups - 1"),
-                    //                       labelStyle: const TextStyle(
-                    //                         fontWeight: FontWeight.bold,
-                    //                         color: Colors.white,
-                    //                       ),
-                    //                       selected: selectedFilter == 'Groups',
-                    //                       selectedColor:
-                    //                           const Color(0xFF105A01),
-                    //                       backgroundColor: Colors.green,
-                    //                       checkmarkColor: Colors.white,
-                    //                       onSelected: (bool selected) {
-                    //                         setState(() {
-                    //                           selectedFilter =
-                    //                               selected ? 'Groups' : '';
-                    //                         });
-                    //                       },
-                    //                     )
-                    //                   ],
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             const SizedBox(height: 10),
-                    //             SizedBox(
-                    //               height:
-                    //                   MediaQuery.of(context).size.height * 0.7,
-                    //               child: Padding(
-                    //                 padding: const EdgeInsets.all(16.0),
-                    //                 child: filteredChats.isNotEmpty
-                    //                     ? ListView.builder(
-                    //                         key: ValueKey(selectedFilter),
-                    //                         itemCount: filteredChats.length,
-                    //                         itemBuilder: (context, index) {
-                    //                           return InkWell(
-                    //                             onTap: () {
-                    //                               _markChatAsRead(index);
-                    //                               Navigator.push(
-                    //                                 context,
-                    //                                 MaterialPageRoute(
-                    //                                   builder: (context) =>
-                    //                                       ChatPage(
-                    //                                           chat:
-                    //                                               filteredChats[
-                    //                                                   index]),
-                    //                                 ),
-                    //                               );
-                    //                             },
-                    //                             child: ChatCard(
-                    //                                 chat: filteredChats[index]),
-                    //                           );
-                    //                         },
-                    //                       )
-                    //                     : const Center(
-                    //                         key: ValueKey('noChats'),
-                    //                         child: Text(
-                    //                           'No Chats Available',
-                    //                           style: TextStyle(
-                    //                             fontSize: 18,
-                    //                             fontWeight: FontWeight.bold,
-                    //                           ),
-                    //                         ),
-                    //                       ),
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         )
-                    //       : const Padding(
-                    //           padding: EdgeInsets.all(100.0),
-                    //           child: Center(
-                    //             key: ValueKey('comingSoon'),
-                    //             child: Column(
-                    //               mainAxisSize: MainAxisSize.min,
-                    //               children: [
-                    //                 Icon(Icons.build_circle,
-                    //                     size: 50, color: Color(0xFF026B13)),
-                    //                 SizedBox(height: 10),
-                    //                 Text(
-                    //                   'Chat Feature Unavailable\nComing Soon!',
-                    //                   textAlign: TextAlign.center,
-                    //                   style: TextStyle(
-                    //                     fontSize: 18,
-                    //                     fontWeight: FontWeight.bold,
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    // ),
+                    // Lottie.asset('assets/animations/chatFeature.json',
+                    //     width: double.infinity, height: 200),
+                    // const SizedBox(height: 10),
+                    // const Text("Lets manage your living space!",
+                    //     style: TextStyle(fontSize: 18)),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: isConditionMet
+                          ? Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label: const Text("All"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'All',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'All' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label:
+                                              Text("unRead - ${unRead.length}"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'unRead',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'unRead' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label: const Text("Groups - 1"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'Groups',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'Groups' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: filteredChats.isNotEmpty
+                                        ? ListView.builder(
+                                            key: ValueKey(selectedFilter),
+                                            itemCount: filteredChats.length,
+                                            itemBuilder: (context, index) {
+                                              return InkWell(
+                                                onTap: () {
+                                                  _markChatAsRead(index);
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ChatPage(
+                                                              chat:
+                                                                  filteredChats[
+                                                                      index]),
+                                                    ),
+                                                  );
+                                                },
+                                                child: ChatCard(
+                                                    chat: filteredChats[index]),
+                                              );
+                                            },
+                                          )
+                                        : const Center(
+                                            key: ValueKey('noChats'),
+                                            child: Text(
+                                              'No Chats Available',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.all(100.0),
+                              child: Center(
+                                key: ValueKey('comingSoon'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.build_circle,
+                                        size: 50, color: Color(0xFF026B13)),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Chat Feature Unavailable\nComing Soon!',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                    ),
                   ],
                 )
               ],

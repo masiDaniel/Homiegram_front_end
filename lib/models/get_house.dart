@@ -6,11 +6,12 @@ class GetHouse {
   final String rentAmount;
   final int rating;
   final String description;
-  final String location;
+
   final List<String>? images;
   final String bankName;
   final String accountNumber;
   final List<int> amenities;
+  final int location_detail;
   final int landlordId;
   final int? caretakerId;
   final String? contractUrl;
@@ -21,14 +22,31 @@ class GetHouse {
       required this.rentAmount,
       required this.rating,
       required this.description,
-      required this.location,
       this.images,
       required this.bankName,
       required this.accountNumber,
       required this.amenities,
       required this.landlordId,
+      required this.location_detail,
       this.caretakerId,
       this.contractUrl});
+
+  @override
+  String toString() {
+    return '''GetHouse {
+  name: $name,
+  rentAmount: $rentAmount,
+  rating: $rating,
+  description: $description,
+  images: $images,
+  amenities: $amenities,
+  landlordId: $landlordId,
+  houseId: $houseId,
+  bankName: $bankName,
+  accountNumber: $accountNumber,
+  location_detail: $location_detail
+}''';
+  }
 
   factory GetHouse.fromJSon(Map<String, dynamic> json) {
     List<String> images = [];
@@ -43,14 +61,14 @@ class GetHouse {
         rentAmount: json['rent_amount'] ?? '',
         rating: json['rating'] ?? '',
         description: json['description'] ?? '',
-        location: json['location'] ?? '',
         images: images,
         bankName: json['payment_bank_name'] ?? '',
         accountNumber: json['payment_account_number'] ?? '',
         amenities: List<int>.from(json['amenities'] ?? []),
         landlordId: json['landlord_id'],
         caretakerId: json['caretaker'],
-        contractUrl: json['contract_file']);
+        contractUrl: json['contract_file'],
+        location_detail: json['location_detail']);
   }
 
   Map<String, dynamic> tojson() {
@@ -59,7 +77,6 @@ class GetHouse {
       'rentAmount': rentAmount,
       'rating': rating,
       'description': description,
-      'location': location,
       'amenities': amenities,
       'landlordId': landlordId,
     };

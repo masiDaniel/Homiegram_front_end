@@ -122,10 +122,10 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text("Location: ${house.location}"),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        //   child: Text("Location: ${house.location}"),
+                        // ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text("Rent: ${house.rentAmount}"),

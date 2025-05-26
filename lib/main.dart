@@ -18,13 +18,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Wait for SharedPreferences to be initialized before running the app
   final initialRoute = await getInitialRoute();
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => UserProvider()..loadUserData()),
   ], child: MyApp(initialRoute: initialRoute)));
 }
+
+///
+/// (TODO): Have an internet test on launch, and how to keep it accurate
+///
+///
 
 Future<String> getInitialRoute() async {
   final prefs = await SharedPreferences.getInstance();
@@ -45,6 +49,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '',
       initialRoute: initialRoute,
+      // home: const SignIn(),
       home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {

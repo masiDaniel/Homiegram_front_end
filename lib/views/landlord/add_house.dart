@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/models/locations.dart';
+import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/post_house_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +18,8 @@ class AddHousePageState extends State<AddHousePage> {
   final _formKey = GlobalKey<FormState>();
   String _houseName = '';
   String _rentAmount = '';
-  String _location = '';
+  int _location = 0;
+  String _str_location = '';
   String _description = '';
   String _bankName = '';
   String __accountNumber = '';
@@ -25,11 +28,14 @@ class AddHousePageState extends State<AddHousePage> {
 
   final PostHouseService postHouseService = PostHouseService();
   final ImagePicker _picker = ImagePicker();
+  late Future<List<Locations>> futureLocations;
+  List<Locations> locations = [];
 
   @override
   void initState() {
     super.initState();
     _loadUserId();
+    _loadLocations();
   }
 
   Future<void> _loadUserId() async {
@@ -73,6 +79,17 @@ class AddHousePageState extends State<AddHousePage> {
         ),
       );
     }
+  }
+
+  void _loadLocations() {
+    futureLocations = fetchLocations();
+
+    // Fetch locations separately
+    futureLocations.then((locs) {
+      setState(() {
+        locations = locs;
+      });
+    });
   }
 
   @override
@@ -123,16 +140,29 @@ class AddHousePageState extends State<AddHousePage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                DropdownButtonFormField<int>(
                   decoration: const InputDecoration(
-                    labelText: 'Location',
+                    labelText: 'Select Location',
                     border: OutlineInputBorder(),
                   ),
+                  items: locations.map((location) {
+                    final label =
+                        "${location.county}, ${location.town}, ${location.area}";
+                    return DropdownMenuItem<int>(
+                      value: location.locationId,
+                      child: Text(label),
+                    );
+                  }).toList(),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a location';
+                    if (value == null) {
+                      return 'Please select a location';
                     }
                     return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      _location = value!;
+                    });
                   },
                   onSaved: (value) {
                     _location = value!;
@@ -203,38 +233,7 @@ class AddHousePageState extends State<AddHousePage> {
                     _description = value!;
                   },
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Bank Name',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a bank name';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _bankName = value!;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'account number',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an account number';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    __accountNumber = value!;
-                  },
-                ),
+
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
@@ -242,34 +241,50 @@ class AddHousePageState extends State<AddHousePage> {
                       _formKey.currentState!.save();
                       // Create a new house instance
                       final newHouse = GetHouse(
-                        name: _houseName,
-                        rentAmount: _rentAmount,
-                        rating: 2, // Assuming a default rating
-                        description:
-                            _description, // Add description if available
-                        location: _location,
-                        images: _imageUrls, // Assuming a list of images
-                        amenities: [1], // Include if you have amenities
-                        landlordId: userIdShared as int,
-                        houseId: 0,
-                        bankName: _bankName,
-                        accountNumber:
-                            __accountNumber, // Set the correct landlord ID
-                      );
+                          name: _houseName,
+                          rentAmount: _rentAmount,
+                          rating: 2,
+                          description: _description,
+                          images: _imageUrls,
+                          amenities: [1],
+                          landlordId: userIdShared as int,
+                          houseId: 0,
+                          bankName: _bankName,
+                          accountNumber: __accountNumber,
+                          location_detail: _location);
+
+                      print("this is the new house ${newHouse}");
 
                       // Call the addHouse method and await the response
                       bool success =
                           await postHouseService.postHouseWithImages(newHouse);
 
-                      if (success) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('House added successfully!')),
-                          );
-                          Navigator.pop(
-                              context); // Navigate back or clear the form
-                        }
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.green[600],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            duration: const Duration(seconds: 2),
+                            content: const Row(
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.white),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'House added successfully!',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+
+                        Navigator.pop(context);
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

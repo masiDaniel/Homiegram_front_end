@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -14,7 +15,7 @@ Future<List<Ad>> fetchAds() async {
   };
 
   final response = await http.get(
-    Uri.parse('$devUrl/houses/getAdverts/'),
+    Uri.parse('$devUrl/houses/getAdverstisments/?status=active'),
     headers: headers,
   );
 
@@ -28,26 +29,40 @@ Future<List<Ad>> fetchAds() async {
   }
 }
 
-Future<AdRequest> postAds(AdRequest adRequest) async {
+Future<String> postAds(Ad adRequest, File? imageFile) async {
   String? token = await UserPreferences.getAuthToken();
-  final Map<String, String> headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Token $token',
-  };
 
-  final response = await http.post(
-    Uri.parse('$devUrl/houses/submitAdvertisment/'),
-    headers: headers,
-    body: jsonEncode(adRequest.toJson()), // Properly encode the body
-  );
+  final uri = Uri.parse('$devUrl/houses/submitAdvertisment/');
+  final request = http.MultipartRequest('POST', uri);
+  request.headers['Authorization'] = 'Token $token';
 
-  if (response.statusCode == 201) {
-    log("Ad submission was successful");
+  request.fields['title'] = adRequest.title;
+  request.fields['description'] = adRequest.description;
+  request.fields['start_date'] = adRequest.startDate;
+  request.fields['end_date'] = adRequest.endDate;
 
-    final Map<String, dynamic> jsonResponse = json.decode(response.body);
-    return AdRequest.fromJson(jsonResponse); // Correct parsing
+  if (imageFile != null) {
+    log("Attaching image: ${imageFile.path}");
+    request.files
+        .add(await http.MultipartFile.fromPath('image', imageFile.path));
   } else {
-    log("Failed to submit advertisement: ${response.body}");
-    throw Exception('Failed to submit advertisements');
+    log("No image selected");
+  }
+
+  try {
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> jsonResponse = json.decode(responseBody);
+      return jsonResponse['message'] ?? 'Ad created successfully';
+    } else {
+      throw Exception(
+          'Failed to submit ad. Status: ${response.statusCode}, Body: $responseBody');
+    }
+  } catch (e, stack) {
+    log("Exception occurred: $e");
+    log("STACKTRACE: $stack");
+    rethrow;
   }
 }

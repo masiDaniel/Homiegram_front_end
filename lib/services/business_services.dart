@@ -135,6 +135,7 @@ Future<List<Products>> fetchProductsSeller() async {
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
+      print("we are here");
       final List<dynamic> productsData = json.decode(response.body);
 
       final List<Products> products =

@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
 import 'package:homi_2/services/fetch_bookmarks.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/rent_room_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -27,12 +30,15 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   late Future<List<GetHouse>> bookmarkedHousesFuture;
   bool isBookmarked = false;
   int? userId;
+  late Future<List<Locations>> futureLocations;
+  List<Locations> locations = [];
 
   @override
   void initState() {
     super.initState();
     _fetchComments();
     _loadUserId();
+    _fetchLocations();
 
     bookmarkedHousesFuture = fetchBookmarkedHouses();
 
@@ -192,6 +198,28 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     }
   }
 
+  Future<void> _fetchLocations() async {
+    try {
+      List<Locations> fetchedLocations = await fetchLocations();
+      setState(() {
+        locations = fetchedLocations;
+      });
+    } catch (e) {
+      log('error fetching locations!');
+    }
+  }
+
+  String getLocationName(int locationId) {
+    final location = locations.firstWhere(
+      (loc) => loc.locationId == locationId,
+      orElse: () => Locations(
+        locationId: 0,
+        area: "unknown",
+      ), // Default value if not found
+    );
+    return '${location.area}, ${location.town}, ${location.county}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
@@ -199,6 +227,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.house.name),
+        backgroundColor: const Color(0xFF126E06),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -220,25 +249,84 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               ),
             ),
             Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color.fromARGB(31, 2, 245, 2),
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Description: ${widget.house.description}',
-                    style: const TextStyle(fontSize: 18),
+                  const Text(
+                    'House Details',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF126E06),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.description, color: Color(0xFF126E06)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.house.description,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  Text('Rent Amount: ${widget.house.rentAmount}'),
-                  Text('Rating: ${widget.house.rating}'),
-                  Text('Location: ${widget.house.location}'),
+                  Row(
+                    children: [
+                      const Icon(Icons.monetization_on,
+                          color: Color(0xFF126E06)),
+                      const SizedBox(width: 8),
+                      Text('Rent: KES ${widget.house.rentAmount}',
+                          style: const TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      const Text('Rating:', style: TextStyle(fontSize: 16)),
+                      buildSimpleStars(widget.house.rating.toDouble())
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Color(0xFF126E06)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                            'Location ${getLocationName(widget.house.location_detail)}',
+                            style: const TextStyle(fontSize: 16)),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
             Text(
               'Tell us about ${widget.house.name}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF126E06)),
             ),
             const SizedBox(height: 10),
             Container(
@@ -248,8 +336,11 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 children: [
                   TextField(
                     controller: commentController,
-                    decoration:
-                        const InputDecoration(labelText: 'Your comment'),
+                    decoration: const InputDecoration(
+                      labelText: 'Your comment',
+                      labelStyle: TextStyle(color: Color(0xFF126E06)),
+                    ),
+                    cursorColor: const Color(0xFF126E06),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
@@ -257,12 +348,10 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       _submitComment(commentController);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF126E06), // Green color
-                      foregroundColor: Colors.white, // Text color
-                      shadowColor:
-                          const Color.fromARGB(255, 9, 17, 9), // Shadow color
-                      elevation:
-                          5, // Optional: Adjust elevation for shadow effect
+                      backgroundColor: const Color.fromRGBO(18, 110, 6, 1),
+                      foregroundColor: Colors.white,
+                      shadowColor: const Color.fromARGB(255, 30, 185, 30),
+                      elevation: 5,
                     ),
                     child: const Text('Post Comment'),
                   ),
@@ -475,6 +564,19 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       ),
     );
   }
+
+  Widget buildSimpleStars(double rating) {
+    return RatingBarIndicator(
+      rating: rating,
+      itemBuilder: (context, index) => const Icon(
+        Icons.star,
+        color: Color(0xFF126E06),
+      ),
+      itemCount: 5,
+      itemSize: 20.0,
+      direction: Axis.horizontal,
+    );
+  }
 }
 
 class CommentList extends StatefulWidget {
@@ -570,46 +672,63 @@ class _CommentListState extends State<CommentList> {
       GetComments comment, Map<int?, List<GetComments>> groupedComments,
       {int depth = 0}) {
     return Padding(
-      padding: EdgeInsets.only(left: depth * 20.0),
+      padding: EdgeInsets.only(left: depth * 20.0, top: 4, bottom: 4),
       child: Container(
-        padding: const EdgeInsets.all(8),
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFF126E06)),
-          borderRadius: BorderRadius.circular(8),
+          color: const Color.fromARGB(255, 67, 134, 59),
+          border: Border.all(color: const Color(0xFF126E06), width: 1.0),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Expanded(child: Text(comment.comment)),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => _handleReact(comment.commentId, "like"),
-                    icon: const Icon(Icons.thumb_up, color: Colors.grey),
-                  ),
-                  Text("${likesMap[comment.commentId] ?? comment.likes}"),
-                  IconButton(
-                    onPressed: () => _handleReact(comment.commentId, "dislike"),
-                    icon: const Icon(Icons.thumb_down, color: Colors.grey),
-                  ),
-                  Text("${dislikesMap[comment.commentId] ?? comment.dislikes}"),
-                ],
-              ),
-              if (comment.userId == userId)
-                IconButton(
-                  onPressed: () => widget.onDelete(comment.commentId),
-                  icon: const Icon(Icons.delete, color: Color(0xFF126E06)),
+            Text(comment.comment,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => _handleReact(comment.commentId, "like"),
+                      icon: const Icon(Icons.thumb_up,
+                          size: 20, color: Colors.grey),
+                    ),
+                    Text("${likesMap[comment.commentId] ?? comment.likes}"),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () =>
+                          _handleReact(comment.commentId, "dislike"),
+                      icon: const Icon(Icons.thumb_down,
+                          size: 20, color: Colors.grey),
+                    ),
+                    Text(
+                        "${dislikesMap[comment.commentId] ?? comment.dislikes}"),
+                  ],
                 ),
-            ]),
+                if (comment.userId == userId)
+                  IconButton(
+                    onPressed: () => widget.onDelete(comment.commentId),
+                    icon: const Icon(Icons.delete, color: Color(0xFF126E06)),
+                  ),
+              ],
+            ),
             if (groupedComments.containsKey(comment.commentId))
-              Column(
-                children: groupedComments[comment.commentId]!
-                    .map((reply) => _buildCommentTile(reply, groupedComments,
-                        depth: depth + 1))
-                    .toList(),
-              ),
+              ...groupedComments[comment.commentId]!
+                  .map((reply) => _buildCommentTile(reply, groupedComments,
+                      depth: depth + 1))
+                  .toList(),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/locations.dart';
@@ -26,6 +27,7 @@ class _SearchPageState extends State<SearchPage> {
   bool isLoadingHouses = true;
   bool isLoadingAmenities = true;
   int? userId;
+  late Future<List<Locations>> futureLocations;
 
   @override
   void initState() {
@@ -134,11 +136,10 @@ class _SearchPageState extends State<SearchPage> {
           : Column(
               children: [
                 Expanded(
-                  // create an animation for this
                   child: displayedHouses.isEmpty
                       ? Center(
                           child: Lottie.asset(
-                            'assets/animations/notFound.json', // Path to your animation file
+                            'assets/animations/notFound.json',
                             width: 200,
                             height: 200,
                             fit: BoxFit.cover,
@@ -197,11 +198,18 @@ class _SearchPageState extends State<SearchPage> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           const SizedBox(height: 4),
-                                          Text("Location: ${house.location}"),
-                                          const SizedBox(height: 4),
                                           Text("Rent: ${house.rentAmount}"),
                                           const SizedBox(height: 4),
-                                          Text("Rating: ${house.rating}"),
+                                          Row(
+                                            children: [
+                                              Text("Rating:"),
+                                              buildSimpleStars(
+                                                  house.rating.toDouble()),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                              "location: ${getLocationName(house.location_detail)}"),
                                         ],
                                       ),
                                     ),
@@ -214,6 +222,19 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ],
             ),
+    );
+  }
+
+  Widget buildSimpleStars(double rating) {
+    return RatingBarIndicator(
+      rating: rating,
+      itemBuilder: (context, index) => const Icon(
+        Icons.star,
+        color: Color(0xFF126E06),
+      ),
+      itemCount: 5,
+      itemSize: 20.0,
+      direction: Axis.horizontal,
     );
   }
 }

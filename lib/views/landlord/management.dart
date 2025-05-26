@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/get_house_service.dart';
+import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/landlord_house_details.dart';
@@ -18,12 +22,14 @@ class LandlordManagement extends StatefulWidget {
 class _LandlordManagementState extends State<LandlordManagement> {
   late Future<List<GetHouse>> futureLandlordHouses;
   int? userIdShared;
+  List<Locations> locations = [];
 
   @override
   void initState() {
     super.initState();
     futureLandlordHouses = fetchHouses();
     _loadUserType();
+    _fetchLocations();
   }
 
   Future<void> _loadUserType() async {
@@ -31,6 +37,28 @@ class _LandlordManagementState extends State<LandlordManagement> {
     setState(() {
       userIdShared = id ?? 0; // Default to 'tenant' if null
     });
+  }
+
+  Future<void> _fetchLocations() async {
+    try {
+      List<Locations> fetchedLocations = await fetchLocations();
+      setState(() {
+        locations = fetchedLocations;
+      });
+    } catch (e) {
+      log('error fetching locations!');
+    }
+  }
+
+  String getLocationName(int locationId) {
+    final location = locations.firstWhere(
+      (loc) => loc.locationId == locationId,
+      orElse: () => Locations(
+        locationId: 0,
+        area: "unknown",
+      ), // Default value if not found
+    );
+    return '${location.area}, ${location.town}, ${location.county}';
   }
 
   @override
@@ -62,7 +90,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
           } else if (snapshot.hasError) {
             return Center(
               child: Lottie.asset(
-                'assets/animations/notFound.json', // Path to your animation file
+                'assets/animations/notFound.json',
                 width: 200,
                 height: 200,
                 fit: BoxFit.cover,
@@ -134,7 +162,9 @@ class _LandlordManagementState extends State<LandlordManagement> {
                       const SizedBox(height: 8),
                       Text('Rent: Ksh${house.rentAmount}'),
                       const SizedBox(height: 4),
-                      Text('Location: ${house.location}'),
+                      Text(
+                          "actual location: ${getLocationName(house.location_detail)}")
+
                       // Add more details as needed
                     ],
                   ),

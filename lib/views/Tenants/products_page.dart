@@ -5,6 +5,7 @@ import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/add_product_screen.dart';
+import 'package:homi_2/views/Tenants/business_edit_page.dart';
 import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -220,6 +221,39 @@ class _ProductsPageState extends State<ProductsPage>
                             builder: (context) => AddProductPage(
                                   businessId: widget.businessId,
                                 )),
+                      );
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: const Color(0xFF03AA19),
+                    label: 'Edit business profile',
+                    labelStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    labelBackgroundColor: Colors.white,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BusinessEditPage(
+                            business: {
+                              "id": 2,
+                              "name": "foodmore",
+                              "contact_number": "9884",
+                              "email": "food@biz.com",
+                              "image": "/media/businesses/414QGhuE5NL.jpg",
+                              "owner": 2,
+                              "business_type": 1,
+                              "location": 1
+                            },
+                          ),
+                        ),
                       );
                     },
                   ),

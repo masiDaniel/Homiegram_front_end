@@ -118,10 +118,10 @@ class HouseListScreenState extends State<HouseListScreen> {
                                         'Rating: ${snapshot.data![index].rating}',
                                         style: const TextStyle(fontSize: 16),
                                       ),
-                                      Text(
-                                        'Location: ${snapshot.data![index].location}',
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
+                                      // Text(
+                                      //   'Location: ${snapshot.data![index].location}',
+                                      //   style: const TextStyle(fontSize: 16),
+                                      // ),
                                       const SizedBox(
                                         height: 5,
                                       ),

@@ -39,7 +39,9 @@ class PostHouseService {
     formData.fields.add(MapEntry('rent_amount', house.rentAmount));
     formData.fields.add(MapEntry('rating', house.rating.toString()));
     formData.fields.add(MapEntry('description', house.description));
-    formData.fields.add(MapEntry('location', house.location));
+    formData.fields
+        .add(MapEntry('location_detail', house.location_detail.toString()));
+
     formData.fields.add(MapEntry('landlord_id', house.landlordId.toString()));
 
     // Adding amenities as form fields

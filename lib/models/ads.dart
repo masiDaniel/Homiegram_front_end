@@ -16,12 +16,24 @@ class Ad {
 
   factory Ad.fromJson(Map<String, dynamic> json) {
     return Ad(
-        imageUrl: json['image'] as String?,
-        videoUrl: json['video_file'] as String?,
+        // handling null was very problematic
+        imageUrl: json['image']?.toString(),
+        videoUrl: json['video_file']?.toString(),
         title: json['title'] as String,
         description: json['description'] as String,
         startDate: json['start_date'],
         endDate: json['end_date']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'image': imageUrl,
+      'video_file': videoUrl,
+      'start_date': startDate,
+      'end_date': endDate,
+    };
   }
 }
 
