@@ -189,16 +189,6 @@ class _LandlordManagementState extends State<LandlordManagement> {
               );
             },
           ),
-          // SpeedDialChild(
-          //   child: const Icon(Icons.tv),
-          //   label: 'Advertise',
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const AddHousePage()),
-          //     );
-          //   },
-          // ),
         ],
       ),
     );

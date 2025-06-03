@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
-import 'package:homi_2/views/Tenants/bookmark_page.dart';
+import 'package:homi_2/views/Shared/bookmark_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,6 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
       currentUserPhoneNumber = phoneNumber;
       currentserIdNumber = idNumber;
       currentUserProfilePicture = profilePicture;
+      print("this is the current picture ${currentUserProfilePicture}");
     });
   }
 
@@ -168,11 +169,38 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           currentUserProfilePicture = pickedFile.path;
         });
+
+        // Show confirmation dialog
+        final bool? confirm = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Update Profile Picture'),
+              content:
+                  const Text('Do you want to update your profile picture?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirm == true) {
+          await updateProfilePicture(currentUserProfilePicture!);
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("Failed to select image. Please try again.")),
+          content: Text("Failed to select image. Please try again."),
+        ),
       );
     }
   }
@@ -190,16 +218,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  ImageProvider<Object> getProfileImage(String? profilePicture, String devUrl) {
+  ImageProvider<Object>? getProfileImage(
+      String? profilePicture, String devUrl) {
     // Default fallback image
-    const defaultImage = AssetImage('assets/images/default_avatar.jpeg');
+    const defaultImage1 = AssetImage('assets/images/default_avatar.jpeg');
+    const defaultImage = AssetImage('assets/images/1_3.jpeg');
     const splashImage = AssetImage('assets/images/splash.jpeg');
 
     // If profile picture is missing or set to "homigram", return splash image
     if (profilePicture == null ||
         profilePicture.isEmpty ||
-        profilePicture == "homigram") {
-      return splashImage;
+        profilePicture == "N/A") {
+      return null;
     }
 
     // If stored profile picture follows "/media/photo.jpeg" format, attach devUrl
@@ -214,12 +244,13 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     // If nothing works, return the default avatar
-    return defaultImage;
+    return defaultImage1;
   }
 
   @override
   Widget build(BuildContext context) {
-    bool showInitials = currentUserProfilePicture == "homigram";
+    bool showInitials = currentUserProfilePicture == "N/A";
+    print("this is the current user profile ${currentUserProfilePicture}");
 
     return Scaffold(
       appBar: AppBar(

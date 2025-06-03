@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 ///
 /// the use of global variables is not the best approach,
@@ -16,9 +18,10 @@ const Map<String, String> headers = {
 
 //  'https://hommiegram.azurewebsites.net'
 String productionUrl = 'http://192.168.0.106:8000/'; // this will be deleted.
-String devUrl = 'http://192.168.2.127:8000/';
+String devUrl = 'http://127.0.0.1:8000/';
 
-Future fetchUserSignIn(String username, String password) async {
+Future fetchUserSignIn(
+    BuildContext context, String username, String password) async {
   try {
     final response = await http.post(
       Uri.parse("$devUrl/accounts/login/"),
@@ -68,4 +71,49 @@ Future updateUserInfo(Map<String, dynamic> updateData) async {
     rethrow;
   }
   return null;
+}
+
+Future<bool> updateProfilePicture(String imagePath) async {
+  String? token = await UserPreferences.getAuthToken();
+
+  try {
+    final uri = Uri.parse("$devUrl/accounts/user/update/");
+
+    var request = http.MultipartRequest('PATCH', uri);
+    request.headers.addAll({
+      'Authorization': 'Token $token',
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Attach the image file
+    request.files.add(await http.MultipartFile.fromPath(
+      'profile_pic',
+      imagePath,
+      contentType: MediaType('image', 'jpeg'),
+    ));
+
+    final response = await request.send().timeout(const Duration(seconds: 10));
+    // // Convert streamed response to normal response
+    // final responseBody = await response.stream.bytesToString();
+    // print("Raw response body: $responseBody");
+
+    // final userData = jsonDecode(responseBody);
+
+    ///
+    ///To do implementautomatic saving to user prefrences
+    ///
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      // For debugging
+      final respStr = await response.stream.bytesToString();
+      log("Failed to update profile picture: $respStr");
+    }
+  } catch (e) {
+    log("Exception occurred: $e");
+    rethrow;
+  }
+
+  return false;
 }

@@ -80,12 +80,6 @@ class _HomePageState extends State<HomePage> {
     _startAutoScroll();
   }
 
-  // void _loadAds() async {
-  //   futureAds = fetchAds(); // Assign future
-  //   List<Ad> ads = await futureAds; // Resolve future
-  //   print('my Fetched Ads: $ads'); // Debug output
-  //   setState(() {}); // Update UI after fetching ads
-  // }
   @override
   void dispose() {
     _timer?.cancel();
@@ -113,13 +107,13 @@ class _HomePageState extends State<HomePage> {
 
   void _onAdTap(int index) {
     setState(() {
-      _isPaused = !_isPaused; // Toggle pause state
+      _isPaused = !_isPaused;
       _currentPage = index;
     });
     if (_isPaused) {
-      _timer?.cancel(); // Stop auto-scrolling
+      _timer?.cancel();
     } else {
-      _startAutoScroll(); // Resume auto-scrolling
+      _startAutoScroll();
     }
   }
 
@@ -168,8 +162,8 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(
-                            color: Colors.green, // Custom color
-                            strokeWidth: 6.0, // Thicker stroke
+                            color: Colors.green,
+                            strokeWidth: 6.0,
                           ),
                           SizedBox(height: 10),
                           Text("Loading, please wait...",
@@ -183,40 +177,38 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Image.asset(
-                            //   'assets/images/splash.jpeg', // Fallback image path
-                            //   fit: BoxFit.contain,
-                            // ),
-                            // const SizedBox(height: 10),
                             Center(
-                              child: Container(
-                                width: double.infinity,
-                                height: 250, // Or any specific height you need
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF105A01),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.info_outline,
-                                      size: 48,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      "No advertisements available",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 250,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF105A01),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        size: 48,
                                         color: Colors.white,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                      SizedBox(height: 12),
+                                      Text(
+                                        "No advertisements available",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -337,24 +329,6 @@ class _HomePageState extends State<HomePage> {
                                                   style: const TextStyle(
                                                       color: Colors.white70,
                                                       fontSize: 14)),
-                                              const SizedBox(height: 15),
-                                              // ElevatedButton(
-                                              //   onPressed: () {},
-                                              //   style: ElevatedButton.styleFrom(
-                                              //     backgroundColor: Colors.green,
-                                              //     shape: RoundedRectangleBorder(
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(
-                                              //                 8)),
-                                              //     padding: const EdgeInsets
-                                              //         .symmetric(
-                                              //         horizontal: 20,
-                                              //         vertical: 10),
-                                              //   ),
-                                              //   child: const Text('Go to page',
-                                              //       style: TextStyle(
-                                              //           fontSize: 16)),
-                                              // ),
                                             ],
                                           ),
                                         ),
@@ -457,6 +431,30 @@ class _HomePageState extends State<HomePage> {
                                             setState(() {
                                               selectedFilter =
                                                   selected ? 'Groups' : '';
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        FilterChip(
+                                          label: const Text("stories"),
+                                          labelStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          selected: selectedFilter == 'Stories',
+                                          selectedColor:
+                                              const Color(0xFF105A01),
+                                          backgroundColor: Colors.green,
+                                          checkmarkColor: Colors.white,
+                                          onSelected: (bool selected) {
+                                            setState(() {
+                                              selectedFilter =
+                                                  selected ? 'stories' : '';
                                             });
                                           },
                                         )

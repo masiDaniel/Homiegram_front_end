@@ -48,7 +48,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     fetchUsers();
     checkCaretakerStatus();
     _fetchLocations();
-    _downloadAndSaveFile('$devUrl${widget.house.contractUrl}');
   }
 
   Future<void> _fetchLocations() async {
@@ -197,136 +196,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     }
   }
 
-  // Function to pick a file
-  Future<void> _pickFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'txt'], // Allow only PDF and TXT files
-      );
-
-      // Check if the widget is still mounted before using the context
-      if (!mounted) return;
-
-      if (result != null) {
-        setState(() {
-          selectedFile = File(result.files.single.path!);
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File selected: ${selectedFile!.path}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking file: $e')),
-      );
-    }
-  }
-
-  // Function to upload the file
-  Future<void> _uploadFile() async {
-    if (selectedFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a file first')),
-      );
-      return;
-    }
-
-    String? token = await UserPreferences.getAuthToken();
-
-    try {
-      final headers = {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': 'Token $token',
-      };
-
-      final uri =
-          Uri.parse('$devUrl/houses/updateHouse/${widget.house.houseId}/');
-      final request = http.MultipartRequest('PATCH', uri)
-        ..headers.addAll(headers)
-        ..files.add(await http.MultipartFile.fromPath(
-          'contract_file', // Backend expects this key for the file
-          selectedFile!.path,
-        ));
-
-      final response = await request.send();
-
-      // Check if the widget is still mounted before using the context
-      if (!mounted) return;
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Contract uploaded successfully!')),
-        );
-      } else {
-        throw Exception('Failed to upload contract');
-      }
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading file: $e')),
-      );
-    }
-  }
-
-  Future<void> _downloadAndSaveFile(String? url,
-      {bool allowDownload = false}) async {
-    if (url == null || url.isEmpty) {
-      _showMessage("Invalid file URL");
-      return;
-    }
-
-    try {
-      print('we are here');
-      _showLoadingMessage("Downloading file...");
-
-      final response =
-          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
-
-      if (response.statusCode == 200) {
-        final dir = allowDownload
-            ? await getApplicationDocumentsDirectory()
-            : await getTemporaryDirectory();
-        final fileName = url.split('/').last;
-        final file = File('${dir.path}/$fileName');
-        await file.writeAsBytes(response.bodyBytes);
-        print('this is the path${file.path}');
-
-        setState(() {
-          localFilePath = file.path;
-        });
-        print(localFilePath);
-
-        _showMessage(allowDownload
-            ? "File saved to: ${file.path}"
-            : "File downloaded for temporary viewing.");
-      } else {
-        _showMessage("Failed to download file. Please try again.");
-      }
-    } on SocketException {
-      _showMessage("No internet connection. Please check your network.");
-    } on TimeoutException {
-      _showMessage("Request timed out. Please try again.");
-    } catch (e) {
-      _showMessage("An unexpected error occurred.");
-    }
-  }
-
-  void _showMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
-  void _showLoadingMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 1)),
-    );
-  }
-
   void showAdvertCreationDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     final TextEditingController titleController = TextEditingController();
@@ -400,9 +269,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                               .format(DateTime.parse(endDateController.text)),
                         );
 
-                        log("Submitting ad: ${businessData.toJson()}");
-                        log("Selected image path: ${_selectedImage?.path}");
-
                         postAds(businessData, _selectedImage).then((message) {
                           if (context.mounted) {
                             _showSuccessDialog(context);
@@ -452,7 +318,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontSize: 16)),
+        Text(label, style: const TextStyle(fontSize: 16)),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () async {
@@ -472,12 +338,12 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             ),
             child: imageFile != null
                 ? Image.file(imageFile, fit: BoxFit.cover)
-                : Center(child: Text('Tap to pick image')),
+                : const Center(child: Text('Tap to pick image')),
           ),
         ),
         const SizedBox(height: 8),
         if (imageFile == null)
-          Text(validationMessage, style: TextStyle(color: Colors.red)),
+          Text(validationMessage, style: const TextStyle(color: Colors.red)),
       ],
     );
   }
@@ -613,132 +479,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
-            Center(
-              child: Text(
-                'Contract',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
-                    ),
-              ),
-            ),
             const SizedBox(height: 16),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.green, // Outline color
-                  width: 2.0, // Outline thickness
-                ),
-                borderRadius:
-                    BorderRadius.circular(8), // Optional: Rounded corners
-              ),
-              child: SizedBox(
-                height: 300,
-                width: 400,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: FutureBuilder(
-                        future: Future.delayed(const Duration(
-                            seconds: 8)), // Show loading for 3 seconds
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState !=
-                              ConnectionState.done) {
-                            // Show CircularProgressIndicator for 3 seconds
-                            return const Center(
-                                child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(
-                                  color: Colors.green, // Custom color
-                                  strokeWidth: 6.0, // Thicker stroke
-                                ),
-                                SizedBox(height: 10),
-                                Text("Loading, please wait...",
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white)),
-                              ],
-                            ));
-                          }
-
-                          // After 3 seconds, check if the file exists
-                          if (localFilePath == null) {
-                            return const Center(
-                              child: Text(
-                                "No contract available",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            );
-                          }
-
-                          // If file exists, show the PDF
-                          return PDFView(
-                            filePath: localFilePath!,
-                            enableSwipe: true,
-                            swipeHorizontal: false,
-                            autoSpacing: true,
-                            pageFling: true,
-                            onRender: (pages) {},
-                            onError: (error) {},
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _pickFile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF013803),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Choose File',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                if (selectedFile != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      'Selected File: ${selectedFile!.path.split('/').last}',
-                      style: const TextStyle(fontSize: 14, color: Colors.green),
-                    ),
-                  ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _uploadFile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF013803),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Upload File',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(
               height: 30,
             ),
@@ -859,9 +600,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => RoomInputPage(
-                          apartmentId: widget.house.houseId,
-                        )),
+                  builder: (context) =>
+                      RoomInputPage(apartmentId: widget.house.houseId),
+                ),
               );
             },
           ),

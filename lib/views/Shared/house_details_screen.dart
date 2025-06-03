@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
@@ -9,11 +10,13 @@ import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
 import 'package:homi_2/services/fetch_bookmarks.dart';
+import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/rent_room_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Shared/comments_screen.dart';
 import 'package:http/http.dart' as http;
 
 class SpecificHouseDetailsScreen extends StatefulWidget {
@@ -26,19 +29,20 @@ class SpecificHouseDetailsScreen extends StatefulWidget {
 }
 
 class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
-  List<GetComments> _comments = []; // Local comments list
+  List<GetComments> _comments = [];
   late Future<List<GetHouse>> bookmarkedHousesFuture;
   bool isBookmarked = false;
   int? userId;
   late Future<List<Locations>> futureLocations;
   List<Locations> locations = [];
+  List<Amenities> amenities = [];
 
   @override
   void initState() {
     super.initState();
     _fetchComments();
     _loadUserId();
-    _fetchLocations();
+    _fetchLocationsAndAmenities();
 
     bookmarkedHousesFuture = fetchBookmarkedHouses();
 
@@ -198,11 +202,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     }
   }
 
-  Future<void> _fetchLocations() async {
+  Future<void> _fetchLocationsAndAmenities() async {
     try {
       List<Locations> fetchedLocations = await fetchLocations();
+      List<Amenities> fetchedAmenities = await fetchAmenities();
+      List<Amenities> availableAmenities = fetchedAmenities
+          .where((amenity) => widget.house.amenities.contains(amenity))
+          .toList();
+
       setState(() {
         locations = fetchedLocations;
+        amenities = availableAmenities;
       });
     } catch (e) {
       log('error fetching locations!');
@@ -225,9 +235,66 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     final TextEditingController commentController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.house.name),
-        backgroundColor: const Color(0xFF126E06),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF126E06), Color(0xFF4CAF50)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.house.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "Modern Living",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.share, color: Colors.white),
+              onPressed: () {
+                // Share house link or details
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -280,7 +347,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          widget.house.description,
+                          'Description: ${widget.house.description}',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),
@@ -320,49 +387,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Tell us about ${widget.house.name}',
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF126E06)),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: commentController,
-                    decoration: const InputDecoration(
-                      labelText: 'Your comment',
-                      labelStyle: TextStyle(color: Color(0xFF126E06)),
-                    ),
-                    cursorColor: const Color(0xFF126E06),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      _submitComment(commentController);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(18, 110, 6, 1),
-                      foregroundColor: Colors.white,
-                      shadowColor: const Color.fromARGB(255, 30, 185, 30),
-                      elevation: 5,
-                    ),
-                    child: const Text('Post Comment'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            CommentList(
-              comments: _comments,
-              onDelete: deleteComment,
-              onReact: onReact,
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: amenities.map((amenity) {
+                return Chip(
+                  label: Text(amenity.name![0].toUpperCase() +
+                      amenity.name!.substring(1)),
+                  backgroundColor: const Color(0xFF126E06),
+                  labelStyle: const TextStyle(color: Colors.white),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -464,7 +499,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       vertical: 10), // More padding for easier tap
                 ),
                 child: Text(
-                  isBookmarked ? 'Remove Bookmark' : 'Bookmark',
+                  isBookmarked ? 'Bookmarked' : 'Bookmark',
                   style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
@@ -549,12 +584,40 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.home, color: Colors.white), // House icon
-                    SizedBox(width: 10),
                     Text(
                       'Rent',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommentsScreen(
+                        house: widget.house,
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF126E06),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 8,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.comment, color: Colors.white),
                   ],
                 ),
               ),
@@ -597,8 +660,8 @@ class CommentList extends StatefulWidget {
 
 class _CommentListState extends State<CommentList> {
   int? userId;
-  Map<int, int> likesMap = {}; // Store likes count
-  Map<int, int> dislikesMap = {}; // Store dislikes count
+  Map<int, int> likesMap = {};
+  Map<int, int> dislikesMap = {};
 
   @override
   void initState() {

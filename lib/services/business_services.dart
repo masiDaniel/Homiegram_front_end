@@ -36,6 +36,11 @@ Future<List<BusinessModel>> fetchBusinesses() async {
   }
 }
 
+///
+/// Handle posting of busiess
+/// handle posting with images
+///
+
 Future<bool> postBusiness(
   Map<String, Object?> businessData,
   BuildContext context,
@@ -53,7 +58,7 @@ Future<bool> postBusiness(
       headers: headersWithToken,
       body: json.encode(businessData),
     );
-
+    print("we are getting here after");
     if (response.statusCode == 201) {
       log('Business created successfully.');
       if (context.mounted) {

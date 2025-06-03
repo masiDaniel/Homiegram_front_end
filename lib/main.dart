@@ -4,14 +4,14 @@ import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
 import 'package:homi_2/views/Shared/video_splash_screen.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
-import 'package:homi_2/views/Tenants/all_houses.dart';
-import 'package:homi_2/views/Tenants/home_page_v1.dart';
+import 'package:homi_2/views/Shared/all_houses.dart';
+import 'package:homi_2/views/Shared/home_page_v1.dart';
 import 'package:homi_2/views/Tenants/house_list_screen.dart';
-import 'package:homi_2/views/Tenants/search_page.dart';
+import 'package:homi_2/views/Shared/search_page.dart';
 import 'package:homi_2/views/landlord/management.dart';
-import 'package:homi_2/views/sign_in.dart';
+import 'package:homi_2/views/Shared/sign_in.dart';
 import 'package:homi_2/views/Shared/sign_up.dart';
-import 'package:homi_2/views/welcome_page.dart';
+import 'package:homi_2/views/Shared/welcome_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,8 +49,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '',
       initialRoute: initialRoute,
-      // home: const SignIn(),
-      home: const VideoSplashScreen(),
+      home: const WelcomePage(),
+      // home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),
@@ -80,13 +80,68 @@ class NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF126E06),
       appBar: AppBar(
-        title: const Text("Not Found"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text("Oops!"),
+        centerTitle: true,
       ),
-      body: Container(
-        color: const Color(0xFF0b8793),
-        height: 300,
-        width: 300,
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          width: 350,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Colors.redAccent,
+                size: 80,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "404 - Page Not Found",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Sorry, the page you are looking for doesn't exist or has been moved.",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 25),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.home),
+                label: const Text("Go Back Home"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

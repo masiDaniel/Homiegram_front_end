@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:homi_2/services/user_data.dart';
-import 'package:homi_2/views/Tenants/home_page_v1.dart';
+import 'package:homi_2/views/Shared/home_page_v1.dart';
 import 'package:homi_2/views/Tenants/market_place.dart';
 import 'package:homi_2/views/Tenants/profile_page.dart';
 import 'package:homi_2/views/Tenants/renting_page.dart';
-import 'package:homi_2/views/Tenants/search_page.dart';
+import 'package:homi_2/views/Shared/search_page.dart';
 import 'package:homi_2/views/landlord/management.dart';
 
 class CustomBottomNavigartion extends StatefulWidget {

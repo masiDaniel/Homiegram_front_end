@@ -4,12 +4,13 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/locations.dart';
+import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/Tenants/bookmark_page.dart';
-import 'package:homi_2/views/Tenants/house_details_screen.dart';
+import 'package:homi_2/views/Shared/bookmark_page.dart';
+import 'package:homi_2/views/Shared/house_details_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class SearchPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     _loadAllHouses();
     _loadUserId();
-    _fetchLocations();
+    _fetchLocationsAndAmenities();
   }
 
   Future<void> _loadUserId() async {
@@ -60,11 +61,14 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  Future<void> _fetchLocations() async {
+  Future<void> _fetchLocationsAndAmenities() async {
     try {
       List<Locations> fetchedLocations = await fetchLocations();
+      List<Amenities> fetchedAmenities = await fetchAmenities();
+
       setState(() {
         locations = fetchedLocations;
+        amenities = fetchedAmenities;
       });
     } catch (e) {
       log('error fetching locations!');
@@ -77,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
       orElse: () => Locations(
         locationId: 0,
         area: "unknown",
-      ), // Default value if not found
+      ),
     );
     return '${location.area}, ${location.town}, ${location.county}';
   }
@@ -125,8 +129,8 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  color: Colors.green, // Custom color
-                  strokeWidth: 6.0, // Thicker stroke
+                  color: Colors.green,
+                  strokeWidth: 6.0,
                 ),
                 SizedBox(height: 10),
                 Text("Loading, please wait...",
@@ -195,14 +199,15 @@ class _SearchPageState extends State<SearchPage> {
                                             house.name,
                                             style: const TextStyle(
                                                 fontSize: 18,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF126E06)),
                                           ),
                                           const SizedBox(height: 4),
                                           Text("Rent: ${house.rentAmount}"),
                                           const SizedBox(height: 4),
                                           Row(
                                             children: [
-                                              Text("Rating:"),
+                                              const Text("Rating:"),
                                               buildSimpleStars(
                                                   house.rating.toDouble()),
                                             ],

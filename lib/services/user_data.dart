@@ -26,8 +26,7 @@ class UserPreferences {
     await prefs.setString(_keyUserType, userData['user_type']);
     await prefs.setString(_keyPhoneNumber, userData['phone_number']);
     await prefs.setInt(_keyIdNumber, userData['id_number']);
-    await prefs.setString(
-        _keyProfilePic, userData['profile_pic'] ?? 'homiGram');
+    await prefs.setString(_keyProfilePic, userData['profile_pic'] ?? 'N/A');
     await prefs.setBool(_keyIsLoggedIn, true);
     await prefs.setInt('login_time', DateTime.now().millisecondsSinceEpoch);
   }

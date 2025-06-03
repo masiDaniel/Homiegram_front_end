@@ -48,7 +48,7 @@ class SignInState extends State<SignIn> {
       });
       try {
         UserRegistration? userRegistration =
-            await fetchUserSignIn(email, password)
+            await fetchUserSignIn(context, email, password)
                 .timeout(const Duration(seconds: 10), onTimeout: () {
           throw TimeoutException("Connection timed out. Please try again.");
         });

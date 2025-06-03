@@ -5,7 +5,7 @@ import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/Tenants/house_details_screen.dart';
+import 'package:homi_2/views/Shared/house_details_screen.dart';
 
 class HouseListScreen extends StatefulWidget {
   const HouseListScreen({super.key});

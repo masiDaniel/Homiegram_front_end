@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/locations.dart';
@@ -6,8 +8,9 @@ import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/add_product_screen.dart';
-import 'package:homi_2/views/Tenants/cart_page.dart';
+import 'package:homi_2/views/Shared/cart_page.dart';
 import 'package:homi_2/views/Tenants/products_page.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
 class MarketPlace extends StatefulWidget {
@@ -26,6 +29,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   List<Products> displayedProducts = [];
   List<Locations> locations = [];
   bool showBusinesses = true;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -260,6 +264,17 @@ class _MarketPlaceState extends State<MarketPlace> {
                       return null;
                     },
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildImagePicker(
+                    imageFile: _selectedImage,
+                    onImagePicked: (file) =>
+                        setState(() => _selectedImage = file),
+                    label: 'Business Image',
+                    validationMessage: 'Please pick an image',
+                    context: context,
+                  ),
                 ],
               ),
             ),
@@ -286,9 +301,13 @@ class _MarketPlaceState extends State<MarketPlace> {
                     'email': businessEmailController.text,
                     'location': selectedLocationId,
                     'owner': id,
+                    // 'image': _selectedImage,
                   };
+
                   postBusiness(businessData, context).then((success) {
                     if (success) {
+                      print("we are inside");
+
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -299,11 +318,9 @@ class _MarketPlaceState extends State<MarketPlace> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the success dialog
-                                  _refreshBusinesses(); // Refresh data
-                                  Navigator.of(context)
-                                      .pop(); // Close the parent dialog
+                                  Navigator.of(context).pop();
+                                  _refreshBusinesses();
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text('OK'),
                               ),
@@ -424,6 +441,46 @@ class _MarketPlaceState extends State<MarketPlace> {
           ),
         ]),
       )),
+    );
+  }
+
+  Widget buildImagePicker({
+    required File? imageFile,
+    required Function(File?) onImagePicked,
+    required String label,
+    required String validationMessage,
+    required BuildContext context,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16)),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () async {
+            final picker = ImagePicker();
+            final picked = await picker.pickImage(source: ImageSource.gallery);
+            if (picked != null) {
+              onImagePicked(File(picked.path));
+            }
+          },
+          child: Container(
+            height: 150,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey[200],
+            ),
+            child: imageFile != null
+                ? Image.file(imageFile, fit: BoxFit.cover)
+                : const Center(child: Text('Tap to pick image')),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (imageFile == null)
+          Text(validationMessage, style: const TextStyle(color: Colors.red)),
+      ],
     );
   }
 

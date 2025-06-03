@@ -1,12 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/fetch_bookmarks.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:homi_2/views/Tenants/house_details_screen.dart';
+import 'package:homi_2/views/Shared/house_details_screen.dart';
 
 class BookmarkedHousesPage extends StatefulWidget {
   final int userId;
@@ -122,17 +123,19 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        //   child: Text("Location: ${house.location}"),
-                        // ),
+
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text("Rent: ${house.rentAmount}"),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text("Rating: ${house.rating}"),
+                          child: Row(
+                            children: [
+                              const Text("Rating:"),
+                              buildSimpleStars(house.rating.toDouble()),
+                            ],
+                          ),
                         ),
                         // Bookmarked button aligned to the right
                         Padding(
@@ -213,6 +216,19 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
           }
         },
       ),
+    );
+  }
+
+  Widget buildSimpleStars(double rating) {
+    return RatingBarIndicator(
+      rating: rating,
+      itemBuilder: (context, index) => const Icon(
+        Icons.star,
+        color: Color(0xFF126E06),
+      ),
+      itemCount: 5,
+      itemSize: 20.0,
+      direction: Axis.horizontal,
     );
   }
 }
