@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/get_locations.dart';
@@ -19,10 +20,10 @@ class AddHousePageState extends State<AddHousePage> {
   String _houseName = '';
   String _rentAmount = '';
   int _location = 0;
-  String _str_location = '';
+
   String _description = '';
-  String _bankName = '';
-  String __accountNumber = '';
+  final String _bankName = '';
+  final String __accountNumber = '';
   final List<String> _imageUrls = [];
   int? userIdShared;
 
@@ -30,6 +31,7 @@ class AddHousePageState extends State<AddHousePage> {
   final ImagePicker _picker = ImagePicker();
   late Future<List<Locations>> futureLocations;
   List<Locations> locations = [];
+  List<Amenities> amenities = [];
 
   @override
   void initState() {
@@ -156,6 +158,34 @@ class AddHousePageState extends State<AddHousePage> {
                   validator: (value) {
                     if (value == null) {
                       return 'Please select a location';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      _location = value!;
+                    });
+                  },
+                  onSaved: (value) {
+                    _location = value!;
+                  },
+                ),
+                DropdownButtonFormField<int>(
+                  decoration: const InputDecoration(
+                    labelText: 'Select Amenities',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: locations.map((location) {
+                    final label =
+                        "${location.county}, ${location.town}, ${location.area}";
+                    return DropdownMenuItem<int>(
+                      value: location.locationId,
+                      child: Text(label),
+                    );
+                  }).toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select amenities ';
                     }
                     return null;
                   },

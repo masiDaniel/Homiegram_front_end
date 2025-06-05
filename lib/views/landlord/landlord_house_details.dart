@@ -613,11 +613,16 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               showAdvertCreationDialog(context);
             },
           ),
-          // SpeedDialChild(
-          //   child: const Icon(Icons.tv),
-          //   label: 'Statistics',
-          //   onTap: () {},
-          // ),
+          SpeedDialChild(
+            child: const Icon(Icons.auto_graph),
+            label: 'Statistics',
+            onTap: () {},
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.edit),
+            label: 'Edit house',
+            onTap: () {},
+          ),
         ],
       ),
     );

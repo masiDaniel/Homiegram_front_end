@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
+import 'package:homi_2/models/get_users.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
@@ -12,6 +14,7 @@ import 'package:homi_2/views/Shared/cart_page.dart';
 import 'package:homi_2/views/Tenants/products_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MarketPlace extends StatefulWidget {
   const MarketPlace({super.key});
@@ -30,12 +33,15 @@ class _MarketPlaceState extends State<MarketPlace> {
   List<Locations> locations = [];
   bool showBusinesses = true;
   File? _selectedImage;
+  List<GerUsers> users = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadBusinessesAndLocations();
     _loadProducts();
+    fetchUsers();
   }
 
   void _loadBusinessesAndLocations() {
@@ -72,6 +78,48 @@ class _MarketPlaceState extends State<MarketPlace> {
       allBusinesses = businesses;
       displayedBusinesses = businesses;
     });
+  }
+
+  Future<void> fetchUsers() async {
+    setState(() {
+      isLoading = true;
+    });
+    String? token = await UserPreferences.getAuthToken();
+
+    try {
+      // Define your headers
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $token',
+      };
+
+      // Call the endpoint
+      final response = await http.get(
+        Uri.parse('$devUrl/accounts/getUsers/'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the response
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          users = data.map((user) => GerUsers.fromJSon(user)).toList();
+        });
+      } else {
+        throw Exception('Failed to fetch users');
+      }
+    } catch (e) {
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching users: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _showPopup(BuildContext context) {
@@ -355,6 +403,31 @@ class _MarketPlaceState extends State<MarketPlace> {
               product.productName.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
+  }
+
+  void makePhoneCall(String phoneNumber) async {
+    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
+  }
+
+  String? getBusinessPhoneNumber(int businessId, List<GerUsers> users) {
+    // final matchedUser = users.firstWhere(
+    //   (user) => user.userId == businessId,
+    // );
+
+    // return matchedUser.phoneNumber;
+
+    try {
+      final matchedUser = users.firstWhere((user) => user.userId == businessId);
+      print("this is the user ${matchedUser.firstName}");
+      return matchedUser.phoneNumber;
+    } catch (e) {
+      return null; // return null or fallback
+    }
   }
 
   @override
@@ -702,27 +775,32 @@ class _MarketPlaceState extends State<MarketPlace> {
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF065F09)),
                               onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Lottie.asset(
-                                              'assets/animations/callingServers.json',
-                                              width: 100,
-                                              height: 100),
-                                          const SizedBox(height: 10),
-                                          const Text("calling initiated!",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold)),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
+                                print(
+                                    "this is the seller id ${product.seller}");
+                                makePhoneCall(getBusinessPhoneNumber(
+                                    product.seller, users)!);
+
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (BuildContext context) {
+                                //     return AlertDialog(
+                                //       content: Column(
+                                //         mainAxisSize: MainAxisSize.min,
+                                //         children: [
+                                //           Lottie.asset(
+                                //               'assets/animations/callingServers.json',
+                                //               width: 100,
+                                //               height: 100),
+                                //           const SizedBox(height: 10),
+                                //           const Text("calling initiated!",
+                                //               style: TextStyle(
+                                //                   fontSize: 18,
+                                //                   fontWeight: FontWeight.bold)),
+                                //         ],
+                                //       ),
+                                //     );
+                                //   },
+                                // );
                               },
                               child: const Text(
                                 'call seller',

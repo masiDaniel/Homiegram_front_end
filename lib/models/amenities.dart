@@ -1,15 +1,15 @@
 class Amenities {
-  final int? locationId;
+  final int? Id;
   final String? name;
 
   Amenities({
-    this.locationId,
+    this.Id,
     this.name,
   });
 
   factory Amenities.fromJSon(Map<String, dynamic> json) {
     return Amenities(
-      locationId: json['id'],
+      Id: json['id'],
       name: json['name'],
     );
   }

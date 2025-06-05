@@ -63,7 +63,7 @@ class ProductDetailPage extends StatelessWidget {
 
             // Price
             Text(
-              'Price: \$${product.productPrice}',
+              'Price: Ksh ${product.productPrice}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -141,6 +141,43 @@ class ProductDetailPage extends StatelessWidget {
                               },
                               child: const Text(
                                 'Buy Now',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: const Color(0xFF065F09),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Lottie.asset(
+                                            'assets/animations/moneySuccess.json',
+                                            width: 150,
+                                            height: 100,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                            "Product added to cart successfully!",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Text(
+                                'Add to cart',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

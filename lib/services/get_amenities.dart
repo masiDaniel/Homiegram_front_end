@@ -22,9 +22,12 @@ Future<List<Amenities>> fetchAmenities() async {
 
     if (response.statusCode == 200) {
       final List<dynamic> amenitiesData = json.decode(response.body);
+      print("this is the beginign ${amenitiesData}");
 
       final List<Amenities> amenities =
           amenitiesData.map((json) => Amenities.fromJSon(json)).toList();
+
+      print("this is the end ${amenities}");
 
       return amenities;
     } else {

@@ -150,7 +150,7 @@ class _ProductsPageState extends State<ProductsPage>
                         Text(product.productDescription),
                         const SizedBox(height: 4.0),
                         Text(
-                          'Price: \$${product.productPrice}',
+                          'Price: Ksh ${product.productPrice}',
                           style: const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.bold,

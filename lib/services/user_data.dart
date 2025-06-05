@@ -4,7 +4,7 @@ class UserPreferences {
   // Keys
   static const String _keyAuthToken = 'authToken';
   static const String _keyUserId = 'userId';
-  static const String _keyUserName = 'userName';
+  static const String _keyUserName = 'nickName';
   static const String _keyFirstName = 'firstName';
   static const String _keyLastName = 'lastName';
   static const String _keyUserEmail = 'userEmail';
@@ -19,7 +19,7 @@ class UserPreferences {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyAuthToken, userData['token']);
     await prefs.setInt(_keyUserId, userData['id']);
-    await prefs.setString(_keyUserName, userData['username']);
+    await prefs.setString(_keyUserName, userData['nick_name'] ?? 'Homie');
     await prefs.setString(_keyFirstName, userData['first_name']);
     await prefs.setString(_keyLastName, userData['last_name']);
     await prefs.setString(_keyUserEmail, userData['email']);

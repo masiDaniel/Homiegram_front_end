@@ -76,17 +76,18 @@ class Products {
   final int businessId;
   final int productTypeId;
   final String productImage;
+  final int seller;
 
-  Products({
-    required this.productId,
-    required this.productName,
-    required this.productDescription,
-    required this.productPrice,
-    required this.stockAvailable,
-    required this.businessId,
-    required this.productTypeId,
-    required this.productImage,
-  });
+  Products(
+      {required this.productId,
+      required this.productName,
+      required this.productDescription,
+      required this.productPrice,
+      required this.stockAvailable,
+      required this.businessId,
+      required this.productTypeId,
+      required this.productImage,
+      required this.seller});
 
   factory Products.fromJSon(Map<String, dynamic> json) {
     return Products(
@@ -98,6 +99,7 @@ class Products {
       businessId: json['business'] ?? 0,
       productTypeId: json['category'] ?? 0,
       productImage: json['image'] ?? '',
+      seller: json['seller'] ?? 0,
     );
   }
 

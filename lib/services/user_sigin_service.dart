@@ -18,7 +18,7 @@ const Map<String, String> headers = {
 
 //  'https://hommiegram.azurewebsites.net'
 String productionUrl = 'http://192.168.0.106:8000/'; // this will be deleted.
-String devUrl = 'http://127.0.0.1:8000/';
+String devUrl = 'http://192.168.100.7:8000/';
 
 Future fetchUserSignIn(
     BuildContext context, String username, String password) async {

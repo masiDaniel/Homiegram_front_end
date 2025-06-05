@@ -5,6 +5,7 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
 import 'package:homi_2/views/Shared/bookmark_page.dart';
+import 'package:homi_2/views/Shared/edit_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -268,6 +269,19 @@ class _ProfilePageState extends State<ProfilePage> {
               },
               icon: const Icon(
                 Icons.edit,
+                color: Colors.white,
+              )),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfilePage(),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.edit_attributes_outlined,
                 color: Colors.white,
               ))
         ],

@@ -61,7 +61,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   Future<void> _loadUserId() async {
     int? id = await UserPreferences.getUserId();
     setState(() {
-      userId = id ?? 0; // Default to 'tenant' if null
+      userId = id ?? 0;
     });
   }
 
@@ -207,8 +207,10 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       List<Locations> fetchedLocations = await fetchLocations();
       List<Amenities> fetchedAmenities = await fetchAmenities();
       List<Amenities> availableAmenities = fetchedAmenities
-          .where((amenity) => widget.house.amenities.contains(amenity))
+          .where((amenity) => widget.house.amenities.contains(amenity.Id))
           .toList();
+
+      print("these are the avilable amenities ${widget.house.amenities}");
 
       setState(() {
         locations = fetchedLocations;
@@ -388,17 +390,37 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               ),
             ),
             Wrap(
-              spacing: 10,
-              runSpacing: 10,
+              spacing: 12,
+              runSpacing: 12,
               children: amenities.map((amenity) {
-                return Chip(
-                  label: Text(amenity.name![0].toUpperCase() +
-                      amenity.name!.substring(1)),
-                  backgroundColor: const Color(0xFF126E06),
-                  labelStyle: const TextStyle(color: Colors.white),
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Color(0xFF186E1B)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        amenity.name![0].toUpperCase() +
+                            amenity.name!.substring(1),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
-            ),
+            )
           ],
         ),
       ),

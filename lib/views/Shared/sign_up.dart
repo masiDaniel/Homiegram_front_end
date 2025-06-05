@@ -39,6 +39,18 @@ class _SignUpState extends State<SignUp> {
       );
       return;
     }
+    bool isValidMandatoryEmail(String email) {
+      final RegExp regex = RegExp(r"^[\w\.-]+@gmail\.com$");
+      return regex.hasMatch(email);
+    }
+
+    if (!isValidMandatoryEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Invalid. (Valid) Email format gmail.com')),
+      );
+      return;
+    }
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
