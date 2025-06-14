@@ -35,7 +35,7 @@ class PostComments {
           "user_id": userId,
           "comment": comment,
           "nested": nested,
-          "nested_id": nestedId
+          "nested_id": nestedId,
         }),
       );
 

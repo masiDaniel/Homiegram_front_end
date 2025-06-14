@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/providers/user_provider.dart';
+import 'package:homi_2/services/theme_provider.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
 import 'package:homi_2/views/Shared/video_splash_screen.dart';
@@ -22,6 +23,7 @@ void main() async {
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => UserProvider()..loadUserData()),
+    ChangeNotifierProvider(create: (_) => ThemeProvider()),
   ], child: MyApp(initialRoute: initialRoute)));
 }
 
@@ -45,12 +47,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '',
+      title: 'HG',
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeProvider.themeMode,
       initialRoute: initialRoute,
-      home: const WelcomePage(),
-      // home: const VideoSplashScreen(),
+      // home: const WelcomePage(),
+      home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),

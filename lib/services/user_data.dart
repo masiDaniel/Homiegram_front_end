@@ -31,23 +31,49 @@ class UserPreferences {
     await prefs.setInt('login_time', DateTime.now().millisecondsSinceEpoch);
   }
 
-  // Future<void> checkSavedData() async {
-  //   final prefs = await SharedPreferences.getInstance();
+// save partial data
+  static Future<void> savePartialUserData(Map<String, dynamic> userData) async {
+    final prefs = await SharedPreferences.getInstance();
 
-  //   print('Auth Token: ${prefs.getString(_keyAuthToken)}');
-  //   print('User ID: ${prefs.getInt(_keyUserId)}');
-  //   print('Username: ${prefs.getString(_keyUserName)}');
-  //   print('First Name: ${prefs.getString(_keyFirstName)}');
-  //   print('Last Name: ${prefs.getString(_keyLastName)}');
-  //   print('Email: ${prefs.getString(_keyUserEmail)}');
-  //   print('User Type: ${prefs.getString(_keyUserType)}');
-  //   print('Phone Number: ${prefs.getString(_keyPhoneNumber)}');
-  //   print('ID Number: ${prefs.getInt(_keyIdNumber)}');
-  //   print('Profile Pic: ${prefs.getString(_keyProfilePic)}');
-  //   print('Is Logged In: ${prefs.getBool(_keyIsLoggedIn)}');
-  // }
+    if (userData.containsKey('nick_name')) {
+      await prefs.setString(_keyUserName, userData['nick_name']);
+    }
+    if (userData.containsKey('first_name')) {
+      await prefs.setString(_keyFirstName, userData['first_name']);
+    }
+    if (userData.containsKey('last_name')) {
+      await prefs.setString(_keyLastName, userData['last_name']);
+    }
+    if (userData.containsKey('email')) {
+      await prefs.setString(_keyUserEmail, userData['email']);
+    }
+    if (userData.containsKey('phone_number')) {
+      await prefs.setString(_keyPhoneNumber, userData['phone_number']);
+    }
+    if (userData.containsKey('user_type')) {
+      await prefs.setString(_keyUserType, userData['user_type']);
+    }
+  }
 
-  // Getters to retrieve stored data
+  static Future<Map<String, dynamic>> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'token': prefs.getString(_keyAuthToken),
+      'id': prefs.getInt(_keyUserId),
+      'nick_name': prefs.getString(_keyUserName),
+      'first_name': prefs.getString(_keyFirstName),
+      'last_name': prefs.getString(_keyLastName),
+      'email': prefs.getString(_keyUserEmail),
+      'user_type': prefs.getString(_keyUserType),
+      'phone_number': prefs.getString(_keyPhoneNumber),
+      'id_number': prefs.getInt(_keyIdNumber),
+      'profile_pic': prefs.getString(_keyProfilePic),
+      'is_logged_in': prefs.getBool(_keyIsLoggedIn) ?? false,
+      'login_time': prefs.getInt('login_time'),
+    };
+  }
+
+  // Getters to retrieve stored data individually
   static Future<String?> getAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyAuthToken);

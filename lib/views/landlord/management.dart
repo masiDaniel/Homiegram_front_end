@@ -163,7 +163,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
                       Text('Rent: Ksh${house.rentAmount}'),
                       const SizedBox(height: 4),
                       Text(
-                          "actual location: ${getLocationName(house.location_detail)}")
+                          "Location: ${getLocationName(house.location_detail)}")
 
                       // Add more details as needed
                     ],

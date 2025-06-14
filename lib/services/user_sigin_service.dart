@@ -5,6 +5,7 @@ import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 ///
 /// the use of global variables is not the best approach,
@@ -94,16 +95,19 @@ Future<bool> updateProfilePicture(String imagePath) async {
 
     final response = await request.send().timeout(const Duration(seconds: 10));
     // // Convert streamed response to normal response
-    // final responseBody = await response.stream.bytesToString();
+    final responseBody = await response.stream.bytesToString();
     // print("Raw response body: $responseBody");
 
-    // final userData = jsonDecode(responseBody);
+    final userData = jsonDecode(responseBody);
 
     ///
     ///To do implementautomatic saving to user prefrences
     ///
 
     if (response.statusCode == 200) {
+      final prefs = await SharedPreferences.getInstance();
+      const String _keyProfilePic = 'profilePicture';
+      await prefs.setString(_keyProfilePic, userData['profile_pic'] ?? 'N/A');
       return true;
     } else {
       // For debugging

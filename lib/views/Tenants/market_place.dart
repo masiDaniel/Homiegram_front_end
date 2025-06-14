@@ -48,7 +48,6 @@ class _MarketPlaceState extends State<MarketPlace> {
     futureBusinesses = fetchBusinesses();
     futureLocations = fetchLocations();
 
-    // Fetch businesses
     futureBusinesses.then((businesses) {
       setState(() {
         allBusinesses = businesses;
@@ -56,7 +55,6 @@ class _MarketPlaceState extends State<MarketPlace> {
       });
     });
 
-    // Fetch locations separately
     futureLocations.then((locs) {
       setState(() {
         locations = locs;
@@ -87,20 +85,17 @@ class _MarketPlaceState extends State<MarketPlace> {
     String? token = await UserPreferences.getAuthToken();
 
     try {
-      // Define your headers
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Token $token',
       };
 
-      // Call the endpoint
       final response = await http.get(
         Uri.parse('$devUrl/accounts/getUsers/'),
         headers: headers,
       );
 
       if (response.statusCode == 200) {
-        // Parse the response
         final List<dynamic> data = json.decode(response.body);
         setState(() {
           users = data.map((user) => GerUsers.fromJSon(user)).toList();
@@ -111,7 +106,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     } catch (e) {
       // Check if the widget is still mounted before using the context
       if (!mounted) return;
-      // Handle errors
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching users: $e')),
       );
@@ -187,10 +182,11 @@ class _MarketPlaceState extends State<MarketPlace> {
           return StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
-                title: const Text("Select Business Location"),
+                title: const Text(
+                    "Select Business Location (county, constituency, Location)"),
                 content: SizedBox(
-                  width: double.maxFinite, // Ensures proper width
-                  height: 300, // Adjust height as needed
+                  width: double.maxFinite,
+                  height: 300,
                   child: Column(
                     children: [
                       TextField(
@@ -217,8 +213,17 @@ class _MarketPlaceState extends State<MarketPlace> {
                         },
                       ),
                       const SizedBox(height: 10),
+                      const Text(
+                        "Can’t find your location? No worries! Reach out to us at help.homigram@gmail.com",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF023304),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
                       Expanded(
-                        // Ensures ListView gets proper constraints
                         child: ListView.builder(
                           itemCount: filteredLocations.length,
                           itemBuilder: (context, index) {
@@ -229,11 +234,10 @@ class _MarketPlaceState extends State<MarketPlace> {
                               onTap: () {
                                 setState(() {
                                   businessAddressController.text =
-                                      "${loc.county}, ${loc.town}, ${loc.area}"; // Display name
-                                  selectedLocationId =
-                                      loc.locationId; // Store ID
+                                      "${loc.county}, ${loc.town}, ${loc.area}";
+                                  selectedLocationId = loc.locationId;
                                 });
-                                Navigator.pop(context); // Close dialog
+                                Navigator.pop(context);
                               },
                             );
                           },
@@ -330,11 +334,11 @@ class _MarketPlaceState extends State<MarketPlace> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text(
                 'Cancel',
-                style: TextStyle(color: Color.fromARGB(255, 2, 51, 4)),
+                style: TextStyle(color: Color(0xFF023304)),
               ),
             ),
             ElevatedButton(
@@ -423,7 +427,8 @@ class _MarketPlaceState extends State<MarketPlace> {
 
     try {
       final matchedUser = users.firstWhere((user) => user.userId == businessId);
-      print("this is the user ${matchedUser.firstName}");
+      print(
+          "this is the user ${matchedUser.firstName}, ${matchedUser.phoneNumber} ");
       return matchedUser.phoneNumber;
     } catch (e) {
       return null; // return null or fallback
@@ -449,24 +454,10 @@ class _MarketPlaceState extends State<MarketPlace> {
               // Navigate to the cart screen or handle cart actions
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const CartScreen()), // Replace with your cart screen
+                MaterialPageRoute(builder: (context) => const CartScreen()),
               );
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.bookmark_added),
-          //   onPressed: () {
-          //     // Navigate to the cart screen or handle cart actions
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) =>
-          //               const BusinessBookmarks()), // Replace with your cart screen
-          //     );
-          //   },
-          // ),
           IconButton(
             onPressed: () => _showPopup(context),
             icon: const Icon(Icons.add),
@@ -777,30 +768,9 @@ class _MarketPlaceState extends State<MarketPlace> {
                               onPressed: () {
                                 print(
                                     "this is the seller id ${product.seller}");
+
                                 makePhoneCall(getBusinessPhoneNumber(
                                     product.seller, users)!);
-
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (BuildContext context) {
-                                //     return AlertDialog(
-                                //       content: Column(
-                                //         mainAxisSize: MainAxisSize.min,
-                                //         children: [
-                                //           Lottie.asset(
-                                //               'assets/animations/callingServers.json',
-                                //               width: 100,
-                                //               height: 100),
-                                //           const SizedBox(height: 10),
-                                //           const Text("calling initiated!",
-                                //               style: TextStyle(
-                                //                   fontSize: 18,
-                                //                   fontWeight: FontWeight.bold)),
-                                //         ],
-                                //       ),
-                                //     );
-                                //   },
-                                // );
                               },
                               child: const Text(
                                 'call seller',

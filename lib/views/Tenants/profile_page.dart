@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:homi_2/services/theme_provider.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/services/user_signout_service.dart';
@@ -8,6 +9,7 @@ import 'package:homi_2/views/Shared/bookmark_page.dart';
 import 'package:homi_2/views/Shared/edit_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -46,15 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Future<void> debugSharedPreferences() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   print('Stored Last Name: ${prefs.getString('lastName')}');
-  //   print('Stored Email: ${prefs.getString('userEmail')}');
-  //   print('Stored ID Number: ${prefs.getInt('idNumber')}');
-  //   print('Stored Phone Number: ${prefs.getString('phoneNumber')}');
-  //   print('Stored profile photo: ${prefs.getString('profilePicture')}');
-  // }
-
   Future<void> loadUserId() async {
     int? id = await UserPreferences.getUserId();
     String? type = await UserPreferences.getUserType();
@@ -76,7 +69,6 @@ class _ProfilePageState extends State<ProfilePage> {
       currentUserPhoneNumber = phoneNumber;
       currentserIdNumber = idNumber;
       currentUserProfilePicture = profilePicture;
-      print("this is the current picture ${currentUserProfilePicture}");
     });
   }
 
@@ -251,7 +243,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     bool showInitials = currentUserProfilePicture == "N/A";
-    print("this is the current user profile ${currentUserProfilePicture}");
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -283,7 +276,13 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: const Icon(
                 Icons.edit_attributes_outlined,
                 color: Colors.white,
-              ))
+              )),
+          Switch(
+            value: isDark,
+            onChanged: (value) {
+              themeProvider.toggleTheme(value);
+            },
+          ),
         ],
       ),
       body: ListView(
