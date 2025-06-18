@@ -37,6 +37,15 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   List<Locations> locations = [];
   List<Amenities> amenities = [];
 
+  int _currentPage = 0;
+  final PageController _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose(); // prevent memory leaks
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -303,19 +312,47 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
           children: [
             const SizedBox(height: 5),
             SizedBox(
-              height: 500,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (var imageUrl in widget.house.images!)
-                    Image.network(
+                height: 500,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.house.images!.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final imageUrl = widget.house.images![index];
+                    return Image.network(
                       '$devUrl$imageUrl',
                       width: 500,
                       height: 300,
                       fit: BoxFit.cover,
-                    ),
-                ],
+                    );
+                  },
+                )),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                widget.house.images!.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 12 : 8,
+                  height: _currentPage == index ? 12 : 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentPage == index
+                        ? Colors.green
+                        : Colors.grey.withOpacity(0.5),
+                  ),
+                ),
               ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

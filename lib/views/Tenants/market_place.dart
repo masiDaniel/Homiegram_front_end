@@ -353,8 +353,10 @@ class _MarketPlaceState extends State<MarketPlace> {
                     'email': businessEmailController.text,
                     'location': selectedLocationId,
                     'owner': id,
-                    // 'image': _selectedImage,
+                    'image': _selectedImage,
                   };
+
+                  print("we are here");
 
                   postBusiness(businessData, context).then((success) {
                     if (success) {

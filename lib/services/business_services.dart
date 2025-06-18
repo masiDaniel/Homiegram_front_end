@@ -5,6 +5,8 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:path/path.dart';
 
 const Map<String, String> headers = {
   "Content-Type": "application/json",
@@ -46,30 +48,68 @@ Future<bool> postBusiness(
   BuildContext context,
 ) async {
   String? token = await UserPreferences.getAuthToken();
+
+  print("we are inside ");
   try {
-    final headersWithToken = {
-      ...headers,
+    print("we are inside 1");
+
+    final uri = Uri.parse("$devUrl/business/getBusiness/");
+    var request = http.MultipartRequest('POST', uri);
+
+    request.headers.addAll({
       'Authorization': 'Token $token',
       'Content-Type': 'application/json',
-    };
+    });
 
-    final response = await http.post(
-      Uri.parse('$devUrl/business/getBusiness/'),
-      headers: headersWithToken,
-      body: json.encode(businessData),
-    );
-    print("we are getting here after");
-    if (response.statusCode == 201) {
-      log('Business created successfully.');
-      if (context.mounted) {
-        // Check if the widget is still in the widget tree
-        Navigator.of(context).pop();
+    businessData.forEach((key, value) {
+      if (key != 'image') {
+        request.fields[key] = value.toString();
       }
-      return true;
-    } else {
-      log('Failed to create business: ${response.body}');
-      return false;
+    });
+
+    if (businessData['image'] is File) {
+      File imageFile = businessData['image'] as File;
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          imageFile.path,
+          filename: basename(imageFile.path),
+        ),
+      );
     }
+
+    print("this is the request $request");
+
+    final response = await request.send();
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Upload successful');
+      final responseBody = await response.stream.bytesToString();
+      print('Response: $responseBody');
+    } else {
+      print('Upload failed with status: ${response.statusCode}');
+      final error = await response.stream.bytesToString();
+      print('Error: $error');
+    }
+    // final response = await http.post(
+    //   Uri.parse('$devUrl/business/getBusiness/'),
+    //   headers: headersWithToken,
+    //   body: json.encode(businessData),
+    // );
+    // print("we are getting here after");
+    // if (response.statusCode == 201) {
+    //   log('Business created successfully.');
+    //   if (context.mounted) {
+    //     // Check if the widget is still in the widget tree
+    //     Navigator.of(context).pop();
+    //   }
+    //   return true;
+    // } else {
+    //   log('Failed to create business: ${response.body}');
+    //   return false;
+    // }
+    return true;
   } catch (e) {
     return false;
   }

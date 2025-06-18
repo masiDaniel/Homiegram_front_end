@@ -5,6 +5,7 @@ import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
+import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
@@ -152,6 +153,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
+    int housseId = widget.house.houseId;
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -162,6 +164,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               comments: _comments,
               onDelete: deleteComment,
               onReact: onReact,
+              houseIdHere: housseId,
             ),
             const SizedBox(height: 10),
             Container(
@@ -211,11 +214,13 @@ class CommentList extends StatefulWidget {
   final List<GetComments> comments;
   final Function(int, String) onReact;
   final Function(int) onDelete;
+  final int houseIdHere;
 
   const CommentList({
     required this.comments,
     required this.onReact,
     required this.onDelete,
+    required this.houseIdHere,
     Key? key,
   }) : super(key: key);
 
@@ -225,8 +230,10 @@ class CommentList extends StatefulWidget {
 
 class _CommentListState extends State<CommentList> {
   int? userId;
-  Map<int, int> likesMap = {}; // Store likes count
-  Map<int, int> dislikesMap = {}; // Store dislikes count
+  Map<int, int> likesMap = {};
+  Map<int, int> dislikesMap = {};
+  int? replyingToCommentId;
+  final TextEditingController replyController = TextEditingController();
 
   @override
   void initState() {
@@ -289,16 +296,53 @@ class _CommentListState extends State<CommentList> {
           itemCount: rootComments.length,
           itemBuilder: (context, index) {
             final comment = rootComments.reversed.toList()[index];
-            return _buildCommentTile(comment, groupedComments);
+            return _buildCommentTile(comment, groupedComments,
+                house: widget.houseIdHere);
           },
         ),
       ],
     );
   }
 
+  void _sendReply(int parentCommentId, int houseIdnew) async {
+    final replyText = replyController.text.trim();
+    if (replyText.isEmpty) return;
+
+    final url = Uri.parse("$devUrl/comments/post/");
+    String? token = await UserPreferences.getAuthToken();
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "Token $token"
+      },
+      body: jsonEncode({
+        "house_id": houseIdnew,
+        "user_id": userId,
+        "comment": replyText,
+        "parent": parentCommentId,
+      }),
+    );
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      replyController.clear();
+      setState(() {
+        replyingToCommentId = null;
+      });
+      fetchComments(houseIdnew);
+    } else {
+      // Handle error
+      print("Failed to post reply: ${response.body}");
+    }
+  }
+
   Widget _buildCommentTile(
-      GetComments comment, Map<int?, List<GetComments>> groupedComments,
-      {int depth = 0}) {
+    GetComments comment,
+    Map<int?, List<GetComments>> groupedComments, {
+    int depth = 0,
+    int? house,
+  }) {
     return Padding(
       padding: EdgeInsets.only(left: depth * 20.0, top: 4, bottom: 4),
       child: Container(
@@ -351,6 +395,17 @@ class _CommentListState extends State<CommentList> {
                     Text(
                         "${dislikesMap[comment.commentId] ?? comment.dislikes}",
                         style: const TextStyle(color: Colors.white)),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          replyingToCommentId = comment.commentId;
+                        });
+                      },
+                      child: const Text(
+                        "Reply",
+                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
+                    ),
                   ],
                 ),
                 if (comment.userId == userId)
@@ -360,6 +415,35 @@ class _CommentListState extends State<CommentList> {
                   ),
               ],
             ),
+            if (replyingToCommentId == comment.commentId)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: replyController,
+                      decoration: InputDecoration(
+                        hintText: "Write a reply...",
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(color: Colors.green),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => _sendReply(comment.commentId, house!),
+                        child: const Text("Send"),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             if (groupedComments.containsKey(comment.commentId))
               ...groupedComments[comment.commentId]!
                   .map((reply) => _buildCommentTile(reply, groupedComments,
