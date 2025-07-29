@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signin.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -56,8 +57,6 @@ class SignInState extends State<SignIn> {
         if (userRegistration != null) {
           if (!mounted) return;
 
-          // Navigator.pushReplacementNamed(context, '/homescreen');
-
           if (!mounted) return;
           {
             _saveCredentials();
@@ -65,36 +64,33 @@ class SignInState extends State<SignIn> {
               context,
               MaterialPageRoute(
                   builder: (context) => const CustomBottomNavigartion()),
-              (Route<dynamic> route) =>
-                  false, // This removes all the previous routes
+              (Route<dynamic> route) => false,
             );
           }
         } else {
           if (!mounted) return;
 
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Invalid email or password'),
-          ));
+          showCustomSnackBar(context, 'Invalid email or password',
+              type: SnackBarType.error);
         }
       } on TimeoutException catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.message ?? 'Request timed out'),
-        ));
+        showCustomSnackBar(context, e.message ?? 'Request timed out',
+            type: SnackBarType.warning);
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('An error occurred. Please try again later.'),
-        ));
+
+        showCustomSnackBar(
+            context, 'An error occurred. Please try again later.',
+            type: SnackBarType.error);
       } finally {
         setState(() {
           _isLoading = false;
         });
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please enter a valid email and password'),
-      ));
+      showCustomSnackBar(context, 'Please enter a valid email and password',
+          type: SnackBarType.warning);
     }
   }
 
@@ -122,11 +118,13 @@ class SignInState extends State<SignIn> {
 
   /// this part deals with the user interface of the sign in page
   /// it also  has the custom text fields that take input
+  ///
+  /// The input field do not perform in the dark mode settings
+  /// should refactor this, also on sign up screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
           child: Stack(
         children: [
@@ -143,6 +141,7 @@ class SignInState extends State<SignIn> {
                         fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 15),
+                  // its color durig dark mode
                   MyTextField(
                     controller: _emailController,
                     hintText: 'Email',
@@ -158,43 +157,53 @@ class SignInState extends State<SignIn> {
                     suffixIcon: Icons.password,
                     onChanged: (value) {},
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Remember Me'),
-                      Checkbox(
-                        value: _rememberMe,
-                        onChanged: (value) {
-                          setState(() {
-                            _rememberMe = value ?? false;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  const Text(
-                    "Dont' have an account?  ",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 25),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/signup');
-                    },
-                    child: const Text(
-                      " sign up",
-                      style: TextStyle(
-                          color: Color(0xFF126E06),
-                          fontSize: 20,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w700),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 35),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text('Remember Me'),
+                        Checkbox(
+                          value: _rememberMe,
+                          activeColor: const Color(0xFF126E06),
+                          checkColor: const Color(0xFFFFFFFF),
+                          onChanged: (value) {
+                            setState(() {
+                              _rememberMe = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 35),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Dont' have an account?  ",
+                          style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: const Text(
+                            " sign up",
+                            style: TextStyle(
+                                color: Color(0xFF126E06),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   const SizedBox(height: 25),
                   MyButton(
                     buttonText: 'Sign In',
@@ -207,7 +216,6 @@ class SignInState extends State<SignIn> {
               ),
             ),
           ),
-          // Loading overlay
           if (_isLoading)
             Container(
               color: const Color.fromARGB(255, 9, 63, 2),
@@ -216,8 +224,8 @@ class SignInState extends State<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    color: Colors.green, // Custom color
-                    strokeWidth: 6.0, // Thicker stroke
+                    color: Colors.green,
+                    strokeWidth: 6.0,
                   ),
                   SizedBox(height: 10),
                   Text("Loading, please wait...",

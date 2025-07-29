@@ -24,16 +24,6 @@ Future<UserSignUp?> fetchUserSignUp(
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       return UserSignUp.fromJSon(jsonResponse);
-
-      ///
-      ///i should come back and refactor this code, the problem is the response from the backend
-      ///should have a user signed in succesfully
-      // if (jsonResponse.containsKey('message') &&
-      //     jsonResponse["message"] == "User successfully registered") {
-      //   return UserSignUp.fromJSon(jsonResponse);
-      // } else {
-      //   throw Exception("server returned status: ${response.statusCode}");
-      // }
     } else {
       throw Exception("request failed with status: ${response.statusCode}");
     }

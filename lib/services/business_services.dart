@@ -38,21 +38,13 @@ Future<List<BusinessModel>> fetchBusinesses() async {
   }
 }
 
-///
-/// Handle posting of busiess
-/// handle posting with images
-///
-
 Future<bool> postBusiness(
   Map<String, Object?> businessData,
   BuildContext context,
 ) async {
   String? token = await UserPreferences.getAuthToken();
 
-  print("we are inside ");
   try {
-    print("we are inside 1");
-
     final uri = Uri.parse("$devUrl/business/getBusiness/");
     var request = http.MultipartRequest('POST', uri);
 
@@ -79,37 +71,17 @@ Future<bool> postBusiness(
       );
     }
 
-    print("this is the request $request");
-
     final response = await request.send();
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Upload successful');
       final responseBody = await response.stream.bytesToString();
-      print('Response: $responseBody');
+      log("Post business response $responseBody");
+      return true;
     } else {
-      print('Upload failed with status: ${response.statusCode}');
       final error = await response.stream.bytesToString();
-      print('Error: $error');
+      log("Post business error $error");
+      return false;
     }
-    // final response = await http.post(
-    //   Uri.parse('$devUrl/business/getBusiness/'),
-    //   headers: headersWithToken,
-    //   body: json.encode(businessData),
-    // );
-    // print("we are getting here after");
-    // if (response.statusCode == 201) {
-    //   log('Business created successfully.');
-    //   if (context.mounted) {
-    //     // Check if the widget is still in the widget tree
-    //     Navigator.of(context).pop();
-    //   }
-    //   return true;
-    // } else {
-    //   log('Failed to create business: ${response.body}');
-    //   return false;
-    // }
-    return true;
   } catch (e) {
     return false;
   }
@@ -180,7 +152,6 @@ Future<List<Products>> fetchProductsSeller() async {
         headers: headersWithToken);
 
     if (response.statusCode == 200) {
-      print("we are here");
       final List<dynamic> productsData = json.decode(response.body);
 
       final List<Products> products =

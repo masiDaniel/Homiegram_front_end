@@ -22,10 +22,8 @@ class PostHouseService {
     );
 
     if (response.statusCode == 201) {
-      // The house was added successfully
       return true;
     } else {
-      // Handle error response
       log('Failed to add house: ${response.statusCode} ${response.body}');
       return false;
     }
@@ -40,29 +38,25 @@ class PostHouseService {
     formData.fields.add(MapEntry('rating', house.rating.toString()));
     formData.fields.add(MapEntry('description', house.description));
     formData.fields
-        .add(MapEntry('location_detail', house.location_detail.toString()));
+        .add(MapEntry('location_detail', house.locationDetail.toString()));
 
     formData.fields.add(MapEntry('landlord_id', house.landlordId.toString()));
 
-    // Adding amenities as form fields
     for (int amenity in house.amenities) {
       formData.fields.add(MapEntry('amenities', amenity.toString()));
     }
 
-    // Add images as multipart files
     if (house.images != null) {
       for (int i = 0; i < house.images!.length; i++) {
         String imagePath = house.images![i];
 
-        // Create a MultipartFile for each image
         var file = await MultipartFile.fromFile(imagePath,
             filename: imagePath.split('/').last);
 
-        // Dynamically set the field name like 'image' for the first image, 'image_1', 'image_2' for others
         String fieldName = i == 0 ? 'image' : 'image_$i';
 
         formData.files.add(MapEntry(
-          fieldName, // 'image' for the first one, 'image_1', 'image_2' for others
+          fieldName,
           file,
         ));
       }

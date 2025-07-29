@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:homi_2/components/my_snackbar.dart';
+import 'package:homi_2/main.dart';
 import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/bookmark.dart';
 import 'package:homi_2/models/comments.dart';
@@ -42,7 +44,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose(); // prevent memory leaks
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -55,17 +57,22 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
 
     bookmarkedHousesFuture = fetchBookmarkedHouses();
 
-    // Check if the current house is bookmarked
     bookmarkedHousesFuture.then((bookmarkedHouses) {
       setState(() {
         isBookmarked = bookmarkedHouses
             .any((house) => house.houseId == widget.house.houseId);
       });
     }).catchError((error) {
-      // Handle errors gracefully
       debugPrint("Error fetching bookmarked houses: $error");
     });
   }
+
+  final List<Map<String, dynamic>> roomCategories = const [
+    {'label': 'Bedsitter', 'page': NotFoundPage()},
+    {'label': '1 Bedroom', 'page': NotFoundPage()},
+    {'label': '2 Bedrooms', 'page': NotFoundPage()},
+    {'label': '3 Bedrooms', 'page': NotFoundPage()},
+  ];
 
   Future<void> _loadUserId() async {
     int? id = await UserPreferences.getUserId();
@@ -77,7 +84,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
   Future<void> _fetchComments() async {
     List<GetComments> comments = await fetchComments(widget.house.houseId);
     setState(() {
-      _comments = comments; // Initialize the local comments list
+      _comments = comments;
     });
   }
 
@@ -90,20 +97,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       nestedId: '3',
     );
 
-    // After adding the comment, fetch the updated comments list
-    await _fetchComments(); // Re-fetch comments
-  }
-
-  void _submitComment(TextEditingController commentController) {
-    final String comment = commentController.text.trim();
-    if (comment.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Comment cannot be empty')),
-      );
-    } else {
-      addComment(comment);
-      commentController.clear();
-    }
+    await _fetchComments();
   }
 
   /// how should i refactor this?
@@ -117,56 +111,43 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
     };
 
     try {
-      // Send DELETE request
       final response = await http.delete(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 204) {
-        // Comment deleted successfully
         setState(() {
-          _comments.removeWhere((comment) =>
-              comment.commentId == commentId); // Remove from local list
+          _comments.removeWhere((comment) => comment.commentId == commentId);
         });
       } else if (response.statusCode == 404) {
-        // Check if the widget is still mounted before using the context
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Comment already deleted')),
-        );
+
+        showCustomSnackBar(context, 'Comment already deleted');
       } else {
-        // Check if the widget is still mounted before using the context
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('We have problems')),
-        );
+
+        showCustomSnackBar(context, 'We have problems!');
       }
     } catch (e) {
-      // Check if the widget is still mounted before using the context
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error deleting comment')),
-      );
+
+      showCustomSnackBar(context, 'Error deleting comment');
     }
   }
 
-  // This map will store the bookmark state for each house by its houseId
   Map<int, bool> bookmarkedHouses = {};
 
   Future<List<GetHouse>> fetchBookmarkedHouses() async {
     int? id = await UserPreferences.getUserId();
-    //Fetch the bookmarks for the user
+
     final bookmarks = await fetchBookmarks();
     List<GetHouse> allHouses = await fetchHouses();
 
-    // Extract the house IDs from the bookmarks
     final houseIdsForCurrentUser = bookmarks
-        .where((bookmark) => bookmark.user == id) // Filter by current user
-        .map((bookmark) => bookmark.house) // Extract house ID
-        .toList(); // Convert to a list
+        .where((bookmark) => bookmark.user == id)
+        .map((bookmark) => bookmark.house)
+        .toList();
 
-    // Filter houses by matching ids
     List<GetHouse> filteredHouses = allHouses.where((house) {
-      return houseIdsForCurrentUser
-          .contains(house.houseId); // Check if house ID is in the user's list
+      return houseIdsForCurrentUser.contains(house.houseId);
     }).toList();
 
     return filteredHouses;
@@ -183,29 +164,12 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
         "Content-Type": "application/json",
         'Authorization': 'Token $token',
       },
-      body: jsonEncode({
-        "comment_id": commentId,
-        "action": action, // "like" or "dislike"
-        "user_id": userId
-      }),
+      body: jsonEncode(
+          {"comment_id": commentId, "action": action, "user_id": userId}),
     );
 
     if (response.statusCode == 200) {
-      // final data = jsonDecode(response.body);
-
-      // Update UI
-      setState(() {
-        // final index = widget.comments.indexWhere((c) => c.commentId == commentId);
-        // if (index != -1) {
-        //   if (action == "like") {
-        //     widget.comments[index].likes?.add(userId);
-        //     widget.comments[index].dislikes?.remove(userId);
-        //   } else if (action == "dislike") {
-        //     widget.comments[index].dislikes?.add(userId);
-        //     widget.comments[index].likes?.remove(userId);
-        //   }
-        // }
-      });
+      setState(() {});
     } else {
       log("Failed to react: ${response.body}");
     }
@@ -216,10 +180,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       List<Locations> fetchedLocations = await fetchLocations();
       List<Amenities> fetchedAmenities = await fetchAmenities();
       List<Amenities> availableAmenities = fetchedAmenities
-          .where((amenity) => widget.house.amenities.contains(amenity.Id))
+          .where((amenity) => widget.house.amenities.contains(amenity.id))
           .toList();
-
-      print("these are the avilable amenities ${widget.house.amenities}");
 
       setState(() {
         locations = fetchedLocations;
@@ -236,15 +198,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       orElse: () => Locations(
         locationId: 0,
         area: "unknown",
-      ), // Default value if not found
+      ),
     );
     return '${location.area}, ${location.town}, ${location.county}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController commentController = TextEditingController();
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
@@ -254,7 +214,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
           flexibleSpace: Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF126E06), Color(0xFF4CAF50)],
+                colors: [Color.fromARGB(255, 6, 46, 0), Color(0xFF4CAF50)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -284,7 +244,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                "Modern Living",
+                "Homigram verified",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white.withOpacity(0.9),
@@ -310,7 +270,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 5),
+            const SizedBox(height: 30),
             SizedBox(
                 height: 500,
                 child: PageView.builder(
@@ -331,7 +291,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     );
                   },
                 )),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -351,19 +311,17 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color.fromARGB(31, 2, 245, 2),
-                    blurRadius: 6,
+                    color: Color(0x1F02F502),
                     offset: Offset(0, 3),
                   ),
                 ],
@@ -418,7 +376,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                            'Location ${getLocationName(widget.house.location_detail)}',
+                            'Location ${getLocationName(widget.house.locationDetail)}',
                             style: const TextStyle(fontSize: 16)),
                       ),
                     ],
@@ -426,6 +384,60 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 10),
+            const Text(
+              "Browse by Room Type",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: roomCategories.map((category) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => category['page']),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: const Color(0x1F02F502),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      category['label'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Amenities",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 12,
               runSpacing: 12,
@@ -434,8 +446,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(0xFF186E1B)),
+                      borderRadius: BorderRadius.circular(12),
+                      color: const Color(0x1F02F502)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -457,7 +469,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   ),
                 );
               }).toList(),
-            )
+            ),
           ],
         ),
       ),
@@ -467,39 +479,32 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () {
                   int houseId = widget.house.houseId;
 
-                  // Check if the house is already bookmarked
                   if (isBookmarked) {
-                    // Remove bookmark
                     PostBookmark.removeBookmark(houseId: houseId).then((_) {
                       setState(() {
                         isBookmarked = false;
                       });
 
-                      // Show a success alert for unbookmarking
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Bookmark Removed'),
-                            content: const Text(
+                          return const AlertDialog(
+                            title: Text('Bookmark Removed'),
+                            content: Text(
                                 'This house has been removed from your bookmarks.'),
                             actions: [
                               TextButton(
                                 style: ButtonStyle(
-                                    backgroundColor:
-                                        WidgetStateProperty.all<Color>(
-                                            const Color(0xFF186E1B))),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'OK',
-                                  style: TextStyle(color: Colors.white),
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(Color(0x1F02F502)),
                                 ),
+                                onPressed: null, // Close handled in dialog
+                                child: Text('OK',
+                                    style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           );
@@ -509,13 +514,11 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       log("Error occurred while removing bookmark: $error");
                     });
                   } else {
-                    // Add bookmark
                     PostBookmark.postBookmark(houseId: houseId).then((_) {
                       setState(() {
                         isBookmarked = true;
                       });
 
-                      // Show a success alert for bookmarking
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -525,17 +528,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                                 '${widget.house.name} has been added to your bookmarks.'),
                             actions: [
                               TextButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        WidgetStateProperty.all<Color>(
-                                            const Color(0xFF186E1B))),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'OK',
-                                  style: TextStyle(color: Colors.white),
+                                style: const ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      const Color(0x1F02F502)),
                                 ),
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK',
+                                    style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           );
@@ -546,29 +545,27 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     });
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF126E06), // Green color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // Rounded corners
-                  ),
-
-                  elevation: 8, // Increased depth for elevation
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10), // More padding for easier tap
+                icon: Icon(
+                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: Colors.white,
                 ),
-                child: Text(
-                  isBookmarked ? 'Bookmarked' : 'Bookmark',
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                label: Container(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0x1F02F502),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 8,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
               ),
-              const SizedBox(width: 20), // Space between buttons
-              ElevatedButton(
+
+              ElevatedButton.icon(
                 onPressed: () async {
                   String? userTypeShared = await UserPreferences.getUserType();
-                  // Assuming you have a variable `userType` that holds the user's type
+
                   if (userTypeShared == "landlord") {
-                    // Show an error dialog to inform the landlord they cannot rent a room
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -577,17 +574,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                           content: const Text('Landlords cannot rent rooms.'),
                           actions: [
                             TextButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          const Color(0xFF186E1B))),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text(
-                                'OK',
-                                style: TextStyle(color: Colors.white),
+                              style: const ButtonStyle(
+                                backgroundColor:
+                                    WidgetStatePropertyAll(Color(0x1F02F502)),
                               ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('OK',
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ],
                         );
@@ -595,11 +588,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     );
                   } else {
                     int houseId = widget.house.houseId;
-
-                    // Call the rentRoom function
                     String? message = await rentRoom(houseId);
 
-                    // Check the message and display feedback to the user
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -611,17 +601,13 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                               Text(message ?? 'An unexpected error occurred.'),
                           actions: [
                             TextButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          const Color(0xFF186E1B))),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text(
-                                'OK',
-                                style: TextStyle(color: Colors.white),
+                              style: const ButtonStyle(
+                                backgroundColor:
+                                    WidgetStatePropertyAll(Color(0x1F02F502)),
                               ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('OK',
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ],
                         );
@@ -629,55 +615,41 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                     );
                   }
                 },
+                icon: const Icon(Icons.home, color: Colors.white),
+                label:
+                    const Text("Rent", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF126E06), // Green color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // Rounded corners
-                  ),
-
-                  elevation: 8, // Depth for elevation
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10), // Increase padding for better touch
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Rent',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CommentsScreen(
-                        house: widget.house,
-                      ),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF126E06),
+                  backgroundColor: const Color(0x1F02F502),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   elevation: 8,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.comment, color: Colors.white),
-                  ],
+              ),
+
+              // Comments Button
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommentsScreen(house: widget.house),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.comment, color: Colors.white),
+                label: const Text("Comments",
+                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0x1F02F502),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 8,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
               ),
             ],
@@ -743,6 +715,7 @@ class _CommentListState extends State<CommentList> {
     }
   }
 
+// TODO : Handle this, example - have it post after 3 seconds.
   void _handleReact(int commentId, String reactionType) {
     setState(() {
       if (reactionType == "like") {
@@ -752,7 +725,6 @@ class _CommentListState extends State<CommentList> {
       }
     });
 
-    // Call backend to update database
     widget.onReact(commentId, reactionType);
   }
 

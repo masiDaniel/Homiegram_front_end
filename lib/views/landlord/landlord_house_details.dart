@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/get_users.dart';
@@ -19,7 +17,6 @@ import 'package:homi_2/views/landlord/add_room.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 
 final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
@@ -37,7 +34,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   List<GerUsers> users = [];
   GerUsers? selectedUser;
   bool isLoading = false;
-  File? selectedFile; // Holds the selected file.
+  File? selectedFile;
   String? localFilePath;
   File? _selectedImage;
   List<Locations> locations = [];
@@ -67,7 +64,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       orElse: () => Locations(
         locationId: 0,
         area: "unknown",
-      ), // Default value if not found
+      ),
     );
     return '${location.area}, ${location.town}, ${location.county}';
   }
@@ -75,8 +72,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   String getUserName(int? cartakerId) {
     final caretaker = users.firstWhere(
       (loc) => loc.userId == cartakerId,
-      orElse: () =>
-          GerUsers(firstName: "select a user"), // Default value if not found
+      orElse: () => GerUsers(firstName: "select a user"),
     );
     return '${caretaker.firstName}, ${caretaker.email}';
   }
@@ -90,20 +86,17 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     String? token = await UserPreferences.getAuthToken();
 
     try {
-      // Define your headers
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Token $token',
       };
 
-      // Call the endpoint
       final response = await http.get(
         Uri.parse('$devUrl/accounts/getUsers/'),
         headers: headers,
       );
 
       if (response.statusCode == 200) {
-        // Parse the response
         final List<dynamic> data = json.decode(response.body);
         setState(() {
           users = data.map((user) => GerUsers.fromJSon(user)).toList();
@@ -112,12 +105,9 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         throw Exception('Failed to fetch users');
       }
     } catch (e) {
-      // Check if the widget is still mounted before using the context
       if (!mounted) return;
-      // Handle errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching users: $e')),
-      );
+
+      showCustomSnackBar(context, 'Error fetching users:!');
     } finally {
       setState(() {
         isLoading = false;
@@ -127,21 +117,17 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
   Future<void> _assignCaretaker() async {
     if (selectedUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a user')),
-      );
+      showCustomSnackBar(context, 'Please select a user');
       return;
     }
     String? token = await UserPreferences.getAuthToken();
 
     try {
-      // Define your headers
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Token $token',
       };
 
-      // Call the endpoint
       final response = await http.post(
         Uri.parse('$devUrl/houses/assign-caretaker/'),
         headers: headers,
@@ -152,32 +138,27 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       );
 
       if (response.statusCode == 200) {
-        // Check if the widget is still mounted before using the context
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Caretaker assigned successfully!')),
-        );
+
+        showCustomSnackBar(context, 'Caretaker assigned successfully!');
       } else {
         throw Exception('Failed to assign caretaker');
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error assigning caretaker: $e')),
-      );
+
+      showCustomSnackBar(context, 'Error assigning caretaker');
     }
   }
 
   Future<void> _removeCaretaker() async {
     String? token = await UserPreferences.getAuthToken();
     try {
-      // Define headers
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Token $token',
       };
 
-      // Make DELETE request
       final response = await http.delete(
         Uri.parse('$devUrl/houses/remove-caretaker/'),
         headers: headers,
@@ -187,21 +168,17 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
         }),
       );
 
-      // Check if the widget is still mounted before using the context
       if (!mounted) return;
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Caretaker removed successfully!')),
-        );
+        showCustomSnackBar(context, 'Caretaker removed successfully!');
       } else {
         final error = json.decode(response.body)['error'] ?? 'Unknown error';
         throw Exception(error);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error removing caretaker: $e')),
-      );
+
+      showCustomSnackBar(context, 'Error removing caretaker!');
     }
   }
 
@@ -385,8 +362,8 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close success dialog
-                Navigator.of(context).pop(); // Close main dialog
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
               child: const Text('OK'),
             ),
@@ -526,8 +503,8 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                       final backgroundColor = isAvailable
                           ? Colors.white
                           : room.rentStatus
-                              ? const Color(0xFF158518) // Paid
-                              : const Color(0xFF8C1A1A); // Unpaid
+                              ? const Color(0xFF158518)
+                              : const Color(0xFF8C1A1A);
 
                       final textColor =
                           isAvailable ? Colors.black : Colors.white;
@@ -536,9 +513,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                           : Colors.transparent;
 
                       return GestureDetector(
-                        onTap: () {
-                          // Navigate to room details
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -583,7 +558,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                                       size: 16, color: textColor),
                                   const SizedBox(width: 4),
                                   Text(
-                                    '${room.rentAmount}',
+                                    room.rentAmount,
                                     style: TextStyle(color: textColor),
                                   ),
                                 ],
@@ -600,11 +575,11 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                                           ? 'Available'
                                           : getUserName(room.tenantId),
                                       style: TextStyle(
-                                        fontStyle: isAvailable
-                                            ? FontStyle.italic
-                                            : FontStyle.normal,
-                                        color: textColor,
-                                      ),
+                                          fontStyle: isAvailable
+                                              ? FontStyle.italic
+                                              : FontStyle.normal,
+                                          color: textColor,
+                                          fontSize: 10),
                                     ),
                                   ),
                                 ],
@@ -665,9 +640,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
 
   bool isCaretakerAssigned = false;
 
-// Update this variable based on the backend response or local state.
   void checkCaretakerStatus() {
-    // Example: Check if caretaker is assigned.
     setState(() {
       isCaretakerAssigned = widget.house.caretakerId != null;
     });
@@ -683,8 +656,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image Slider using PageView
-
           SizedBox(
             height: 200,
             width: double.infinity,
@@ -728,7 +699,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                     const Icon(Icons.location_on,
                         color: Colors.redAccent, size: 18),
                     const SizedBox(width: 5),
-                    Text(getLocationName(widget.house.location_detail),
+                    Text(getLocationName(widget.house.locationDetail),
                         style:
                             const TextStyle(fontSize: 16, color: Colors.white)),
                   ],

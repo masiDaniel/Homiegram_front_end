@@ -35,7 +35,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
   Future<void> _loadUserType() async {
     int? id = await UserPreferences.getUserId();
     setState(() {
-      userIdShared = id ?? 0; // Default to 'tenant' if null
+      userIdShared = id ?? 0;
     });
   }
 
@@ -56,7 +56,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
       orElse: () => Locations(
         locationId: 0,
         area: "unknown",
-      ), // Default value if not found
+      ),
     );
     return '${location.area}, ${location.town}, ${location.county}';
   }
@@ -67,6 +67,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
       appBar: AppBar(
         title: const Text('Landlord Management'),
         leading: Container(),
+        scrolledUnderElevation: 0,
       ),
       body: FutureBuilder<List<GetHouse>>(
         future: futureLandlordHouses,
@@ -78,8 +79,8 @@ class _LandlordManagementState extends State<LandlordManagement> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    color: Colors.green, // Custom color
-                    strokeWidth: 6.0, // Thicker stroke
+                    color: Colors.green,
+                    strokeWidth: 6.0,
                   ),
                   SizedBox(height: 10),
                   Text("Loading, please wait...",
@@ -102,7 +103,6 @@ class _LandlordManagementState extends State<LandlordManagement> {
 
           final houses = snapshot.data!;
 
-          // Filter houses where the landlord_id matches the user ID
           final filteredHouses = houses
               .where((house) => house.landlordId == userIdShared)
               .toList();
@@ -113,7 +113,6 @@ class _LandlordManagementState extends State<LandlordManagement> {
               final house = filteredHouses[index];
               return GestureDetector(
                 onTap: () {
-                  // Navigate to the details page for managing the house
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -122,50 +121,80 @@ class _LandlordManagementState extends State<LandlordManagement> {
                   );
                 },
                 child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 16.0),
+                  padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFA0A5A8)
-                            .withAlpha((0.5 * 255).toInt()),
-                        spreadRadius: 2,
-                        blurRadius: 5,
+                        color: Colors.grey.withOpacity(0.15),
+                        spreadRadius: 3,
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 200, // Set the desired height for the image
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          image: DecorationImage(
-                            image: house.images!.isNotEmpty
-                                ? NetworkImage(
-                                    '$devUrl${house.images?[0]}') // Online image
-                                : const AssetImage('assets/images/splash.jpeg')
-                                    as ImageProvider, // Local fallback image
-                            fit: BoxFit.cover, // Adjust the image fitting
-                          ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: SizedBox(
+                          height: 180,
+                          width: double.infinity,
+                          child: house.images!.isNotEmpty
+                              ? Image.network(
+                                  '$devUrl${house.images![0]}',
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/splash.jpeg',
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
+                      const SizedBox(height: 12),
                       Text(
                         house.name,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      Text('Rent: Ksh${house.rentAmount}'),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.monetization_on,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Ksh ${house.rentAmount}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 4),
-                      Text(
-                          "Location: ${getLocationName(house.location_detail)}")
-
-                      // Add more details as needed
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            getLocationName(house.locationDetail),
+                            style: const TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

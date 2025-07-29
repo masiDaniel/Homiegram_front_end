@@ -4,7 +4,6 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
-/// this has an issue in terms of  proper coding standards, will refactor lator in the day
 class PostBookmark {
   static Future<void> postBookmark({
     required int houseId,

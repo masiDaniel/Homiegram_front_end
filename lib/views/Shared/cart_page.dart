@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/cart.dart';
 import 'package:homi_2/services/cart_services.dart';
 import 'package:homi_2/services/user_data.dart';
@@ -32,34 +33,36 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+//  TODO creation is not working seamlesly i the frontend
   Future<void> _createCart() async {
     int? userId = await UserPreferences.getUserId();
     if (userId == null) return;
 
     try {
-      Cart? newCart = await cartService
-          .createCart(userId); // Assuming you have a createCart method
+      Cart? newCart = await cartService.createCart(userId);
       if (newCart != null) {
+        showCustomSnackBar(context, "cart created succesfully!");
         setState(() {
           userCartFuture = Future.value(newCart);
         });
       }
+      showCustomSnackBar(context, "Creation failed!");
     } catch (e) {
       debugPrint("Error creating cart: $e");
     }
   }
 
-  // Future<void> _addItemsToCart(List<int> productIds) async {
-  //   final cart = await userCartFuture;
-  //   if (cart == null) return;
+  Future<void> _addItemsToCart(List<int> productIds) async {
+    final cart = await userCartFuture;
+    if (cart == null) return;
 
-  //   bool success = await cartService.addToCart(cart.id, productIds);
-  //   if (success) {
-  //     setState(() {
-  //       userCartFuture = _loadCart(); // Refresh the cart
-  //     });
-  //   }
-  // }
+    bool success = await cartService.addToCart(cart.id, productIds);
+    if (success) {
+      setState(() {
+        userCartFuture = _loadCart(); // Refresh the cart
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +77,7 @@ class _CartScreenState extends State<CartScreen> {
             return const Center(child: Text("Failed to load cart"));
           }
 
+// have this to reflect when there is no internet connection
           final userCart = snapshot.data;
           if (userCart == null) {
             return Center(
@@ -84,8 +88,14 @@ class _CartScreenState extends State<CartScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _createCart,
-                    child: const Text("Create Cart"),
-                  ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: const Text(
+                      "Create Cart",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
                 ],
               ),
             );
@@ -97,7 +107,7 @@ class _CartScreenState extends State<CartScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Lottie.asset(
-                        'assets/animations/empty_cart.json', // Ensure this file is in assets
+                        'assets/animations/empty_cart.json',
                         width: 200,
                         height: 200,
                       ),

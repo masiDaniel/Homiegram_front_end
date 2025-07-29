@@ -5,7 +5,6 @@ import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
 class CartService {
-  /// **Retrieve the cart**
   Future<Cart?> getCart(int? userId) async {
     String? token = await UserPreferences.getAuthToken();
 
@@ -19,10 +18,9 @@ class CartService {
           headers: headers);
 
       if (response.statusCode == 200) {
-        // Parse the response as a Map instead of a List
         Map<String, dynamic> data = jsonDecode(response.body);
 
-        return Cart.fromJson(data); // Directly convert to Cart
+        return Cart.fromJson(data);
       }
       return null;
     } catch (e) {
@@ -54,14 +52,13 @@ class CartService {
     }
   }
 
-  /// **Add products to the cart**
   Future<bool> addToCart(int cartId, List<int> productIds) async {
     try {
       final response = await http.patch(
         Uri.parse("$devUrl$cartId/"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "products": productIds, // Send new product list
+          "products": productIds,
         }),
       );
 
@@ -72,5 +69,24 @@ class CartService {
     } catch (e) {
       return false;
     }
+  }
+}
+
+Future<bool> removeItemFromCart(int cartId, List<int> productIds) async {
+  try {
+    final response = await http.patch(
+      Uri.parse("$devUrl$cartId/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "products": productIds,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
   }
 }

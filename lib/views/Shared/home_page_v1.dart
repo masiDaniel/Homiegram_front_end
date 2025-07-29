@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:homi_2/chat%20feature/user_list_page.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:homi_2/views/Shared/ad_details_page.dart';
 import 'package:homi_2/views/Shared/chat_page.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
-import 'package:lottie/lottie.dart';
+
 import 'package:video_player/video_player.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,10 +22,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final bool isConditionMet = true;
 
-  //this will hold the current filter selection
   String selectedFilter = 'All';
 
-  // Sample chat list
   final List<Chat> chats = [
     Chat(
         chatName: "Landlord Maina",
@@ -46,14 +47,13 @@ class _HomePageState extends State<HomePage> {
         unreadMessage: 0),
   ];
 
-  // Function to filter chats based on the selected filter
   List<Chat> _getFilteredChats() {
     if (selectedFilter == 'unRead') {
       return chats.where((chat) => chat.unreadMessage > 0).toList();
     } else if (selectedFilter == 'Groups') {
       return chats.where((chat) => chat.chatName.contains('Group')).toList();
     } else {
-      return chats; // 'All' or default
+      return chats;
     }
   }
 
@@ -70,7 +70,8 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   bool _isPaused = false;
   late List<Ad> ads;
-
+  late String authToken;
+  late int user_id;
   @override
   void initState() {
     super.initState();
@@ -94,7 +95,7 @@ class _HomePageState extends State<HomePage> {
         _currentPage++;
 
         if (_currentPage >= ads.length) {
-          _currentPage = 0; // Reset to the first ad
+          _currentPage = 0;
         }
         _pageController.animateToPage(
           _currentPage,
@@ -117,6 +118,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void getToken() {
+    setState(() async {
+      authToken = (await UserPreferences.getAuthToken())!;
+      user_id = (await UserPreferences.getUserId())!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
@@ -125,22 +133,18 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFFFEFFFF),
         body: SingleChildScrollView(
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 20.0),
+            margin: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 const Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 50,
-                      ),
                       Text(
                         "Homigram.",
                         style: TextStyle(
@@ -152,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 5,
                 ),
                 FutureBuilder<List<Ad>>(
                   future: futureAds,
@@ -185,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                                   height: 250,
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF105A01),
+                                    color: const Color(0xFF105A01),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: const Column(
@@ -218,20 +222,26 @@ class _HomePageState extends State<HomePage> {
                     } else {
                       ads = snapshot.data!;
                       return SizedBox(
-                        height: 320,
+                        height: 300,
                         child: PageView.builder(
                           controller: _pageController,
                           itemCount: ads.length,
                           itemBuilder: (context, index) {
                             final ad = ads[index];
-                            bool isSelected =
-                                _isPaused && _currentPage == index;
 
                             return GestureDetector(
-                              onTap: () => _onAdTap(index),
+                              onTap: () {
+                                _onAdTap(index);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UserListPage(
+                                        jwtToken: authToken, userId: user_id),
+                                  ),
+                                );
+                              },
                               child: Stack(
                                 children: [
-                                  // Ad Container
                                   Container(
                                     margin: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
@@ -248,8 +258,7 @@ class _HomePageState extends State<HomePage> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12.0),
                                       child: AspectRatio(
-                                        aspectRatio: 16 /
-                                            9, // Maintain a uniform aspect ratio
+                                        aspectRatio: 16 / 9.5,
                                         child: ad.imageUrl != null
                                             ? Image.network(
                                                 '$devUrl${ad.imageUrl!}',
@@ -261,8 +270,6 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
-
-                                  // Title Overlay
                                   Positioned(
                                     bottom: 15,
                                     left: 10,
@@ -273,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                                       decoration: BoxDecoration(
                                         color: const Color.fromARGB(
                                             255, 4, 104, 3),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         ad.title,
@@ -286,54 +293,6 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
-
-                                  // Expanded Content Overlay when clicked
-                                  if (isSelected)
-                                    Positioned.fill(
-                                      child: AnimatedOpacity(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        opacity: 1.0,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF0B110C)
-                                                .withAlpha((0.5 * 255).toInt()),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(ad.title,
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              const SizedBox(height: 8),
-                                              Text(ad.description,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 16)),
-                                              const SizedBox(height: 10),
-                                              Text(
-                                                  'Start Date: ${ad.startDate}',
-                                                  style: const TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 14)),
-                                              const SizedBox(height: 5),
-                                              Text('End Date: ${ad.endDate}',
-                                                  style: const TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                 ],
                               ),
                             );
@@ -343,185 +302,130 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
                 Column(
                   children: [
-                    // Lottie.asset('assets/animations/chatFeature.json',
-                    //     width: double.infinity, height: 200),
-                    // const SizedBox(height: 10),
-                    // const Text("Lets manage your living space!",
-                    //     style: TextStyle(fontSize: 18)),
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 400),
                       child: isConditionMet
                           ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Wrap(
-                                      runSpacing: 8,
-                                      spacing: 8,
-                                      children: [
-                                        FilterChip(
-                                          label: const Text("All"),
-                                          labelStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          selected: selectedFilter == 'All',
-                                          selectedColor:
-                                              const Color(0xFF105A01),
-                                          backgroundColor: Colors.green,
-                                          checkmarkColor: Colors.white,
-                                          onSelected: (bool selected) {
-                                            setState(() {
-                                              selectedFilter =
-                                                  selected ? 'All' : '';
-                                            });
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                    Wrap(
-                                      runSpacing: 8,
-                                      spacing: 8,
-                                      children: [
-                                        FilterChip(
-                                          label:
-                                              Text("unRead - ${unRead.length}"),
-                                          labelStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          selected: selectedFilter == 'unRead',
-                                          selectedColor:
-                                              const Color(0xFF105A01),
-                                          backgroundColor: Colors.green,
-                                          checkmarkColor: Colors.white,
-                                          onSelected: (bool selected) {
-                                            setState(() {
-                                              selectedFilter =
-                                                  selected ? 'unRead' : '';
-                                            });
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                    Wrap(
-                                      runSpacing: 8,
-                                      spacing: 8,
-                                      children: [
-                                        FilterChip(
-                                          label: const Text("Groups - 1"),
-                                          labelStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          selected: selectedFilter == 'Groups',
-                                          selectedColor:
-                                              const Color(0xFF105A01),
-                                          backgroundColor: Colors.green,
-                                          checkmarkColor: Colors.white,
-                                          onSelected: (bool selected) {
-                                            setState(() {
-                                              selectedFilter =
-                                                  selected ? 'Groups' : '';
-                                            });
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                    Wrap(
-                                      runSpacing: 8,
-                                      spacing: 8,
-                                      children: [
-                                        FilterChip(
-                                          label: const Text("stories"),
-                                          labelStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          selected: selectedFilter == 'Stories',
-                                          selectedColor:
-                                              const Color(0xFF105A01),
-                                          backgroundColor: Colors.green,
-                                          checkmarkColor: Colors.white,
-                                          onSelected: (bool selected) {
-                                            setState(() {
-                                              selectedFilter =
-                                                  selected ? 'stories' : '';
-                                            });
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  ],
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 2),
+                                  child: Text("Homi Chat",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF105A01))),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(
+                                  height: 48,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    children: [
+                                      buildFilterChip(
+                                          "All", selectedFilter == 'All',
+                                          (val) {
+                                        setState(() =>
+                                            selectedFilter = val ? 'All' : '');
+                                      }),
+                                      buildFilterChip(
+                                          "unRead - ${unRead.length}",
+                                          selectedFilter == 'unRead', (val) {
+                                        setState(() => selectedFilter =
+                                            val ? 'unRead' : '');
+                                      }),
+                                      buildFilterChip("Groups - 1",
+                                          selectedFilter == 'Groups', (val) {
+                                        setState(() => selectedFilter =
+                                            val ? 'Groups' : '');
+                                      }),
+                                      buildFilterChip("Stories",
+                                          selectedFilter == 'Stories', (val) {
+                                        setState(() => selectedFilter =
+                                            val ? 'Stories' : '');
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
                                 SizedBox(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.7,
+                                      MediaQuery.of(context).size.height * 0.4,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
                                     child: filteredChats.isNotEmpty
-                                        ? ListView.builder(
+                                        ? ListView.separated(
                                             key: ValueKey(selectedFilter),
                                             itemCount: filteredChats.length,
+                                            separatorBuilder: (_, __) =>
+                                                const SizedBox(height: 12),
                                             itemBuilder: (context, index) {
-                                              return InkWell(
+                                              final chat = filteredChats[index];
+                                              return GestureDetector(
                                                 onTap: () {
                                                   _markChatAsRead(index);
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          ChatPage(
-                                                              chat:
-                                                                  filteredChats[
-                                                                      index]),
+                                                          ChatPage(chat: chat),
                                                     ),
                                                   );
                                                 },
-                                                child: ChatCard(
-                                                    chat: filteredChats[index]),
+                                                child: ChatCard(chat: chat),
                                               );
                                             },
                                           )
                                         : const Center(
-                                            key: ValueKey('noChats'),
-                                            child: Text(
-                                              'No Chats Available',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.chat_bubble_outline,
+                                                    size: 60,
+                                                    color: Color(0xFF026B13)),
+                                                SizedBox(height: 10),
+                                                Text(
+                                                  'No Chats Available',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF026B13),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                   ),
                                 ),
                               ],
                             )
-                          : const Padding(
-                              padding: EdgeInsets.all(100.0),
-                              child: Center(
-                                key: ValueKey('comingSoon'),
+                          : const Center(
+                              key: ValueKey('comingSoon'),
+                              child: Padding(
+                                padding: EdgeInsets.all(40.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.build_circle,
-                                        size: 50, color: Color(0xFF026B13)),
-                                    SizedBox(height: 10),
+                                    Icon(Icons.upcoming,
+                                        size: 80, color: Color(0xFF026B13)),
+                                    SizedBox(height: 20),
                                     Text(
-                                      'Chat Feature Unavailable\nComing Soon!',
-                                      textAlign: TextAlign.center,
+                                      'Chat Feature Unavailable',
                                       style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Coming Soon!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   ],
@@ -538,4 +442,34 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  Widget buildFilterChip(
+      String label, bool isSelected, Function(bool) onSelected) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: FilterChip(
+        label: Text(label),
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: isSelected ? Colors.white : Colors.black,
+        ),
+        selected: isSelected,
+        selectedColor: const Color(0xFF105A01),
+        backgroundColor: Colors.grey[200],
+        checkmarkColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+              color: isSelected ? Colors.green : Colors.grey.shade300),
+        ),
+        onSelected: onSelected,
+      ),
+    );
+  }
 }
+
+    // Lottie.asset('assets/animations/chatFeature.json',
+                    //     width: double.infinity, height: 200),
+                    // const SizedBox(height: 10),
+                    // const Text("Lets manage your living space!",
+                    //     style: TextStyle(fontSize: 18)),

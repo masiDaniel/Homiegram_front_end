@@ -34,7 +34,7 @@ class _ProductsPageState extends State<ProductsPage>
   @override
   void initState() {
     super.initState();
-    // Fetch the products when the page loads
+
     futureProducts = fetchProducts();
     _loadUserId();
   }
@@ -60,12 +60,10 @@ class _ProductsPageState extends State<ProductsPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('Products for ${widget.businessName}'),
-        // actions: [],
       ),
       body: FutureBuilder<List<Products>>(
         future: futureProducts,
         builder: (context, snapshot) {
-          // Loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: Center(
@@ -73,8 +71,8 @@ class _ProductsPageState extends State<ProductsPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    color: Colors.green, // Custom color
-                    strokeWidth: 6.0, // Thicker stroke
+                    color: Colors.green,
+                    strokeWidth: 6.0,
                   ),
                   SizedBox(height: 10),
                   Text("Loading, please wait...",
@@ -82,14 +80,9 @@ class _ProductsPageState extends State<ProductsPage>
                 ],
               )),
             );
-          }
-          // Error state
-          else if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          // Data is available
-          else if (snapshot.hasData) {
-            // Filter products based on the businessId
+          } else if (snapshot.hasData) {
             List<Products> filteredProducts = snapshot.data!
                 .where((product) => product.businessId == widget.businessId)
                 .toList();
@@ -98,19 +91,15 @@ class _ProductsPageState extends State<ProductsPage>
               return const Center(child: Text('No products available.'));
             }
 
-            // Display the list of filtered products
             return ListView.builder(
               itemCount: filteredProducts.length,
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
-                // String productImage = product.productImage.isNotEmpty
-                //     ? '$devUrl${product.productImage}'
-                //     : 'assets/images/ad2.jpeg'; // Default image asset
+
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: Padding(
-                    padding: const EdgeInsets.all(
-                        8.0), // Adding padding inside the card
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -123,7 +112,7 @@ class _ProductsPageState extends State<ProductsPage>
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
-                                      'assets/images/ad2.jpeg', // Default image in case of error
+                                      'assets/images/ad2.jpeg',
                                       width: double.infinity,
                                       height: 200,
                                       fit: BoxFit.cover,
@@ -131,14 +120,13 @@ class _ProductsPageState extends State<ProductsPage>
                                   },
                                 )
                               : Image.asset(
-                                  'assets/images/ad2.jpeg', // Default image when there is no product image
+                                  'assets/images/ad2.jpeg',
                                   width: double.infinity,
                                   height: 200,
                                   fit: BoxFit.cover,
                                 ),
                         ),
-
-                        const SizedBox(height: 8.0), // Add some spacing
+                        const SizedBox(height: 8.0),
                         Text(
                           product.productName,
                           style: const TextStyle(
@@ -157,7 +145,6 @@ class _ProductsPageState extends State<ProductsPage>
                           ),
                         ),
                         const SizedBox(height: 8.0),
-                        // Button or action row
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
@@ -165,7 +152,6 @@ class _ProductsPageState extends State<ProductsPage>
                                 backgroundColor:
                                     const Color.fromARGB(255, 6, 95, 9)),
                             onPressed: () {
-                              // Handle tap event, e.g., navigating to product details
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -241,7 +227,7 @@ class _ProductsPageState extends State<ProductsPage>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BusinessEditPage(
+                          builder: (context) => const BusinessEditPage(
                             business: {
                               "id": 2,
                               "name": "foodmore",
@@ -277,6 +263,13 @@ class _ProductsPageState extends State<ProductsPage>
                   SpeedDialChild(
                     child: const Icon(Icons.call),
                     label: 'Call business',
+                    onTap: () {
+                      makePhoneCall(widget.businessPhoneNumber);
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(Icons.message),
+                    label: 'Message business',
                     onTap: () {
                       makePhoneCall(widget.businessPhoneNumber);
                     },

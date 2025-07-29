@@ -4,7 +4,6 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
-/// also this, just like the bookmark issue
 class PostComments {
   static Future<void> postComment({
     required String houseId,
@@ -18,14 +17,6 @@ class PostComments {
       'Content-Type': 'application/json',
       'Authorization': 'Token $token',
     };
-
-    print("this is the comment body ${jsonEncode({
-          "house_id": houseId,
-          "user_id": userId,
-          "comment": comment,
-          "nested": nested,
-          "nested_id": nestedId
-        })}");
     try {
       final response = await http.post(
         Uri.parse("$devUrl/comments/post/"),

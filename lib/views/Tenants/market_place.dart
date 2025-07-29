@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
@@ -35,6 +36,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   File? _selectedImage;
   List<GerUsers> users = [];
   bool isLoading = false;
+  List<Category> categories = [];
 
   @override
   void initState() {
@@ -42,6 +44,29 @@ class _MarketPlaceState extends State<MarketPlace> {
     _loadBusinessesAndLocations();
     _loadProducts();
     fetchUsers();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final fetchedCategories = await fetchCategorys();
+      setState(() {
+        categories = fetchedCategories;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  String getCategoryNameById(int id) {
+    final category = categories.firstWhere(
+      (cat) => cat.categoryId == id,
+      orElse: () => Category(categoryId: 0, categoryName: 'Unknown'),
+    );
+    return category.categoryName;
   }
 
   void _loadBusinessesAndLocations() {
@@ -104,12 +129,9 @@ class _MarketPlaceState extends State<MarketPlace> {
         throw Exception('Failed to fetch users');
       }
     } catch (e) {
-      // Check if the widget is still mounted before using the context
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching users: $e')),
-      );
+      showCustomSnackBar(context, "Error fetching users");
     } finally {
       setState(() {
         isLoading = false;
@@ -301,7 +323,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                   ),
                   TextFormField(
                     controller: businessAddressController,
-                    readOnly: true, // Prevent manual typing
+                    readOnly: true,
                     decoration: InputDecoration(
                       labelText: "Business Location",
                       suffixIcon: IconButton(
@@ -356,12 +378,8 @@ class _MarketPlaceState extends State<MarketPlace> {
                     'image': _selectedImage,
                   };
 
-                  print("we are here");
-
                   postBusiness(businessData, context).then((success) {
                     if (success) {
-                      print("we are inside");
-
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -421,19 +439,23 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   String? getBusinessPhoneNumber(int businessId, List<GerUsers> users) {
-    // final matchedUser = users.firstWhere(
-    //   (user) => user.userId == businessId,
-    // );
-
-    // return matchedUser.phoneNumber;
-
     try {
       final matchedUser = users.firstWhere((user) => user.userId == businessId);
-      print(
-          "this is the user ${matchedUser.firstName}, ${matchedUser.phoneNumber} ");
+
       return matchedUser.phoneNumber;
     } catch (e) {
-      return null; // return null or fallback
+      return null;
+    }
+  }
+
+  String? getNameOfSeller(int sellerId, List<GerUsers> users) {
+    try {
+      final matchedUser = users.firstWhere((user) => user.userId == sellerId);
+      String? fullName = " ${matchedUser.firstName}  ${matchedUser.lastName}";
+
+      return fullName;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -449,11 +471,11 @@ class _MarketPlaceState extends State<MarketPlace> {
           ),
           onChanged: _filterResults,
         ),
+        scrolledUnderElevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
-              // Navigate to the cart screen or handle cart actions
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CartScreen()),
@@ -470,7 +492,6 @@ class _MarketPlaceState extends State<MarketPlace> {
           child: RefreshIndicator(
         onRefresh: _refreshBusinesses,
         child: Column(children: [
-          // **Toggle Buttons**
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -501,7 +522,6 @@ class _MarketPlaceState extends State<MarketPlace> {
               ),
             ],
           ),
-          // **Search Results Display**
           Expanded(
             child: showBusinesses ? _buildBusinessList() : _buildProductList(),
           ),
@@ -616,7 +636,6 @@ class _MarketPlaceState extends State<MarketPlace> {
                           child: Container(
                             width: 400,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF126E06),
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             child: Column(
@@ -653,7 +672,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                         style: const TextStyle(
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Color(0xFF126E06),
                                         ),
                                       ),
                                       const SizedBox(height: 4.0),
@@ -662,20 +681,20 @@ class _MarketPlaceState extends State<MarketPlace> {
                                             ? 'Location: ${businessLocation.area}, ${businessLocation.county}, ${businessLocation.town}'
                                             : 'Location: Unknown',
                                         style: const TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white70),
+                                          fontSize: 16.0,
+                                        ),
                                       ),
                                       Text(
                                         'Contact: ${business.contactNumber}',
                                         style: const TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white70),
+                                          fontSize: 16.0,
+                                        ),
                                       ),
                                       Text(
-                                        'Category: ${business.businessTypeId}',
+                                        'Category: ${getCategoryNameById(business.businessTypeId)}',
                                         style: const TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white70),
+                                          fontSize: 16.0,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -696,7 +715,6 @@ class _MarketPlaceState extends State<MarketPlace> {
     );
   }
 
-  // **Build Product List**
   Widget _buildProductList() {
     return displayedProducts.isNotEmpty
         ? ListView.builder(
@@ -708,25 +726,18 @@ class _MarketPlaceState extends State<MarketPlace> {
                   : 'assets/images/default_product.jpeg';
 
               return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      const BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 4.0,
-                          spreadRadius: 1.0),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(12.0),
+                child: Material(
+                  borderRadius: BorderRadius.circular(16),
+                  elevation: 4,
+                  color: Theme.of(context).cardColor,
+                  shadowColor: Theme.of(context).shadowColor,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
                         child: Image.network(
                           productImage,
                           width: double.infinity,
@@ -743,40 +754,75 @@ class _MarketPlaceState extends State<MarketPlace> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               product.productName,
-                              style: const TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.bold),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                            const SizedBox(height: 4.0),
+                            const SizedBox(height: 8),
                             Text(
                               'Price: ${product.productPrice}',
-                              style: const TextStyle(
-                                  fontSize: 16.0, color: Colors.black54),
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                            Text(
-                              'Seller: ${product.productName}',
-                              style: const TextStyle(
-                                  fontSize: 16.0, color: Colors.black54),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Text(
+                                  'Seller: ${getNameOfSeller(product.seller, users)}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                const Spacer(),
+                                SizedBox(
+                                  width: 150,
+                                  child: ElevatedButton.icon(
+                                    icon: const Icon(Icons.message, size: 18),
+                                    label: const Text('Message Seller'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF065F09),
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      elevation: 2,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14),
+                                    ),
+                                    onPressed: () {
+                                      makePhoneCall(getBusinessPhoneNumber(
+                                          product.seller, users)!);
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4.0),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF065F09)),
-                              onPressed: () {
-                                print(
-                                    "this is the seller id ${product.seller}");
-
-                                makePhoneCall(getBusinessPhoneNumber(
-                                    product.seller, users)!);
-                              },
-                              child: const Text(
-                                'call seller',
-                                style: TextStyle(color: Colors.white),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.phone, size: 18),
+                                label: const Text('Call seller'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF065F09),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 2,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                ),
+                                onPressed: () {
+                                  makePhoneCall(getBusinessPhoneNumber(
+                                      product.seller, users)!);
+                                },
                               ),
                             ),
                           ],
@@ -788,6 +834,13 @@ class _MarketPlaceState extends State<MarketPlace> {
               );
             },
           )
-        : const Center(child: Text("No standalone products found."));
+        : Center(
+            child: Lottie.asset(
+              'assets/animations/notFound.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          );
   }
 }

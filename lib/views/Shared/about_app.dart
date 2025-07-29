@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// TODO - figure out a better style for this page and the information also
+
 class Node {
   final String title;
   final String description;
@@ -10,7 +12,7 @@ class Node {
     required this.title,
     required this.description,
     this.icon = Icons.info,
-    this.gradientColors = const Color(0xFF126E06),
+    this.gradientColors = const Color(0xFF0D6B05),
   });
 }
 
@@ -39,13 +41,12 @@ class AboutHomiegram extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF126E06),
+        backgroundColor: const Color(0xFF0D6B05),
         title: const Text(
           "What is Homigram?",
           style: TextStyle(color: Colors.white),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 146, 182, 142),
       body: CustomPaint(
         child: ListView.builder(
           itemCount: nodes.length,

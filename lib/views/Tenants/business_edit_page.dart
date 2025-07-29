@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:http/http.dart' as http;
 
 class BusinessEditPage extends StatefulWidget {
@@ -56,9 +57,7 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     }
 
     if (updates.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No changes to update")),
-      );
+      showCustomSnackBar(context, "No Changes to update");
       return;
     }
 
@@ -69,50 +68,46 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Token your_token_here', // Add your token
+        'Authorization': 'Token ',
       },
       body: jsonEncode(updates),
     );
 
+    if (!mounted) return;
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Business updated successfully")),
-      );
+      showCustomSnackBar(context, "Business updated successfully");
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Update failed: ${response.body}")),
-      );
+      showCustomSnackBar(context, "Update failed");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Edit Business")),
+      appBar: AppBar(title: const Text("Edit Business")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             TextFormField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Business Name'),
+              decoration: const InputDecoration(labelText: 'Business Name'),
             ),
             TextFormField(
               controller: contactController,
-              decoration: InputDecoration(labelText: 'Contact Number'),
+              decoration: const InputDecoration(labelText: 'Contact Number'),
             ),
             TextFormField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               value: selectedLocation,
-              decoration: InputDecoration(labelText: 'Location'),
-              items: [
+              decoration: const InputDecoration(labelText: 'Location'),
+              items: const [
                 DropdownMenuItem(value: 1, child: Text('Location 1')),
                 DropdownMenuItem(value: 2, child: Text('Location 2')),
-                // Add more from your actual backend list
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -124,11 +119,10 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
             ),
             DropdownButtonFormField<int>(
               value: selectedBusinessType,
-              decoration: InputDecoration(labelText: 'Business Type'),
-              items: [
+              decoration: const InputDecoration(labelText: 'Business Type'),
+              items: const [
                 DropdownMenuItem(value: 1, child: Text('Retail')),
                 DropdownMenuItem(value: 2, child: Text('Wholesale')),
-                // Add more from your actual backend list
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -138,10 +132,10 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
                 }
               },
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: updateBusiness,
-              child: Text('Update'),
+              child: const Text('Update'),
             ),
           ],
         ),

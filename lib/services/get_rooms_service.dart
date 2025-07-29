@@ -12,8 +12,6 @@ const Map<String, String> headers = {
 List<GetRooms> allRooms = [];
 String? houseId;
 
-// /this is used in the home_page class(commented out) and the house list page
-
 Future<List<GetRooms>> fetchRooms() async {
   String? token = await UserPreferences.getAuthToken();
   try {
@@ -64,7 +62,6 @@ Future<List<GetRooms>> fetchRoomsByHouse(int houseId) async {
       final List<GetRooms> rooms =
           roomData.map((json) => GetRooms.fromJSon(json)).toList();
 
-      // Filter rooms by houseId
       final filteredRooms =
           rooms.where((room) => room.apartmentID == houseId).toList();
 

@@ -17,7 +17,7 @@ class CustomBottomNavigartion extends StatefulWidget {
 
 class _HomePageState extends State<CustomBottomNavigartion> {
   int _selectedIndex = 0;
-  String? userType; // Store userType
+  String? userType;
 
   @override
   void initState() {
@@ -28,13 +28,11 @@ class _HomePageState extends State<CustomBottomNavigartion> {
   Future<void> _loadUserType() async {
     String? type = await UserPreferences.getUserType();
     setState(() {
-      userType = type ?? 'tenant'; // Default to 'tenant' if null
+      userType = type ?? 'tenant';
     });
   }
 
   List<Widget> get _pages {
-    // handling cases when usertype is null
-
     if ((userType ?? 'tenant') == 'landlord') {
       return const [
         HomePage(),
@@ -61,9 +59,8 @@ class _HomePageState extends State<CustomBottomNavigartion> {
   }
 
   Future<bool> _onWillPop() async {
-    // Exit the app when back button is pressed
-    SystemNavigator.pop(); // Works on Android
-    return false; // Prevents default back navigation
+    SystemNavigator.pop();
+    return false;
   }
 
   @override
@@ -71,49 +68,28 @@ class _HomePageState extends State<CustomBottomNavigartion> {
     return WillPopScope(
       onWillPop: _onWillPop, // prevent back navigation accross all tabs
       child: Scaffold(
-        backgroundColor: const Color(0xFFFEFFFF),
         body: _pages.elementAt(_selectedIndex), // Ensure the index is valid
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.home, color: Colors.grey),
               label: 'Home',
-              backgroundColor: Colors.white,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.search, color: Colors.grey),
               label: 'search',
-              backgroundColor: Colors.white,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.shop,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.shop, color: Colors.grey),
               label: 'Market',
-              backgroundColor: Colors.white,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.money,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.money, color: Colors.grey),
               label: 'Rent',
-              backgroundColor: Colors.white,
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.person, color: Colors.grey),
               label: 'profile',
-              backgroundColor: Colors.white,
             ),
           ],
           currentIndex: _selectedIndex,

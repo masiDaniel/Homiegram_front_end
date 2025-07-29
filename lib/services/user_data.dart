@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences {
-  // Keys
   static const String _keyAuthToken = 'authToken';
   static const String _keyUserId = 'userId';
   static const String _keyUserName = 'nickName';
@@ -14,7 +13,6 @@ class UserPreferences {
   static const String _keyIdNumber = 'idNumber';
   static const String _keyProfilePic = 'profilePicture';
 
-  // Save data example:
   static Future<void> saveUserData(Map<String, dynamic> userData) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyAuthToken, userData['token']);
@@ -31,7 +29,6 @@ class UserPreferences {
     await prefs.setInt('login_time', DateTime.now().millisecondsSinceEpoch);
   }
 
-// save partial data
   static Future<void> savePartialUserData(Map<String, dynamic> userData) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -73,7 +70,6 @@ class UserPreferences {
     };
   }
 
-  // Getters to retrieve stored data individually
   static Future<String?> getAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyAuthToken);

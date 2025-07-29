@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/user_data.dart';
@@ -87,7 +88,9 @@ class AddProductPageState extends State<AddProductPage> {
 
       try {
         var response = await request.send();
+        
         if (response.statusCode == 201) {
+           if (!mounted) return;
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -111,18 +114,18 @@ class AddProductPageState extends State<AddProductPage> {
               ),
             ),
           );
-
-          await Future.delayed(
-              const Duration(seconds: 4)); // Wait for animation
-          Navigator.pop(context); // Close the dialog
-          Navigator.pop(context); // Close the Add Product page
+           
+          await Future.delayed(const Duration(seconds: 4));
+           if (!mounted) return;
+          Navigator.pop(context);
+          Navigator.pop(context);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Failed to add product")));
+           if (!mounted) return;
+          showCustomSnackBar(context, "Failed to add product");
         }
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error: $e")));
+         if (!mounted) return;
+        showCustomSnackBar(context, "Error: $e");
       }
     }
   }

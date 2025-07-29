@@ -36,7 +36,6 @@ class AllHousesState extends State<AllHouses> {
         houses = json.decode(response.body);
       });
     } else {
-      // Handle error
       log('Failed to load houses: ${response.statusCode}');
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
@@ -78,9 +79,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     await updateUserInfo(updatedData);
     await UserPreferences.savePartialUserData(updatedData);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile updated!')),
-    );
+    showCustomSnackBar(context, 'Profile updated!');
   }
 
   void toggleEdit() {
@@ -120,7 +119,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onPressed: toggleEdit,
             child: Text(
               isEditing ? 'Save' : 'Edit',
-              style: const TextStyle(color: Colors.black),
             ),
           )
         ],

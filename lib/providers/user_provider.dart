@@ -9,7 +9,7 @@ class UserProvider with ChangeNotifier {
   String? lastName;
   String? userEmail;
   String? userType;
-  bool isLoggedIn = false; // Add this
+  bool isLoggedIn = false;
 
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -23,6 +23,6 @@ class UserProvider with ChangeNotifier {
     userType = prefs.getString('userType');
     isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    notifyListeners(); // Updates all UI components using this data
+    notifyListeners();
   }
 }

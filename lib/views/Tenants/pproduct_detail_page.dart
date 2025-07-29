@@ -150,6 +150,7 @@ class ProductDetailPage extends StatelessWidget {
                               ),
                               onPressed: () {
                                 Navigator.of(context).pop();
+
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {

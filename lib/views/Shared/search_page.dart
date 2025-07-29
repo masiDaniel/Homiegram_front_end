@@ -89,6 +89,10 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// TODO: search & Filters: Students can search for rooms based on
+      /// - location,
+      /// - price range
+      /// - available amenities.
       appBar: AppBar(
           automaticallyImplyLeading: false,
           title: TextField(
@@ -105,6 +109,7 @@ class _SearchPageState extends State<SearchPage> {
               });
             },
           ),
+          scrolledUnderElevation: 0,
           actions: [
             IconButton(
               icon: const Icon(
@@ -214,7 +219,7 @@ class _SearchPageState extends State<SearchPage> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                              "location: ${getLocationName(house.location_detail)}"),
+                                              "location: ${getLocationName(house.locationDetail)}"),
                                         ],
                                       ),
                                     ),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/services/theme_provider.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
@@ -35,16 +36,15 @@ class _ProfilePageState extends State<ProfilePage> {
     loadUserId();
   }
 
-  // this is a function that takes the first letter from the name of the user
   String extractInitials(String name) {
     if (name.isEmpty) {
-      return 'HG'; // Default to Homigram initials if name is empty
+      return 'HG';
     }
     List<String> nameParts = name.split(' ');
     if (nameParts.isNotEmpty) {
-      return nameParts[0][0].toUpperCase(); //first name, first letter
+      return nameParts[0][0].toUpperCase();
     } else {
-      return 'HG'; // Return Homiegram initials if name is empty
+      return 'HG';
     }
   }
 
@@ -74,82 +74,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _logout() async {
     try {
-      await logoutUser(); // Your existing logout logic
+      await logoutUser();
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('isLoggedIn'); // Remove login flag
-      await prefs.remove('userType'); // Remove user type
+      await prefs.remove('isLoggedIn');
+      await prefs.remove('userType');
 
-      if (!mounted) return; // Ensure the widget is still mounted
+      if (!mounted) return;
 
-      Navigator.pushReplacementNamed(
-          context, '/'); // Navigate to the welcome screen
+      Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       log("Error logging out: $e");
     }
-  }
-
-  void _showEditDialog() {
-    final TextEditingController idNumberController = TextEditingController();
-    final TextEditingController phoneController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Profile'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                TextField(
-                  controller: idNumberController,
-                  decoration: const InputDecoration(labelText: 'National ID'),
-                ),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(labelText: 'Phone Number'),
-                  keyboardType: TextInputType.phone,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () async {
-                // Collect the updated fields
-                Map<String, dynamic> updateData = {};
-
-                if (idNumberController.text.isNotEmpty) {
-                  updateData['id_number'] = idNumberController.text;
-                }
-                if (phoneController.text.isNotEmpty) {
-                  updateData['phone_number'] = phoneController.text;
-                }
-
-                if (updateData.isNotEmpty) {
-                  // Call the backend update function
-                  bool? success = await updateUserInfo(updateData);
-                  if (success == true) {
-                    log('Profile updated successfully!');
-                  } else {
-                    log('Failed to update profile.');
-                  }
-                }
-
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> pickImage() async {
@@ -163,7 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
           currentUserProfilePicture = pickedFile.path;
         });
 
-        // Show confirmation dialog
         final bool? confirm = await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -190,11 +125,8 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Failed to select image. Please try again."),
-        ),
-      );
+      if (!mounted) return;
+      showCustomSnackBar(context, "Failed to select image. Try again later");
     }
   }
 
@@ -213,30 +145,23 @@ class _ProfilePageState extends State<ProfilePage> {
 
   ImageProvider<Object>? getProfileImage(
       String? profilePicture, String devUrl) {
-    // Default fallback image
     const defaultImage1 = AssetImage('assets/images/default_avatar.jpeg');
-    const defaultImage = AssetImage('assets/images/1_3.jpeg');
-    const splashImage = AssetImage('assets/images/splash.jpeg');
 
-    // If profile picture is missing or set to "homigram", return splash image
     if (profilePicture == null ||
         profilePicture.isEmpty ||
         profilePicture == "N/A") {
       return null;
     }
 
-    // If stored profile picture follows "/media/photo.jpeg" format, attach devUrl
     if (profilePicture.startsWith("/media/")) {
       return NetworkImage('$devUrl$profilePicture');
     }
 
-    // If the stored profile picture is a valid local file, return it
     final file = File(profilePicture);
     if (file.existsSync()) {
       return FileImage(file);
     }
 
-    // If nothing works, return the default avatar
     return defaultImage1;
   }
 
@@ -258,14 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
               onPressed: () {
-                _showEditDialog();
-              },
-              icon: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              )),
-          IconButton(
-              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -277,12 +194,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icons.edit_attributes_outlined,
                 color: Colors.white,
               )),
-          Switch(
-            value: isDark,
-            onChanged: (value) {
-              themeProvider.toggleTheme(value);
-            },
-          ),
         ],
       ),
       body: ListView(
@@ -335,11 +246,6 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ListTile(
-                  //   leading: const Icon(Icons.person, color: Color(0xFF126E06)),
-                  //   title: const Text('User ID'),
-                  //   subtitle: Text('$currentUserId'),
-                  // ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.account_circle,
@@ -400,22 +306,28 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const Divider(),
                   GestureDetector(
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => BookmarkedHousesPage(
-                      //       userId: currentUserId!,
-                      //     ),
-                      //   ),
-                      // );
-                    },
+                    onTap: () {},
                     child: const ListTile(
                       leading:
                           Icon(Icons.money_off_sharp, color: Color(0xFF126E06)),
                       title: Text('Purchases'),
                     ),
                   ),
+                  const Divider(),
+                  ListTile(
+                    title: const Text('Theme'),
+                    trailing: Switch(
+                      // have this to be stateful
+                      value: isDark,
+                      onChanged: (value) {
+                        themeProvider.toggleTheme(value);
+                      },
+                      activeThumbColor: const Color(0xFF126E06),
+                      activeTrackColor: Colors.green[200],
+                      inactiveThumbColor: const Color(0xFF126E06),
+                      inactiveTrackColor: Colors.white,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -448,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
 
                   await Future.delayed(const Duration(seconds: 2));
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                   _logout();
                 } else {
                   log('Failed to update profile.');

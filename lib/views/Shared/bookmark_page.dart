@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:homi_2/models/bookmark.dart';
@@ -8,6 +7,7 @@ import 'package:homi_2/services/fetch_bookmarks.dart';
 import 'package:homi_2/services/get_house_service.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/house_details_screen.dart';
+import 'package:lottie/lottie.dart';
 
 class BookmarkedHousesPage extends StatefulWidget {
   final int userId;
@@ -28,21 +28,16 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
   }
 
   Future<List<GetHouse>> fetchBookmarkedHouses() async {
-    //Fetch the bookmarks for the user
     final bookmarks = await fetchBookmarks();
     List<GetHouse> allHouses = await fetchHouses();
 
-    // Extract the house IDs from the bookmarks
     final houseIdsForCurrentUser = bookmarks
-        .where((bookmark) =>
-            bookmark.user == widget.userId) // Filter by current user
-        .map((bookmark) => bookmark.house) // Extract house ID
-        .toList(); // Convert to a list
+        .where((bookmark) => bookmark.user == widget.userId)
+        .map((bookmark) => bookmark.house)
+        .toList();
 
-    // Filter houses by matching ids
     List<GetHouse> filteredHouses = allHouses.where((house) {
-      return houseIdsForCurrentUser
-          .contains(house.houseId); // Check if house ID is in the user's list
+      return houseIdsForCurrentUser.contains(house.houseId);
     }).toList();
 
     return filteredHouses;
@@ -62,8 +57,8 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    color: Colors.green, // Custom color
-                    strokeWidth: 6.0, // Thicker stroke
+                    color: Colors.green,
+                    strokeWidth: 6.0,
                   ),
                   SizedBox(height: 10),
                   Text("Loading, please wait...",
@@ -72,7 +67,14 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
               )),
             );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Lottie.asset(
+                'assets/animations/notFound.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            );
           } else if (snapshot.hasData) {
             final houses = snapshot.data!;
 
@@ -123,7 +125,6 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text("Rent: ${house.rentAmount}"),
@@ -137,27 +138,39 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                             ],
                           ),
                         ),
-                        // Bookmarked button aligned to the right
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .end, // Align button to the right
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(
-                                      0xFF186E1B), // Set the background color to green
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadiusGeometry.all(
+                                      Radius.circular(12),
+                                    ),
+                                  ),
+                                  fixedSize: const Size(
+                                    140,
+                                    40,
+                                  ),
+                                  backgroundBuilder: (context, states, child) =>
+                                      Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF126E06),
+                                    ),
+                                    child: Center(
+                                      child: child,
+                                    ),
+                                  ),
                                 ),
                                 onPressed: () {
-                                  // Remove bookmark
                                   PostBookmark.removeBookmark(
                                           houseId: house.houseId)
                                       .then((_) {
                                     log("Bookmark removed successfully.");
 
                                     if (mounted) {
-                                      // Update the bookmarked houses and show a success alert
                                       setState(() {
                                         _bookmarkedHousesFuture =
                                             fetchBookmarkedHouses();

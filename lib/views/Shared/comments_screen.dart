@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/comments.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/post_comments.dart';
 import 'package:homi_2/services/comments_service.dart';
-import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class CommentsScreen extends StatefulWidget {
   final GetHouse house;
@@ -33,14 +32,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
   Future<void> _loadUserId() async {
     int? id = await UserPreferences.getUserId();
     setState(() {
-      userId = id ?? 0; // Default to 'tenant' if null
+      userId = id ?? 0;
     });
   }
 
   Future<void> _fetchComments() async {
     List<GetComments> comments = await fetchComments(widget.house.houseId);
     setState(() {
-      _comments = comments; // Initialize the local comments list
+      _comments = comments;
     });
   }
 
@@ -53,16 +52,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
       nestedId: '3',
     );
 
-    // After adding the comment, fetch the updated comments list
-    await _fetchComments(); // Re-fetch comments
+    await _fetchComments();
   }
 
   void _submitComment(TextEditingController commentController) {
     final String comment = commentController.text.trim();
     if (comment.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Comment cannot be empty')),
-      );
+      showCustomSnackBar(context, 'Comment cannot be empty',
+          type: SnackBarType.warning);
     } else {
       addComment(comment);
       commentController.clear();
@@ -80,34 +77,28 @@ class _CommentsScreenState extends State<CommentsScreen> {
     };
 
     try {
-      // Send DELETE request
       final response = await http.delete(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 204) {
-        // Comment deleted successfully
         setState(() {
-          _comments.removeWhere((comment) =>
-              comment.commentId == commentId); // Remove from local list
+          _comments.removeWhere((comment) => comment.commentId == commentId);
         });
       } else if (response.statusCode == 404) {
-        // Check if the widget is still mounted before using the context
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Comment already deleted')),
-        );
+
+        showCustomSnackBar(context, 'Comment already deleted',
+            type: SnackBarType.warning);
       } else {
-        // Check if the widget is still mounted before using the context
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('We have problems')),
-        );
+
+        showCustomSnackBar(context, 'We have problems',
+            type: SnackBarType.warning);
       }
     } catch (e) {
-      // Check if the widget is still mounted before using the context
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error deleting comment')),
-      );
+
+      showCustomSnackBar(context, 'Error deleting comment',
+          type: SnackBarType.error);
     }
   }
 
@@ -122,29 +113,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
         "Content-Type": "application/json",
         'Authorization': 'Token $token',
       },
-      body: jsonEncode({
-        "comment_id": commentId,
-        "action": action, // "like" or "dislike"
-        "user_id": userId
-      }),
+      body: jsonEncode(
+          {"comment_id": commentId, "action": action, "user_id": userId}),
     );
 
     if (response.statusCode == 200) {
-      // final data = jsonDecode(response.body);
-
-      // Update UI
-      setState(() {
-        // final index = widget.comments.indexWhere((c) => c.commentId == commentId);
-        // if (index != -1) {
-        //   if (action == "like") {
-        //     widget.comments[index].likes?.add(userId);
-        //     widget.comments[index].dislikes?.remove(userId);
-        //   } else if (action == "dislike") {
-        //     widget.comments[index].dislikes?.add(userId);
-        //     widget.comments[index].likes?.remove(userId);
-        //   }
-        // }
-      });
+      setState(() {});
     } else {
       log("Failed to react: ${response.body}");
     }
@@ -155,7 +129,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
     final TextEditingController commentController = TextEditingController();
     int housseId = widget.house.houseId;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'Comments',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -210,6 +192,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 }
 
+///
+///TODO : refactor the comments style to be more appealing
 class CommentList extends StatefulWidget {
   final List<GetComments> comments;
   final Function(int, String) onReact;
@@ -234,6 +218,7 @@ class _CommentListState extends State<CommentList> {
   Map<int, int> dislikesMap = {};
   int? replyingToCommentId;
   final TextEditingController replyController = TextEditingController();
+  Map<int, String> userReactions = {};
 
   @override
   void initState() {
@@ -258,15 +243,33 @@ class _CommentListState extends State<CommentList> {
 
   void _handleReact(int commentId, String reactionType) {
     setState(() {
-      if (reactionType == "like") {
-        likesMap[commentId] = (likesMap[commentId] ?? 0) + 1;
+      String? currentReaction = userReactions[commentId];
+
+      if (currentReaction == reactionType) {
+        userReactions.remove(commentId);
+        if (reactionType == "like") {
+          likesMap[commentId] = (likesMap[commentId] ?? 1) - 1;
+        } else {
+          dislikesMap[commentId] = (dislikesMap[commentId] ?? 1) - 1;
+        }
+        widget.onReact(commentId, "remove");
       } else {
-        dislikesMap[commentId] = (dislikesMap[commentId] ?? 0) + 1;
+        if (currentReaction == "like") {
+          likesMap[commentId] = (likesMap[commentId] ?? 1) - 1;
+        } else if (currentReaction == "dislike") {
+          dislikesMap[commentId] = (dislikesMap[commentId] ?? 1) - 1;
+        }
+
+        userReactions[commentId] = reactionType;
+        if (reactionType == "like") {
+          likesMap[commentId] = (likesMap[commentId] ?? 0) + 1;
+        } else {
+          dislikesMap[commentId] = (dislikesMap[commentId] ?? 0) + 1;
+        }
+
+        widget.onReact(commentId, reactionType);
       }
     });
-
-    // Call backend to update database
-    widget.onReact(commentId, reactionType);
   }
 
   @override
@@ -282,13 +285,6 @@ class _CommentListState extends State<CommentList> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'Comments',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
         const SizedBox(height: 10),
         ListView.builder(
           shrinkWrap: true,
@@ -331,10 +327,7 @@ class _CommentListState extends State<CommentList> {
         replyingToCommentId = null;
       });
       fetchComments(houseIdnew);
-    } else {
-      // Handle error
-      print("Failed to post reply: ${response.body}");
-    }
+    } else {}
   }
 
   Widget _buildCommentTile(

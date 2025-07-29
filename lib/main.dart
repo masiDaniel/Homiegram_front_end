@@ -3,10 +3,8 @@ import 'package:homi_2/providers/user_provider.dart';
 import 'package:homi_2/services/theme_provider.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
-import 'package:homi_2/views/Shared/video_splash_screen.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
 import 'package:homi_2/views/Shared/all_houses.dart';
-import 'package:homi_2/views/Shared/home_page_v1.dart';
 import 'package:homi_2/views/Tenants/house_list_screen.dart';
 import 'package:homi_2/views/Shared/search_page.dart';
 import 'package:homi_2/views/landlord/management.dart';
@@ -28,15 +26,11 @@ void main() async {
 }
 
 ///
-/// (TODO): Have an internet test on launch, and how to keep it accurate
-///
-///
+/// TODO: Have an internet test on launch, and how to keep it accurate
 
 Future<String> getInitialRoute() async {
   final prefs = await SharedPreferences.getInstance();
-  // await prefs.clear();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  // Go to homescreen if logged in
   return isLoggedIn ? '/homescreen' : '/';
 }
 
@@ -56,8 +50,9 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       themeMode: themeProvider.themeMode,
       initialRoute: initialRoute,
-      // home: const WelcomePage(),
-      home: const VideoSplashScreen(),
+      home: const WelcomePage(),
+
+      // home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),
@@ -65,7 +60,6 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => const SignIn(),
         '/signup': (context) => const SignUp(),
         '/about': (context) => AboutHomiegram(),
-        '/homepage': (context) => const HomePage(),
         '/homescreen': (context) => const CustomBottomNavigartion(),
         '/allHouses': (context) => const AllHouses(),
         '/trialAllHouses': (context) => const HouseListScreen(),
@@ -74,7 +68,7 @@ class MyApp extends StatelessWidget {
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
-          builder: (context) => const NotFoundPage(), // Handle unknown routes
+          builder: (context) => const NotFoundPage(),
         );
       },
     );

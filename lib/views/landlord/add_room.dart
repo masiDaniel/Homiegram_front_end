@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/room.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 
@@ -24,7 +25,7 @@ class RoomInputPageState extends State<RoomInputPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final newRoom = GetRooms(
-      roomId: 0, // Default since it's auto-generated in backend
+      roomId: 0,
       roomName: _roomNameController.text.trim(),
       noOfBedrooms: int.parse(_numberOfBedroomsController.text),
       sizeInSqMeters: _sizeController.text.trim(),
@@ -37,18 +38,14 @@ class RoomInputPageState extends State<RoomInputPage> {
     );
 
     try {
-  
       await postRoomsByHouse(widget.apartmentId, newRoom);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Room posted successfully!')),
-      );
+
+      showCustomSnackBar(context, 'Room posted successfully!');
       _clearForm();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      showCustomSnackBar(context, 'Error!');
     }
   }
 

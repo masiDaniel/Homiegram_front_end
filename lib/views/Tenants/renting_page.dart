@@ -3,6 +3,7 @@ import 'package:homi_2/models/room.dart';
 import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:lottie/lottie.dart';
 
 class RentingPage extends StatefulWidget {
   const RentingPage({super.key});
@@ -37,19 +38,22 @@ class _RentingPageState extends State<RentingPage> {
         leading: Container(),
       ),
       body: FutureBuilder<List<GetRooms>>(
-        future: fetchRooms(), // The Future that fetches the list of rooms
+        future: fetchRooms(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child:
-                    CircularProgressIndicator()); // Loading indicator while waiting
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-                child: Text('Error: ${snapshot.error}')); // Error display
+              child: Lottie.asset(
+                'assets/animations/notFound.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            );
           } else if (snapshot.hasData) {
-            List<GetRooms>? rooms = snapshot.data; // Access the list of rooms
+            List<GetRooms>? rooms = snapshot.data;
 
-            // Find if there's a room where tenantId matches userId
             List<GetRooms> matchedRooms =
                 rooms!.where((room) => room.tenantId == userId).toList();
 
@@ -220,6 +224,23 @@ class _RentingPageState extends State<RentingPage> {
                             subtitle: Text('${matchedRooms[index].rentStatus}'),
                           ),
 
+                          const Divider(),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 193, 21, 9),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: const ListTile(
+                                  leading: Icon(Icons.speaker,
+                                      color: Color(0xFF126E06)),
+                                  title: Text('Raise Complaint'),
+                                ),
+                              ),
+                            ),
+                          ),
                           const Divider(),
 
                           // Contract termination Section

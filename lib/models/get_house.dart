@@ -1,5 +1,3 @@
-// import 'package:flutter/widgets.dart';
-
 class GetHouse {
   final int houseId;
   final String name;
@@ -11,7 +9,7 @@ class GetHouse {
   final String bankName;
   final String accountNumber;
   final List<int> amenities;
-  final int location_detail;
+  final int locationDetail;
   final int landlordId;
   final int? caretakerId;
   final String? contractUrl;
@@ -27,7 +25,7 @@ class GetHouse {
       required this.accountNumber,
       required this.amenities,
       required this.landlordId,
-      required this.location_detail,
+      required this.locationDetail,
       this.caretakerId,
       this.contractUrl});
 
@@ -44,7 +42,7 @@ class GetHouse {
   houseId: $houseId,
   bankName: $bankName,
   accountNumber: $accountNumber,
-  location_detail: $location_detail
+  location_detail: $locationDetail
 }''';
   }
 
@@ -68,7 +66,7 @@ class GetHouse {
         landlordId: json['landlord_id'],
         caretakerId: json['caretaker'],
         contractUrl: json['contract_file'],
-        location_detail: json['location_detail']);
+        locationDetail: json['location_detail']);
   }
 
   Map<String, dynamic> tojson() {

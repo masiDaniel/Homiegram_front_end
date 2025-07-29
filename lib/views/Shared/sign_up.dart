@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homi_2/components/my_button.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/components/my_text_field.dart';
 import 'package:homi_2/models/user_signup.dart';
 import 'package:homi_2/services/user_signup_service.dart';
@@ -34,9 +35,8 @@ class _SignUpState extends State<SignUp> {
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+      showCustomSnackBar(context, 'Please fill in all fields',
+          type: SnackBarType.warning);
       return;
     }
     bool isValidMandatoryEmail(String email) {
@@ -45,17 +45,14 @@ class _SignUpState extends State<SignUp> {
     }
 
     if (!isValidMandatoryEmail(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Invalid. (Valid) Email format gmail.com')),
-      );
+      showCustomSnackBar(context, 'Invalid. (Valid) Email format gmail.com',
+          type: SnackBarType.warning);
       return;
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      showCustomSnackBar(context, 'Passwords do not match',
+          type: SnackBarType.warning);
       return;
     }
 
@@ -66,19 +63,17 @@ class _SignUpState extends State<SignUp> {
     try {
       UserSignUp? userSignUp =
           await fetchUserSignUp(firstName, lastName, email, password);
+      if (!mounted) return;
       if (userSignUp != null) {
-        if (!mounted) return;
+        showCustomSnackBar(
+            context, 'Sign Up Sucessful - Login to your account.');
         Navigator.pushNamed(context, '/signin');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Sign-up failed. Please try again later.')),
-        );
+        showCustomSnackBar(context, 'Sign-up failed. Please try again later.',
+            type: SnackBarType.warning);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      showCustomSnackBar(context, 'Error: ${e.toString()}');
     } finally {
       setState(() {
         isLoading = false;
@@ -89,8 +84,6 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -152,10 +145,7 @@ class _SignUpState extends State<SignUp> {
                       color: const Color(0xFF126E06)),
               const SizedBox(height: 15),
               const Text("Already have an account?",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700)),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
               GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/signin'),
                 child: const Text("Sign in",

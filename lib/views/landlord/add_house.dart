@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/amenities.dart';
+import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/locations.dart';
+import 'package:homi_2/services/business_services.dart';
 import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/post_house_service.dart';
 import 'package:homi_2/services/user_data.dart';
@@ -32,61 +35,62 @@ class AddHousePageState extends State<AddHousePage> {
   late Future<List<Locations>> futureLocations;
   List<Locations> locations = [];
   List<Amenities> amenities = [];
+  List<Category> categories = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadUserId();
     _loadLocations();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final fetchedCategories = await fetchCategorys();
+      setState(() {
+        categories = fetchedCategories;
+      });
+    } catch (e) {
+      setState(() {});
+    }
   }
 
   Future<void> _loadUserId() async {
     int? id = await UserPreferences.getUserId();
     setState(() {
-      userIdShared = id ?? 0; // Default to 'tenant' if null
+      userIdShared = id ?? 0;
     });
   }
 
   Future<void> _pickImages() async {
     if (_imageUrls.length >= 4) {
-      // Show a message or handle the limit
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You can only select up to 4 images.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Prevent further image picking
+      showCustomSnackBar(context, 'You can only select up to 4 images.');
+      return;
     }
 
     final List<XFile> images = await _picker.pickMultiImage();
-    // Calculate how many more images can be added
+
     final int remainingSlots = 4 - _imageUrls.length;
 
     setState(() {
-      // Add only up to the remaining number of slots
       _imageUrls.addAll(
         images.take(remainingSlots).map((file) => file.path),
       );
     });
 
-    // Check if the widget is still mounted before using the context
     if (!mounted) return;
 
     if (images.length > remainingSlots) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Some images were not added due to the 4-image limit.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      showCustomSnackBar(
+          context, 'Some images were not added due to the 4-image limit.');
     }
   }
 
   void _loadLocations() {
     futureLocations = fetchLocations();
 
-    // Fetch locations separately
     futureLocations.then((locs) {
       setState(() {
         locations = locs;
@@ -127,10 +131,9 @@ class AddHousePageState extends State<AddHousePage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Rent Amount',
+                    labelText: 'Rent Amount ie (1B - ks 4000, 2B - ks 5000)',
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a rent amount';
@@ -199,18 +202,15 @@ class AddHousePageState extends State<AddHousePage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Button to pick images
                 ElevatedButton(
                   onPressed: _pickImages,
                   child: const Text('Select Images'),
                 ),
                 const SizedBox(height: 16),
-                // Display selected images with restriction and deselect option
                 _imageUrls.isNotEmpty
                     ? Wrap(
                         spacing: 8.0,
                         children: _imageUrls.take(4).map((url) {
-                          // Limit to 4 images
                           return Stack(
                             alignment: Alignment.topRight,
                             children: [
@@ -226,15 +226,13 @@ class AddHousePageState extends State<AddHousePage> {
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      _imageUrls.remove(
-                                          url); // Remove the image from the list
+                                      _imageUrls.remove(url);
                                     });
                                   },
-                                  // ignore: prefer_const_constructors
-                                  child: CircleAvatar(
+                                  child: const CircleAvatar(
                                     radius: 12,
                                     backgroundColor: Colors.red,
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.close,
                                       size: 16,
                                       color: Colors.white,
@@ -263,70 +261,83 @@ class AddHousePageState extends State<AddHousePage> {
                     _description = value!;
                   },
                 ),
-
-                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      // Create a new house instance
-                      final newHouse = GetHouse(
-                          name: _houseName,
-                          rentAmount: _rentAmount,
-                          rating: 2,
-                          description: _description,
-                          images: _imageUrls,
-                          amenities: [1],
-                          landlordId: userIdShared as int,
-                          houseId: 0,
-                          bankName: _bankName,
-                          accountNumber: __accountNumber,
-                          location_detail: _location);
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF105A01),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
 
-                      print("this is the new house ${newHouse}");
+                            final newHouse = GetHouse(
+                              name: _houseName,
+                              rentAmount: _rentAmount,
+                              rating: 2,
+                              description: _description,
+                              images: _imageUrls,
+                              amenities: [1],
+                              landlordId: userIdShared as int,
+                              houseId: 0,
+                              bankName: _bankName,
+                              accountNumber: __accountNumber,
+                              locationDetail: _location,
+                            );
 
-                      // Call the addHouse method and await the response
-                      bool success =
-                          await postHouseService.postHouseWithImages(newHouse);
+                            setState(() {
+                              isLoading = true;
+                            });
 
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.green[600],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            bool success = await postHouseService
+                                .postHouseWithImages(newHouse);
+
+                            if (!context.mounted) return;
+
+                            setState(() {
+                              isLoading = false;
+                            });
+
+                            if (success) {
+                              showCustomSnackBar(
+                                  context, 'House added successfully!');
+                              Navigator.pop(context);
+                            } else {
+                              showCustomSnackBar(
+                                  context, 'Failed to add house.',
+                                  type: SnackBarType.error);
+                            }
+                          }
+                        },
+                  child: isLoading
+                      ? const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Color(0xFF105A01),
+                                strokeWidth: 2,
+                              ),
                             ),
-                            duration: const Duration(seconds: 2),
-                            content: const Row(
-                              children: [
-                                Icon(Icons.check_circle, color: Colors.white),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'House added successfully!',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 16),
-                                  ),
-                                ),
-                              ],
+                            SizedBox(width: 12),
+                            Text(
+                              'Adding...',
+                              style: TextStyle(color: Color(0xFF105A01)),
                             ),
-                          ),
-                        );
-
-                        Navigator.pop(context);
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Failed to add house.')),
-                          );
-                        }
-                      }
-                    }
-                  },
-                  child: const Text('Add House'),
-                ),
+                          ],
+                        )
+                      : const Text(
+                          'Add House',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                )
               ],
             ),
           ),

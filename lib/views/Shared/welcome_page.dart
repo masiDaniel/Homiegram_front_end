@@ -13,7 +13,6 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 252, 252, 252),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -30,11 +29,11 @@ class WelcomePage extends StatelessWidget {
               height: 50,
             ),
             Container(
-              width: 150, // Set desired width
-              height: 150, // Set desired height
+              width: 150,
+              height: 150,
               decoration: BoxDecoration(
-                color: Colors.white, // Background color
-                borderRadius: BorderRadius.circular(15), // Rounded corners
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
