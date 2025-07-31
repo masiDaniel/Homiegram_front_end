@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   bool _isPaused = false;
   late List<Ad> ads;
   String? authToken;
-  int? currentUserId;
+  String? currentUserEmail;
   @override
   void initState() {
     super.initState();
@@ -72,8 +72,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadAuthToken() async {
     authToken = await UserPreferences.getAuthToken();
-    currentUserId = (await UserPreferences.getUserId())!;
-    print("current user id $currentUserId");
+    currentUserEmail = (await UserPreferences.getUserEmail())!;
+
     setState(() {});
   }
 
@@ -412,7 +412,8 @@ class _HomePageState extends State<HomePage> {
                                                         ChatPage(
                                                       chat: chat,
                                                       token: authToken!,
-                                                      userId: currentUserId!,
+                                                      userEmail:
+                                                          currentUserEmail!,
                                                     ),
                                                   ),
                                                 );

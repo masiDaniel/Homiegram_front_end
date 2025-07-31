@@ -6,10 +6,13 @@ import 'dart:convert';
 class ChatPage extends StatefulWidget {
   final ChatRoom chat;
   final String token;
-  final int userId;
+  final String userEmail;
 
   const ChatPage(
-      {Key? key, required this.chat, required this.token, required this.userId})
+      {Key? key,
+      required this.chat,
+      required this.token,
+      required this.userEmail})
       : super(key: key);
 
   @override
@@ -79,10 +82,7 @@ class _ChatPageState extends State<ChatPage> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
-                final isMe = msg.sender == widget.userId.toString();
-                print("this is me ${widget.userId.toString()}");
-                print("this is the sender ${msg.sender}");
-                print("this is the condition $isMe");
+                final isMe = msg.sender == widget.userEmail;
 
                 return Padding(
                   padding:
