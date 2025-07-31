@@ -10,11 +10,9 @@ class AdDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.white,
         title: const Text("Ad Details"),
       ),
       body: SingleChildScrollView(
@@ -37,7 +35,6 @@ class AdDetailPage extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
               ),
               textAlign: TextAlign.center,
             ),
@@ -46,19 +43,22 @@ class AdDetailPage extends StatelessWidget {
               ad.description,
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.white70,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             Text(
               'Start Date: ${ad.startDate}',
-              style: const TextStyle(fontSize: 14, color: Colors.white60),
+              style: const TextStyle(
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 5),
             Text(
               'End Date: ${ad.endDate}',
-              style: const TextStyle(fontSize: 14, color: Colors.white60),
+              style: const TextStyle(
+                fontSize: 14,
+              ),
             ),
           ],
         ),

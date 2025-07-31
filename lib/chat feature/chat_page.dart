@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:http/http.dart' as http;
 
@@ -37,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void connectWebSocket() {
     final uri = Uri.parse(
-      'ws://127.0.0.1:8000/ws/chat/${widget.roomName}/?token=${widget.jwtToken}',
+      'ws://192.168.100.18:8000/ws/chat/${widget.roomName}/?token=${widget.jwtToken}',
     );
     channel = WebSocketChannel.connect(uri);
 
@@ -53,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> loadMessages() async {
     final url = Uri.parse(
-      'http://127.0.0.1:8000/api/chat/messages/${widget.roomName}/',
+      '$devUrl/api/chat/messages/${widget.roomName}/',
     );
 
     final res = await http.get(
@@ -104,9 +105,8 @@ class _ChatPageState extends State<ChatPage> {
 
                 return Align(
                   // the message sent does not have this hence goes to the left, refactor
-                  alignment: isMe
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
+                  alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(

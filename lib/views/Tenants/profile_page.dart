@@ -322,7 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onChanged: (value) {
                         themeProvider.toggleTheme(value);
                       },
-                      activeThumbColor: const Color(0xFF126E06),
+
                       activeTrackColor: Colors.green[200],
                       inactiveThumbColor: const Color(0xFF126E06),
                       inactiveTrackColor: Colors.white,

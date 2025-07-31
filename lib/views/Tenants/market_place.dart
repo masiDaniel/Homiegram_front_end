@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:homi_2/components/my_snackbar.dart';
+import 'package:homi_2/services/create_chat_room.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/business.dart';
@@ -796,8 +797,8 @@ class _MarketPlaceState extends State<MarketPlace> {
                                           vertical: 14),
                                     ),
                                     onPressed: () {
-                                      makePhoneCall(getBusinessPhoneNumber(
-                                          product.seller, users)!);
+                                      getOrCreatePrivateChatRoom(
+                                          product.seller);
                                     },
                                   ),
                                 ),

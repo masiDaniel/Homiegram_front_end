@@ -409,14 +409,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                         horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: const Color(0x1F02F502),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      color: const Color(0x95154D07),
                     ),
                     child: Text(
                       category['label'],
@@ -446,8 +439,9 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color(0x1F02F502)),
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0x95154D07),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

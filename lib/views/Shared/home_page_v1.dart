@@ -4,10 +4,11 @@ import 'package:homi_2/chat%20feature/user_list_page.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
+import 'package:homi_2/services/fetch_chatS_messages_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/ad_details_page.dart';
-import 'package:homi_2/views/Shared/chat_page.dart';
+import 'package:homi_2/views/Shared/chart_card.dart.dart';
 import 'package:homi_2/views/Tenants/chat_page.dart';
 
 import 'package:video_player/video_player.dart';
@@ -21,47 +22,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final bool isConditionMet = true;
+  late Future<List<ChatRoom>> chatRoomsFuture;
 
   String selectedFilter = 'All';
 
-  final List<Chat> chats = [
-    Chat(
-        chatName: "Landlord Maina",
-        lastMessage: "Welcome to heri",
-        unreadMessage: 1),
-    Chat(
-        chatName: "Heri Group Chat",
-        lastMessage: "Party at 5",
-        unreadMessage: 0),
-    Chat(
-        chatName: "Complaints",
-        lastMessage: "Will be completed tomorrow",
-        unreadMessage: 4),
-    Chat(
-        chatName: "Liquor",
-        lastMessage: "Will be completed tomorrow",
-        unreadMessage: 0),
-    Chat(
-        chatName: "Food",
-        lastMessage: "Will be completed tomorrow",
-        unreadMessage: 0),
-  ];
-
-  List<Chat> _getFilteredChats() {
+  List<ChatRoom> _getFilteredChats(List<ChatRoom> chats) {
     if (selectedFilter == 'unRead') {
-      return chats.where((chat) => chat.unreadMessage > 0).toList();
+      return chats;
     } else if (selectedFilter == 'Groups') {
-      return chats.where((chat) => chat.chatName.contains('Group')).toList();
+      return chats.where((chat) => chat.isGroup).toList();
     } else {
       return chats;
     }
   }
 
-  void _markChatAsRead(int index) {
-    setState(() {
-      chats[index].markAsRead();
-    });
-  }
+  // void _markChatAsRead(int index) {
+  //   setState(() {
+  //     chats[index].markAsRead();
+  //   });
+  // }
 
   late Future<List<Ad>> futureAds;
   VideoPlayerController? _videoController;
@@ -70,15 +49,32 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   bool _isPaused = false;
   late List<Ad> ads;
-  late String authToken;
-  late int user_id;
+  String? authToken;
+  int? currentUserId;
   @override
   void initState() {
     super.initState();
-    _getFilteredChats();
+    _loadAuthToken();
+    chatRoomsFuture = fetchChatRooms();
+
     futureAds = fetchAds();
     _pageController = PageController(initialPage: 0);
     _startAutoScroll();
+  }
+
+  List<ChatRoom> filterChats(List<ChatRoom> chats, String filter) {
+    if (filter == 'All') return chats;
+    // if (filter == 'unRead') return chats.where((c) => !c.isRead).toList();
+    if (filter == 'Groups') return chats.where((c) => c.isGroup).toList();
+    // if (filter == 'Stories') return chats.where((c) => c.hasStory).toList();
+    return chats;
+  }
+
+  Future<void> _loadAuthToken() async {
+    authToken = await UserPreferences.getAuthToken();
+    currentUserId = (await UserPreferences.getUserId())!;
+    print("current user id $currentUserId");
+    setState(() {});
   }
 
   @override
@@ -118,18 +114,17 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void getToken() {
-    setState(() async {
-      authToken = (await UserPreferences.getAuthToken())!;
-      user_id = (await UserPreferences.getUserId())!;
-    });
-  }
+  // void getToken() {
+  //   setState(() async {
+  //     authToken = (await UserPreferences.getAuthToken())!;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
+    // List unRead = chats.where((chat) => chat.unreadMessage > 0).toList();
 
-    final filteredChats = _getFilteredChats();
+    // final filteredChats = _getFilteredChats();
 
     return SafeArea(
       child: Scaffold(
@@ -232,11 +227,19 @@ class _HomePageState extends State<HomePage> {
                             return GestureDetector(
                               onTap: () {
                                 _onAdTap(index);
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (_) => UserListPage(
+                                //         jwtToken: authToken, userId: user_id),
+                                //   ),
+                                // );
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => UserListPage(
-                                        jwtToken: authToken, userId: user_id),
+                                    builder: (_) => AdDetailPage(
+                                      ad: ad,
+                                    ),
                                   ),
                                 );
                               },
@@ -333,21 +336,16 @@ class _HomePageState extends State<HomePage> {
                                             selectedFilter = val ? 'All' : '');
                                       }),
                                       buildFilterChip(
-                                          "unRead - ${unRead.length}",
-                                          selectedFilter == 'unRead', (val) {
-                                        setState(() => selectedFilter =
-                                            val ? 'unRead' : '');
-                                      }),
-                                      buildFilterChip("Groups - 1",
-                                          selectedFilter == 'Groups', (val) {
+                                          "Groups", selectedFilter == 'Groups',
+                                          (val) {
                                         setState(() => selectedFilter =
                                             val ? 'Groups' : '');
                                       }),
-                                      buildFilterChip("Stories",
-                                          selectedFilter == 'Stories', (val) {
-                                        setState(() => selectedFilter =
-                                            val ? 'Stories' : '');
-                                      }),
+                                      // buildFilterChip("Stories",
+                                      //     selectedFilter == 'Stories', (val) {
+                                      //   setState(() => selectedFilter =
+                                      //       val ? 'Stories' : '');
+                                      // }),
                                     ],
                                   ),
                                 ),
@@ -358,30 +356,21 @@ class _HomePageState extends State<HomePage> {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0),
-                                    child: filteredChats.isNotEmpty
-                                        ? ListView.separated(
-                                            key: ValueKey(selectedFilter),
-                                            itemCount: filteredChats.length,
-                                            separatorBuilder: (_, __) =>
-                                                const SizedBox(height: 12),
-                                            itemBuilder: (context, index) {
-                                              final chat = filteredChats[index];
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  _markChatAsRead(index);
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChatPage(chat: chat),
-                                                    ),
-                                                  );
-                                                },
-                                                child: ChatCard(chat: chat),
-                                              );
-                                            },
-                                          )
-                                        : const Center(
+                                    child: FutureBuilder<List<ChatRoom>>(
+                                      future: chatRoomsFuture,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return const Center(
+                                              child: Text(
+                                                  'Failed to load chats.'));
+                                        } else if (!snapshot.hasData ||
+                                            snapshot.data!.isEmpty) {
+                                          return const Center(
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
@@ -399,7 +388,41 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                          );
+                                        }
+
+                                        // Filter chats based on selectedFilter if needed
+                                        final chatRooms = snapshot.data!;
+                                        final filtered = filterChats(
+                                            chatRooms, selectedFilter);
+
+                                        return ListView.separated(
+                                          key: ValueKey(selectedFilter),
+                                          itemCount: filtered.length,
+                                          separatorBuilder: (_, __) =>
+                                              const SizedBox(height: 12),
+                                          itemBuilder: (context, index) {
+                                            final chat = filtered[index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ChatPage(
+                                                      chat: chat,
+                                                      token: authToken!,
+                                                      userId: currentUserId!,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: ChatCard(chat: chat),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],

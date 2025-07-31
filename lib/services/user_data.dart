@@ -56,7 +56,7 @@ class UserPreferences {
     final prefs = await SharedPreferences.getInstance();
     return {
       'token': prefs.getString(_keyAuthToken),
-      'id': prefs.getInt(_keyUserId),
+      'userId': prefs.getInt(_keyUserId),
       'nick_name': prefs.getString(_keyUserName),
       'first_name': prefs.getString(_keyFirstName),
       'last_name': prefs.getString(_keyLastName),
