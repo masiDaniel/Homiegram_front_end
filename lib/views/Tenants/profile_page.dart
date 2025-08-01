@@ -317,17 +317,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   ListTile(
                     title: const Text('Theme'),
                     trailing: Switch(
-                      // have this to be stateful
                       value: isDark,
                       onChanged: (value) {
                         themeProvider.toggleTheme(value);
                       },
-
                       activeTrackColor: Colors.green[200],
                       inactiveThumbColor: const Color(0xFF126E06),
                       inactiveTrackColor: Colors.white,
+                      activeColor: const Color(0xFF126E06),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

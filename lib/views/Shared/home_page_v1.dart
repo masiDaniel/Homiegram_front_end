@@ -400,7 +400,7 @@ class _HomePageState extends State<HomePage> {
                                           key: ValueKey(selectedFilter),
                                           itemCount: filtered.length,
                                           separatorBuilder: (_, __) =>
-                                              const SizedBox(height: 12),
+                                              const SizedBox(height: 2),
                                           itemBuilder: (context, index) {
                                             final chat = filtered[index];
                                             return GestureDetector(
