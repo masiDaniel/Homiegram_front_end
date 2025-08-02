@@ -74,7 +74,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'last_name': lastName,
       'email': email,
       'phone_number': phoneNumber,
-      'user_type': userType,
     };
     await updateUserInfo(updatedData);
     await UserPreferences.savePartialUserData(updatedData);
@@ -132,7 +131,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _buildField('Last Name', lastNameController),
             _buildField('Email', emailController),
             _buildField('Phone Number', phoneNumberController),
-            _buildField('User Type', userTypeController),
+            // _buildField('User Type', userTypeController),
           ],
         ),
       ),

@@ -1,43 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_snackbar.dart';
+import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 class EditHouseDetailsPage extends StatefulWidget {
-  const EditHouseDetailsPage({super.key});
+  final GetHouse house;
+  const EditHouseDetailsPage({super.key, required this.house});
 
   @override
-  State<EditHouseDetailsPage> createState() => _EditProfilePageState();
+  State<EditHouseDetailsPage> createState() => _EditHouseDetailsPageState();
 }
 
-class _EditProfilePageState extends State<EditHouseDetailsPage> {
+class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
   bool isEditing = false;
   bool isLoading = true;
 
   String houseName = '';
   String rentAmount = '';
   String description = '';
-  String amenities = '';
   String bankName = '';
   String accountNumber = '';
 
   late TextEditingController houseNameController;
   late TextEditingController rentAmountController;
   late TextEditingController descriptionController;
-  late TextEditingController amenitiesController;
   late TextEditingController bankNameController;
   late TextEditingController accountNumberController;
+
+  // Track selected amenities
+  late Set<int> selectedAmenities;
+
+  // Example available amenities
+  final Map<int, String> allAmenities = {
+    1: "Wi-Fi",
+    2: "Parking",
+    3: "Water",
+    4: "Security",
+    5: "Laundry",
+  };
 
   @override
   void initState() {
     super.initState();
+
+    houseNameController = TextEditingController(text: widget.house.name);
+    rentAmountController =
+        TextEditingController(text: widget.house.rentAmount.toString());
+    descriptionController =
+        TextEditingController(text: widget.house.description);
+    bankNameController =
+        TextEditingController(text: widget.house.bankName ?? '');
+    accountNumberController =
+        TextEditingController(text: widget.house.accountNumber ?? '');
+
+    selectedAmenities = widget.house.amenities != null
+        ? Set<int>.from(widget.house.amenities)
+        : <int>{};
+
+    isLoading = false;
   }
 
   Future<void> _saveChanges() async {
     houseName = houseNameController.text;
     rentAmount = rentAmountController.text;
     description = descriptionController.text;
-    amenities = amenitiesController.text;
     bankName = bankNameController.text;
     accountNumber = accountNumberController.text;
 
@@ -47,11 +74,12 @@ class _EditProfilePageState extends State<EditHouseDetailsPage> {
       'description': description,
       'payment_bank_name': bankName,
       'payment_account_number': accountNumber,
+      'amenities': selectedAmenities.toList(),
     };
-    await updateUserInfo(updatedData);
-    await UserPreferences.savePartialUserData(updatedData);
 
-    showCustomSnackBar(context, 'Profile updated!');
+    await updateHouseInfo(updatedData, widget.house.houseId);
+    if (!mounted) return;
+    showCustomSnackBar(context, 'House details updated!');
   }
 
   void toggleEdit() {
@@ -75,6 +103,36 @@ class _EditProfilePageState extends State<EditHouseDetailsPage> {
           );
   }
 
+  Widget _buildAmenitiesSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Amenities',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          ...allAmenities.entries.map((entry) {
+            return CheckboxListTile(
+              title: Text(entry.value),
+              value: selectedAmenities.contains(entry.key),
+              onChanged: isEditing
+                  ? (bool? value) {
+                      setState(() {
+                        if (value == true) {
+                          selectedAmenities.add(entry.key);
+                        } else {
+                          selectedAmenities.remove(entry.key);
+                        }
+                      });
+                    }
+                  : null,
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -85,14 +143,15 @@ class _EditProfilePageState extends State<EditHouseDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit House details'),
+        title: const Text('Edit House Details'),
         actions: [
           TextButton(
             onPressed: toggleEdit,
             child: Text(
               isEditing ? 'Save' : 'Edit',
+              style: const TextStyle(color: Colors.white),
             ),
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -101,9 +160,11 @@ class _EditProfilePageState extends State<EditHouseDetailsPage> {
           children: [
             _buildField('House Name', houseNameController),
             _buildField('Rent Amount', rentAmountController),
-            _buildField('description', descriptionController),
+            _buildField('Description', descriptionController),
             _buildField('Bank Name', bankNameController),
             _buildField('Account Number', accountNumberController),
+            const SizedBox(height: 16),
+            _buildAmenitiesSection(),
           ],
         ),
       ),

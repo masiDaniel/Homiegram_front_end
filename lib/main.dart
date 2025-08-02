@@ -81,7 +81,6 @@ class NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF126E06),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -92,7 +91,7 @@ class NotFoundPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9),
+            color: const Color(0x1F02F502),
             borderRadius: BorderRadius.circular(20),
           ),
           width: 350,
@@ -110,7 +109,6 @@ class NotFoundPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -119,7 +117,6 @@ class NotFoundPage extends StatelessWidget {
                 "Sorry, the page you are looking for doesn't exist or has been moved.",
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black54,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -128,8 +125,8 @@ class NotFoundPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.home),
-                label: const Text("Go Back Home"),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text("Go Back"),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,

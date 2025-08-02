@@ -55,6 +55,7 @@ class _SearchPageState extends State<SearchPage> {
       });
     } catch (e) {
       log('Error fetching houses: $e');
+      if (!mounted) return;
       setState(() {
         isLoadingHouses = false;
       });

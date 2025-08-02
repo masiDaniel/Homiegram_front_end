@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_snackbar.dart';
+import 'package:homi_2/models/business.dart';
+import 'package:homi_2/services/user_data.dart';
+import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:http/http.dart' as http;
 
 class BusinessEditPage extends StatefulWidget {
-  final Map<String, dynamic> business;
+  final BusinessModel business;
 
   const BusinessEditPage({super.key, required this.business});
 
@@ -13,47 +16,68 @@ class BusinessEditPage extends StatefulWidget {
 }
 
 class _BusinessEditPageState extends State<BusinessEditPage> {
-  late TextEditingController nameController;
-  late TextEditingController contactController;
-  late TextEditingController emailController;
+  late TextEditingController businessNameController;
+  late TextEditingController contactNumberController;
+  late TextEditingController businessEmailController;
+  late TextEditingController businessAddressController;
+  late TextEditingController businessOwnerIdController;
+  late TextEditingController businessTypeIdController;
+  late TextEditingController businessImageController;
 
   late int selectedLocation;
   late int selectedBusinessType;
 
-  late Map<String, dynamic> originalData;
+  late BusinessModel originalData;
 
   @override
   void initState() {
     super.initState();
 
-    originalData = Map.from(widget.business);
+    originalData = widget.business;
 
-    nameController = TextEditingController(text: originalData['name']);
-    contactController =
-        TextEditingController(text: originalData['contact_number']);
-    emailController = TextEditingController(text: originalData['email']);
+    businessNameController =
+        TextEditingController(text: widget.business.businessName);
+    contactNumberController =
+        TextEditingController(text: widget.business.contactNumber);
+    businessEmailController =
+        TextEditingController(text: widget.business.businessEmail);
+    businessAddressController =
+        TextEditingController(text: widget.business.businessAddress.toString());
+    businessOwnerIdController =
+        TextEditingController(text: widget.business.businessOwnerId.toString());
+    businessTypeIdController =
+        TextEditingController(text: widget.business.businessTypeId.toString());
+    businessImageController =
+        TextEditingController(text: widget.business.businessImage);
 
-    selectedLocation = originalData['location'];
-    selectedBusinessType = originalData['business_type'];
+    selectedLocation = widget.business.businessAddress;
+    selectedBusinessType = widget.business.businessTypeId;
   }
 
   Future<void> updateBusiness() async {
     Map<String, dynamic> updates = {};
 
-    if (nameController.text != originalData['name']) {
-      updates['name'] = nameController.text;
+    if (businessNameController.text != originalData.businessName) {
+      updates['business_name'] = businessNameController.text;
     }
-    if (contactController.text != originalData['contact_number']) {
-      updates['contact_number'] = contactController.text;
+    if (contactNumberController.text != originalData.contactNumber) {
+      updates['contact_number'] = contactNumberController.text;
     }
-    if (emailController.text != originalData['email']) {
-      updates['email'] = emailController.text;
+    if (businessEmailController.text != originalData.businessEmail) {
+      updates['business_email'] = businessEmailController.text;
     }
-    if (selectedLocation != originalData['location']) {
-      updates['location'] = selectedLocation;
+    if (selectedLocation != originalData.businessAddress) {
+      updates['business_address'] = selectedLocation;
     }
-    if (selectedBusinessType != originalData['business_type']) {
-      updates['business_type'] = selectedBusinessType;
+    if (selectedBusinessType != originalData.businessTypeId) {
+      updates['business_type_id'] = selectedBusinessType;
+    }
+    if (businessTypeIdController.text !=
+        originalData.businessTypeId.toString()) {
+      updates['business_type_id'] = int.tryParse(businessTypeIdController.text);
+    }
+    if (businessImageController.text != originalData.businessImage) {
+      updates['business_image'] = businessImageController.text;
     }
 
     if (updates.isEmpty) {
@@ -62,13 +86,14 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
     }
 
     final url = Uri.parse(
-        'http://your-api-domain.com/business/updateBusiness/${originalData['id']}/');
+        '$devUrl/business/updateBusiness/${widget.business.businessId}');
+    String? token = await UserPreferences.getAuthToken();
 
     final response = await http.patch(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Token ',
+        'Authorization': 'Token $token',
       },
       body: jsonEncode(updates),
     );
@@ -90,15 +115,15 @@ class _BusinessEditPageState extends State<BusinessEditPage> {
         child: ListView(
           children: [
             TextFormField(
-              controller: nameController,
+              controller: businessNameController,
               decoration: const InputDecoration(labelText: 'Business Name'),
             ),
             TextFormField(
-              controller: contactController,
+              controller: contactNumberController,
               decoration: const InputDecoration(labelText: 'Contact Number'),
             ),
             TextFormField(
-              controller: emailController,
+              controller: businessEmailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 16),

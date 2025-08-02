@@ -14,6 +14,7 @@ import 'package:homi_2/services/get_rooms_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/add_room.dart';
+import 'package:homi_2/views/landlord/edit_house_details.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -631,7 +632,16 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
           SpeedDialChild(
             child: const Icon(Icons.edit),
             label: 'Edit house',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditHouseDetailsPage(
+                    house: widget.house,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

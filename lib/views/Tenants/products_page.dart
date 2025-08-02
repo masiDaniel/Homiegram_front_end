@@ -10,6 +10,7 @@ import 'package:homi_2/views/Tenants/pproduct_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductsPage extends StatefulWidget {
+  final BusinessModel businessObject;
   final int businessId;
   final String businessName;
   final int businessOwnerId;
@@ -17,6 +18,7 @@ class ProductsPage extends StatefulWidget {
 
   const ProductsPage(
       {super.key,
+      required this.businessObject,
       required this.businessId,
       required this.businessName,
       required this.businessOwnerId,
@@ -227,17 +229,8 @@ class _ProductsPageState extends State<ProductsPage>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const BusinessEditPage(
-                            business: {
-                              "id": 2,
-                              "name": "foodmore",
-                              "contact_number": "9884",
-                              "email": "food@biz.com",
-                              "image": "/media/businesses/414QGhuE5NL.jpg",
-                              "owner": 2,
-                              "business_type": 1,
-                              "location": 1
-                            },
+                          builder: (context) => BusinessEditPage(
+                            business: widget.businessObject,
                           ),
                         ),
                       );

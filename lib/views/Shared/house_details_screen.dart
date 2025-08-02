@@ -486,18 +486,18 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return const AlertDialog(
-                            title: Text('Bookmark Removed'),
-                            content: Text(
+                          return AlertDialog(
+                            title: const Text('Bookmark Removed'),
+                            content: const Text(
                                 'This house has been removed from your bookmarks.'),
                             actions: [
                               TextButton(
-                                style: ButtonStyle(
+                                style: const ButtonStyle(
                                   backgroundColor:
                                       WidgetStatePropertyAll(Color(0x1F02F502)),
                                 ),
-                                onPressed: null, // Close handled in dialog
-                                child: Text('OK',
+                                onPressed: Navigator.of(context).pop,
+                                child: const Text('OK',
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ],

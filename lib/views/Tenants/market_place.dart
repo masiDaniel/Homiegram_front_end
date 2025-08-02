@@ -626,6 +626,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ProductsPage(
+                                  businessObject: business,
                                   businessId: business.businessId,
                                   businessName: business.businessName,
                                   businessOwnerId: business.businessOwnerId,
