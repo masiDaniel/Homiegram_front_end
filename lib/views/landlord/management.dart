@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/get_house.dart';
@@ -90,11 +91,22 @@ class _LandlordManagementState extends State<LandlordManagement> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Lottie.asset(
-                'assets/animations/notFound.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Lottie.asset(
+                    'assets/animations/notFound.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ],
               ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -144,9 +156,15 @@ class _LandlordManagementState extends State<LandlordManagement> {
                           height: 180,
                           width: double.infinity,
                           child: house.images!.isNotEmpty
-                              ? Image.network(
-                                  '$devUrl${house.images![0]}',
+                              ? CachedNetworkImage(
+                                  imageUrl: '$devUrl${house.images![0]}',
                                   fit: BoxFit.cover,
+                                  placeholder: (context, url) => Image.asset(
+                                    'assets/images/splash.jpeg',
+                                    fit: BoxFit.cover,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 )
                               : Image.asset(
                                   'assets/images/splash.jpeg',
@@ -188,7 +206,7 @@ class _LandlordManagementState extends State<LandlordManagement> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            getLocationName(house.locationDetail),
+                            getLocationName(house.locationDetail!),
                             style: const TextStyle(
                               fontSize: 13,
                             ),

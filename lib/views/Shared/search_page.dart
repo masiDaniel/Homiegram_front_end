@@ -220,7 +220,7 @@ class _SearchPageState extends State<SearchPage> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                              "location: ${getLocationName(house.locationDetail)}"),
+                                              "location: ${getLocationName(house.locationDetail!)}"),
                                         ],
                                       ),
                                     ),

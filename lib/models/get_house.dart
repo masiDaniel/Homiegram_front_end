@@ -9,7 +9,7 @@ class GetHouse {
   final String bankName;
   final String accountNumber;
   final List<int> amenities;
-  final int locationDetail;
+  final int? locationDetail;
   final int landlordId;
   final int? caretakerId;
   final String? contractUrl;

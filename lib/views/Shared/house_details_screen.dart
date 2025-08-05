@@ -214,7 +214,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
           flexibleSpace: Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color.fromARGB(255, 6, 46, 0), Color(0xFF4CAF50)],
+                colors: [Color(0xFF062E00), Color(0xFF4CAF50)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -376,7 +376,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                            'Location ${getLocationName(widget.house.locationDetail)}',
+                            'Location ${getLocationName(widget.house.locationDetail!)}',
                             style: const TextStyle(fontSize: 16)),
                       ),
                     ],

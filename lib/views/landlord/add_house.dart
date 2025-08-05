@@ -6,6 +6,7 @@ import 'package:homi_2/models/business.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/business_services.dart';
+import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/post_house_service.dart';
 import 'package:homi_2/services/user_data.dart';
@@ -33,8 +34,10 @@ class AddHousePageState extends State<AddHousePage> {
   final PostHouseService postHouseService = PostHouseService();
   final ImagePicker _picker = ImagePicker();
   late Future<List<Locations>> futureLocations;
+  late Future<List<Amenities>> futureAmenities;
   List<Locations> locations = [];
   List<Amenities> amenities = [];
+  List<Amenities> selectedAmenities = [];
   List<Category> categories = [];
   bool isLoading = false;
 
@@ -43,6 +46,7 @@ class AddHousePageState extends State<AddHousePage> {
     super.initState();
     _loadUserId();
     _loadLocations();
+    _loadAmenities();
     fetchCategories();
   }
 
@@ -94,6 +98,16 @@ class AddHousePageState extends State<AddHousePage> {
     futureLocations.then((locs) {
       setState(() {
         locations = locs;
+      });
+    });
+  }
+
+  void _loadAmenities() {
+    futureAmenities = fetchAmenities();
+
+    futureAmenities.then((ames) {
+      setState(() {
+        amenities = ames;
       });
     });
   }

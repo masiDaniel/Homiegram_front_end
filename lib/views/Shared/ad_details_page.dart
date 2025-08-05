@@ -22,12 +22,19 @@ class AdDetailPage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                '$devUrl${ad.imageUrl!}',
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child: ad.imageUrl != null
+                  ? Image.network(
+                      '$devUrl${ad.imageUrl!}',
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      'assets/images/advertise.png',
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(height: 20),
             Text(

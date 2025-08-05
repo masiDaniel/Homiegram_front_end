@@ -267,9 +267,19 @@ class _HomePageState extends State<HomePage> {
                                                 '$devUrl${ad.imageUrl!}',
                                                 fit: BoxFit.cover,
                                               )
-                                            : Image.asset(
-                                                'assets/images/splash.jpeg',
-                                                fit: BoxFit.cover),
+                                            : Container(
+                                                color: Colors.grey[300],
+                                                child: const Center(
+                                                  child: Text(
+                                                    'No Image Available',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   ),

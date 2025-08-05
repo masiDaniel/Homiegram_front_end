@@ -169,20 +169,34 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     bool showInitials = currentUserProfilePicture == "N/A";
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDark = themeProvider.themeMode == ThemeMode.dark;
+    var isDark = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Page',
-            style: TextStyle(
-              color: Colors.white,
-            )),
-        centerTitle: true,
-        leading: Container(),
+        elevation: 4,
         backgroundColor: const Color(0xFF126E06),
+        // centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16),
+          ),
+        ),
+        leading: Container(),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+            letterSpacing: 0.5,
+          ),
+        ),
         actions: [
-          IconButton(
-              onPressed: () {
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -190,52 +204,114 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 );
               },
-              icon: const Icon(
-                Icons.edit_attributes_outlined,
-                color: Colors.white,
-              )),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.edit_note_rounded,
+                  size: 26,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          )
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          Center(
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: CircleAvatar(
-                    backgroundColor: const Color.fromARGB(255, 2, 75, 50),
-                    radius: 60,
-                    backgroundImage:
-                        getProfileImage(currentUserProfilePicture, devUrl),
-                    child: showInitials
-                        ? Text(
-                            extractInitials(currentUserFirstName ?? ''),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: pickImage,
-                    child: const CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.edit, color: Colors.black, size: 20),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Left Column: Username & Phone
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Username',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('$currentUserName'),
+                        const SizedBox(height: 12),
+                        const Text('Phone Number',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('$currentUserPhoneNumber'),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  // Right Column: Profile Picture and Edit
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // TODO: View full profile picture
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: const Color.fromARGB(255, 2, 75, 50),
+                          radius: 50,
+                          backgroundImage: getProfileImage(
+                              currentUserProfilePicture, devUrl),
+                          child: (currentUserProfilePicture == null ||
+                                      currentUserProfilePicture!.isEmpty) &&
+                                  showInitials
+                              ? Text(
+                                  extractInitials(currentUserFirstName ?? ''),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: pickImage,
+                        child: const Text(
+                          'Edit',
+                          style: TextStyle(
+                            color: Color(0xFF126E06),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+
+          // Second Card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('First Name',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('$currentUserFirstName'),
+                  const SizedBox(height: 12),
+                  const Text('Last Name',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('$currentUserLastName'),
+                  const SizedBox(height: 12),
+                  const Text('Email',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('$currentUserEmail'),
+                  const SizedBox(height: 12),
+                  const Text('ID Number',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('$currentserIdNumber'),
+                ],
+              ),
+            ),
+          ),
+
           Card(
             elevation: 6,
             shape: RoundedRectangleBorder(
@@ -246,86 +322,64 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text(
+                    'Your Tools',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   const Divider(),
+
+                  // Bookmarks
                   ListTile(
-                    leading: const Icon(Icons.account_circle,
+                    leading: const Icon(Icons.bookmark_add_outlined,
                         color: Color(0xFF126E06)),
-                    title: const Text('Username'),
-                    subtitle: Text('$currentUserName'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.person_outline,
-                        color: Color(0xFF126E06)),
-                    title: const Text('First Name'),
-                    subtitle: Text('$currentUserFirstName'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.person_outline,
-                        color: Color(0xFF126E06)),
-                    title: const Text('Last Name'),
-                    subtitle: Text('$currentUserLastName'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.email, color: Color(0xFF126E06)),
-                    title: const Text('Email'),
-                    subtitle: Text('$currentUserEmail'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading:
-                        const Icon(Icons.credit_card, color: Color(0xFF126E06)),
-                    title: const Text('ID Number'),
-                    subtitle: Text('$currentserIdNumber'),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.phone, color: Color(0xFF126E06)),
-                    title: const Text('Phone Number'),
-                    subtitle: Text('$currentUserPhoneNumber'),
-                  ),
-                  const Divider(),
-                  GestureDetector(
+                    title: const Text('Bookmarks'),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BookmarkedHousesPage(
-                            userId: currentUserId!,
-                          ),
+                          builder: (context) =>
+                              BookmarkedHousesPage(userId: currentUserId!),
                         ),
                       );
                     },
-                    child: const ListTile(
-                      leading: Icon(Icons.bookmark_add_outlined,
-                          color: Color(0xFF126E06)),
-                      title: Text('bookmarks'),
-                    ),
                   ),
+                  // const Divider(),
+
+                  // // Purchases
+                  // ListTile(
+                  //   leading: const Icon(Icons.money_off_sharp,
+                  //       color: Color(0xFF126E06)),
+                  //   title: const Text('Purchases'),
+                  //   onTap: () {
+                  //     // TODO: Add purchases page navigation
+                  //   },
+                  // ),
                   const Divider(),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const ListTile(
-                      leading:
-                          Icon(Icons.money_off_sharp, color: Color(0xFF126E06)),
-                      title: Text('Purchases'),
-                    ),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Theme'),
-                    trailing: Switch(
-                      value: isDark,
-                      onChanged: (value) {
-                        themeProvider.toggleTheme(value);
-                      },
-                      activeTrackColor: Colors.green[200],
-                      inactiveThumbColor: const Color(0xFF126E06),
-                      inactiveTrackColor: Colors.white,
-                      activeColor: const Color(0xFF126E06),
-                    ),
+
+                  // Theme Switch
+                  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return ListTile(
+                        leading: const Icon(Icons.brightness_6_outlined,
+                            color: Color(0xFF126E06)),
+                        title: const Text('Theme'),
+                        trailing: Switch(
+                          value: isDark,
+                          onChanged: (value) {
+                            setState(() => isDark = value);
+                            themeProvider.toggleTheme(value);
+                          },
+                          activeTrackColor: Colors.green[200],
+                          inactiveThumbColor: const Color(0xFF126E06),
+                          inactiveTrackColor: Colors.white,
+                          activeColor: const Color(0xFF126E06),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -381,7 +435,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),
-          const SizedBox(height: 30),
+
           ElevatedButton.icon(
             onPressed: () {
               _logout();

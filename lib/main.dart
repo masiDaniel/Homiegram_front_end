@@ -3,6 +3,7 @@ import 'package:homi_2/providers/user_provider.dart';
 import 'package:homi_2/services/theme_provider.dart';
 import 'package:homi_2/views/Shared/about_app.dart';
 import 'package:homi_2/views/Shared/splash_screen.dart';
+import 'package:homi_2/views/Shared/video_splash_screen.dart';
 import 'package:homi_2/views/Tenants/navigation_bar.dart';
 import 'package:homi_2/views/Shared/all_houses.dart';
 import 'package:homi_2/views/Tenants/house_list_screen.dart';
@@ -50,9 +51,9 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       themeMode: themeProvider.themeMode,
       initialRoute: initialRoute,
-      home: const WelcomePage(),
+      // home: const WelcomePage(),
 
-      // home: const VideoSplashScreen(),
+      home: const VideoSplashScreen(),
       // should refactor on this to user flutters way
       routes: {
         '/splash': (context) => const SplashScreen(),

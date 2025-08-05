@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_snackbar.dart';
 import 'package:homi_2/models/get_house.dart';
-import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 class EditHouseDetailsPage extends StatefulWidget {

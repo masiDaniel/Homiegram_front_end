@@ -15,6 +15,7 @@ import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/landlord/add_room.dart';
 import 'package:homi_2/views/landlord/edit_house_details.dart';
+import 'package:homi_2/views/landlord/room_details_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -514,7 +515,14 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                           : Colors.transparent;
 
                       return GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RoomDetailsPage(room: room),
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -709,7 +717,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                     const Icon(Icons.location_on,
                         color: Colors.redAccent, size: 18),
                     const SizedBox(width: 5),
-                    Text(getLocationName(widget.house.locationDetail),
+                    Text(getLocationName(widget.house.locationDetail!),
                         style:
                             const TextStyle(fontSize: 16, color: Colors.white)),
                   ],

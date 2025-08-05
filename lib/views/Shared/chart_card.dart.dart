@@ -27,7 +27,9 @@ class ChatCardState extends State<ChatCard> {
           radius: 24,
         ),
         title: Text(
-          widget.chat.name,
+          widget.chat.isGroup
+              ? widget.chat.name
+              : (widget.chat.label ?? "Group"),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,

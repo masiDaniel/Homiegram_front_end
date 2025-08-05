@@ -27,11 +27,13 @@ class Message {
 class ChatRoom {
   final int id;
   final String name;
+  final String? label;
   final List<int> participants;
   final List<Message> messages;
   final bool isGroup;
 
   ChatRoom({
+    this.label,
     required this.id,
     required this.name,
     required this.participants,
@@ -43,6 +45,7 @@ class ChatRoom {
     return ChatRoom(
       id: json['id'],
       name: json['name'],
+      label: json['label'],
       participants: List<int>.from(json['participants']),
       messages: (json['messages'] as List<dynamic>)
           .map((m) => Message.fromJson(m))

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:intl/intl.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
@@ -31,7 +32,9 @@ class _ChatPageState extends State<ChatPage> {
 
     final wsUrl = Uri.parse(
         '$chatUrl/ws/chat/${widget.chat.name}/?token=${widget.token}');
+    print("this is the url $wsUrl");
     channel = WebSocketChannel.connect(wsUrl);
+    print("this is the channel $channel");
 
     // Listen for incoming messages
     channel.stream.listen((data) {
@@ -58,8 +61,13 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
     final message = {"message": _controller.text.trim()};
+    print("this is the message $message");
     channel.sink.add(jsonEncode(message));
     _controller.clear();
+  }
+
+  DateTime formatTimestampToLocalDeviceTime(DateTime utcTime) {
+    return utcTime.toLocal();
   }
 
   @override
@@ -73,7 +81,11 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.chat.name),
+        title: Text(
+          widget.chat.isGroup
+              ? widget.chat.name
+              : (widget.chat.label ?? "Private Chat"),
+        ),
         backgroundColor: isDark ? Colors.black : const Color(0xFF105A01),
       ),
       backgroundColor: bgColor,
@@ -132,7 +144,10 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          TimeOfDay.fromDateTime(msg.timestamp).format(context),
+                          TimeOfDay.fromDateTime(
+                                  formatTimestampToLocalDeviceTime(
+                                      msg.timestamp))
+                              .format(context),
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],

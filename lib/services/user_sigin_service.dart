@@ -13,9 +13,13 @@ const Map<String, String> headers = {
 
 //  'https://hommiegram.azurewebsites.net'
 // String productionUrl = 'http://192.168.0.106:8000/';
-String devUrl = 'http://192.168.100.18:8000';
-String chatUrl = 'ws://192.168.100.18:8000';
+// String devUrl = 'https://hommiegram.azurewebsites.net';
 
+// String chatUrl = 'wss://hommiegram.azurewebsites.net';
+
+String devUrl = 'http://192.168.100.18:8000';
+
+String chatUrl = 'ws://192.168.100.18:8000';
 Future fetchUserSignIn(
     BuildContext context, String username, String password) async {
   try {
