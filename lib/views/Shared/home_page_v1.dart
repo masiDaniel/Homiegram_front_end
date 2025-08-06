@@ -267,16 +267,12 @@ class _HomePageState extends State<HomePage> {
                                                 '$devUrl${ad.imageUrl!}',
                                                 fit: BoxFit.cover,
                                               )
-                                            : Container(
-                                                color: Colors.grey[300],
-                                                child: const Center(
-                                                  child: Text(
-                                                    'No Image Available',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                            : const Center(
+                                                child: Text(
+                                                  'No Image Available',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                               ),
@@ -345,16 +341,11 @@ class _HomePageState extends State<HomePage> {
                                         setState(() =>
                                             selectedFilter = val ? 'All' : '');
                                       }),
-                                      buildFilterChip(
-                                          "Groups", selectedFilter == 'Groups',
-                                          (val) {
-                                        setState(() => selectedFilter =
-                                            val ? 'Groups' : '');
-                                      }),
-                                      // buildFilterChip("Stories",
-                                      //     selectedFilter == 'Stories', (val) {
+                                      // buildFilterChip(
+                                      //     "Groups", selectedFilter == 'Groups',
+                                      //     (val) {
                                       //   setState(() => selectedFilter =
-                                      //       val ? 'Stories' : '');
+                                      //       val ? 'Groups' : '');
                                       // }),
                                     ],
                                   ),

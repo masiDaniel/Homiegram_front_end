@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
+import 'package:intl/intl.dart';
 
 class AdDetailPage extends StatelessWidget {
   final Ad ad;
@@ -40,32 +41,59 @@ class AdDetailPage extends StatelessWidget {
             Text(
               ad.title,
               style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2D2D2D),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
               ad.description,
               style: const TextStyle(
                 fontSize: 16,
+                height: 1.5,
+                color: Color(0xFF4A4A4A),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Start Date: ${ad.startDate}',
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+            const SizedBox(height: 24),
+            Divider(
+              color: Colors.grey.shade300,
+              thickness: 1,
+              indent: 40,
+              endIndent: 40,
             ),
-            const SizedBox(height: 5),
-            Text(
-              'End Date: ${ad.endDate}',
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  'Start: ${DateFormat('MMMM d, y').format(DateTime.parse(ad.startDate))}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.calendar_today_outlined,
+                    size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  'End: ${DateFormat('MMMM d, y').format(DateTime.parse(ad.endDate))}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
