@@ -40,6 +40,7 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
   String? localFilePath;
   File? _selectedImage;
   List<Locations> locations = [];
+  TextEditingController caretakerController = TextEditingController();
 
   @override
   void initState() {
@@ -430,24 +431,33 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             if (widget.house.caretakerId == null)
               isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : DropdownButtonFormField<GerUsers>(
-                      value: selectedUser,
-                      items: users
-                          .map((user) => DropdownMenuItem(
-                                value: user,
-                                child:
-                                    Text('${user.firstName} (${user.email})'),
-                              ))
-                          .toList(),
-                      onChanged: (user) {
-                        setState(() {
-                          selectedUser = user;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Select a User',
+                  : TextFormField(
+                      controller: caretakerController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: "Select Caretaker",
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () async {
+                            GerUsers? picked =
+                                await showCaretakerDialog(context, users);
+                            if (picked != null) {
+                              setState(() {
+                                selectedUser = picked;
+                                caretakerController.text =
+                                    "${picked.firstName} (${picked.email})";
+                              });
+                            }
+                          },
+                        ),
+                        border: const OutlineInputBorder(),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a caretaker';
+                        }
+                        return null;
+                      },
                     ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -633,11 +643,6 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
             },
           ),
           SpeedDialChild(
-            child: const Icon(Icons.auto_graph),
-            label: 'Statistics',
-            onTap: () {},
-          ),
-          SpeedDialChild(
             child: const Icon(Icons.edit),
             label: 'Edit house',
             onTap: () {
@@ -662,6 +667,80 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
     setState(() {
       isCaretakerAssigned = widget.house.caretakerId != null;
     });
+  }
+
+  Future<GerUsers?> showCaretakerDialog(
+      BuildContext context, List<GerUsers> users) async {
+    TextEditingController searchController = TextEditingController();
+    List<GerUsers> filteredUsers = [];
+    bool hasTyped = false;
+
+    return await showDialog<GerUsers>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Select a Caretaker"),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 350,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        labelText: "Search caretaker",
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (query) {
+                        setState(() {
+                          hasTyped = query.isNotEmpty;
+                          filteredUsers = query.isNotEmpty
+                              ? users
+                                  .where((user) =>
+                                      user.firstName!
+                                          .toLowerCase()
+                                          .contains(query.toLowerCase()) ||
+                                      user.email!
+                                          .toLowerCase()
+                                          .contains(query.toLowerCase()))
+                                  .toList()
+                              : [];
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    hasTyped
+                        ? Expanded(
+                            child: filteredUsers.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: filteredUsers.length,
+                                    itemBuilder: (context, index) {
+                                      final user = filteredUsers[index];
+                                      return ListTile(
+                                        title: Text(
+                                            "${user.firstName} (${user.email})"),
+                                        onTap: () {
+                                          Navigator.pop(context, user);
+                                        },
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child:
+                                        Text("No matching caretakers found."),
+                                  ),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildHouseDetailsCard() {

@@ -40,6 +40,12 @@ class AddHousePageState extends State<AddHousePage> {
   List<Amenities> selectedAmenities = [];
   List<Category> categories = [];
   bool isLoading = false;
+  int? selectedLocationId;
+  List<int> selectedIds = [];
+
+  final TextEditingController houseAddressController = TextEditingController();
+  final TextEditingController houseAmenitiesController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -159,60 +165,48 @@ class AddHousePageState extends State<AddHousePage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
-                    labelText: 'Select Location',
-                    border: OutlineInputBorder(),
+                TextFormField(
+                  controller: houseAddressController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Business Location",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () => showLocationDialog(context),
+                    ),
                   ),
-                  items: locations.map((location) {
-                    final label =
-                        "${location.county}, ${location.town}, ${location.area}";
-                    return DropdownMenuItem<int>(
-                      value: location.locationId,
-                      child: Text(label),
-                    );
-                  }).toList(),
                   validator: (value) {
-                    if (value == null) {
+                    if (value == null || value.isEmpty) {
                       return 'Please select a location';
                     }
                     return null;
                   },
-                  onChanged: (value) {
-                    setState(() {
-                      _location = value!;
-                    });
-                  },
-                  onSaved: (value) {
-                    _location = value!;
-                  },
                 ),
-                DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
-                    labelText: 'Select Amenities',
-                    border: OutlineInputBorder(),
+                TextFormField(
+                  controller: houseAmenitiesController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: "Amenities",
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () async {
+                        selectedIds = await showAmenitiesDialog(context);
+
+                        if (selectedIds.isNotEmpty) {
+                          // Show selected amenity names in the text field
+                          houseAmenitiesController.text = amenities
+                              .where((a) => selectedIds.contains(a.id))
+                              .map((a) => a.name)
+                              .join(", ");
+                        }
+                      },
+                    ),
                   ),
-                  items: locations.map((location) {
-                    final label =
-                        "${location.county}, ${location.town}, ${location.area}";
-                    return DropdownMenuItem<int>(
-                      value: location.locationId,
-                      child: Text(label),
-                    );
-                  }).toList(),
                   validator: (value) {
-                    if (value == null) {
-                      return 'Please select amenities ';
+                    if (value == null || value.isEmpty) {
+                      return 'Please select at least one amenity';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _location = value!;
-                    });
-                  },
-                  onSaved: (value) {
-                    _location = value!;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -289,6 +283,7 @@ class AddHousePageState extends State<AddHousePage> {
                       : () async {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
+                            print("Selected amenities in house: $selectedIds");
 
                             final newHouse = GetHouse(
                               name: _houseName,
@@ -296,12 +291,12 @@ class AddHousePageState extends State<AddHousePage> {
                               rating: 2,
                               description: _description,
                               images: _imageUrls,
-                              amenities: [1],
+                              amenities: selectedIds,
                               landlordId: userIdShared as int,
                               houseId: 0,
                               bankName: _bankName,
                               accountNumber: __accountNumber,
-                              locationDetail: _location,
+                              locationDetail: selectedLocationId,
                             );
 
                             setState(() {
@@ -358,5 +353,166 @@ class AddHousePageState extends State<AddHousePage> {
         ),
       ),
     );
+  }
+
+  void showLocationDialog(BuildContext context) {
+    TextEditingController searchController = TextEditingController();
+    List<Locations> filteredLocations = List.from(locations);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text(
+                  "Select Business Location (county, constituency, Location)"),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 300,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        labelText: "Search Location",
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (query) {
+                        setState(() {
+                          filteredLocations = locations
+                              .where((loc) =>
+                                  loc.county!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()) ||
+                                  loc.town!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()) ||
+                                  loc.area!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Can’t find your location? No worries! Reach out to us at help.homigram@gmail.com",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF023304),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredLocations.length,
+                        itemBuilder: (context, index) {
+                          final loc = filteredLocations[index];
+                          return ListTile(
+                            title:
+                                Text("${loc.county}, ${loc.town}, ${loc.area}"),
+                            onTap: () {
+                              setState(() {
+                                houseAddressController.text =
+                                    "${loc.county}, ${loc.town}, ${loc.area}";
+                                selectedLocationId = loc.locationId;
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<List<int>> showAmenitiesDialog(BuildContext context) async {
+    TextEditingController searchController = TextEditingController();
+    List<Amenities> filteredAmenities = List.from(amenities);
+    List<int> selectedAmenityIds = [];
+
+    return await showDialog<List<int>>(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text("Select Amenities you have"),
+                  content: SizedBox(
+                    width: double.maxFinite,
+                    height: 350,
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            labelText: "Search amenity",
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (query) {
+                            setState(() {
+                              filteredAmenities = amenities
+                                  .where((amenity) => amenity.name!
+                                      .toLowerCase()
+                                      .contains(query.toLowerCase()))
+                                  .toList();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: filteredAmenities.length,
+                            itemBuilder: (context, index) {
+                              final amenity = filteredAmenities[index];
+                              final isSelected =
+                                  selectedAmenityIds.contains(amenity.id);
+
+                              return CheckboxListTile(
+                                title: Text(amenity.name!),
+                                value: isSelected,
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      selectedAmenityIds.add(amenity.id!);
+                                    } else {
+                                      selectedAmenityIds.remove(amenity.id);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, null), // Cancel
+                      child: const Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () =>
+                          Navigator.pop(context, selectedAmenityIds),
+                      child: const Text("Done"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ) ??
+        [];
   }
 }

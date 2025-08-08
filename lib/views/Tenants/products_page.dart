@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:homi_2/models/business.dart';
 import 'package:homi_2/services/business_services.dart';
+import 'package:homi_2/services/create_chat_room.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Tenants/add_product_screen.dart';
@@ -238,21 +239,21 @@ class _ProductsPageState extends State<ProductsPage>
                   ),
                 ]
               : [
-                  SpeedDialChild(
-                    child: const Icon(
-                      Icons.info,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: const Color(0xFF03AA19),
-                    label: 'Business info',
-                    labelStyle: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    labelBackgroundColor: Colors.white,
-                    onTap: () {},
-                  ),
+                  // SpeedDialChild(
+                  //   child: const Icon(
+                  //     Icons.info,
+                  //     color: Colors.white,
+                  //   ),
+                  //   backgroundColor: const Color(0xFF03AA19),
+                  //   label: 'Business info',
+                  //   labelStyle: const TextStyle(
+                  //     fontSize: 16.0,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Colors.black,
+                  //   ),
+                  //   labelBackgroundColor: Colors.white,
+                  //   onTap: () {},
+                  // ),
                   SpeedDialChild(
                     child: const Icon(Icons.call),
                     label: 'Call business',
@@ -260,13 +261,13 @@ class _ProductsPageState extends State<ProductsPage>
                       makePhoneCall(widget.businessPhoneNumber);
                     },
                   ),
-                  SpeedDialChild(
-                    child: const Icon(Icons.message),
-                    label: 'Message business',
-                    onTap: () {
-                      makePhoneCall(widget.businessPhoneNumber);
-                    },
-                  ),
+                  // SpeedDialChild(
+                  //   child: const Icon(Icons.message),
+                  //   label: 'Message business',
+                  //   onTap: () {
+                  //     getOrCreatePrivateChatRoom(widget.businessId);
+                  //   },
+                  // ),
                 ]),
     );
   }

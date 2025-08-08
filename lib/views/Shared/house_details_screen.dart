@@ -494,7 +494,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                               TextButton(
                                 style: const ButtonStyle(
                                   backgroundColor:
-                                      WidgetStatePropertyAll(Color(0x1F02F502)),
+                                      WidgetStatePropertyAll(Color(0x95154D07)),
                                 ),
                                 onPressed: Navigator.of(context).pop,
                                 child: const Text('OK',
@@ -523,8 +523,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                             actions: [
                               TextButton(
                                 style: const ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      const Color(0x1F02F502)),
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(Color(0x95154D07)),
                                 ),
                                 onPressed: () => Navigator.of(context).pop(),
                                 child: const Text('OK',
@@ -545,7 +545,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 ),
                 label: Container(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0x1F02F502),
+                  backgroundColor: const Color(0x95154D07),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -570,7 +570,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                             TextButton(
                               style: const ButtonStyle(
                                 backgroundColor:
-                                    WidgetStatePropertyAll(Color(0x1F02F502)),
+                                    WidgetStatePropertyAll(Color(0x95154D07)),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
                               child: const Text('OK',
@@ -597,7 +597,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                             TextButton(
                               style: const ButtonStyle(
                                 backgroundColor:
-                                    WidgetStatePropertyAll(Color(0x1F02F502)),
+                                    WidgetStatePropertyAll(Color(0x95154D07)),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
                               child: const Text('OK',
@@ -613,7 +613,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 label:
                     const Text("Rent", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0x1F02F502),
+                  backgroundColor: const Color(0x95154D07),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -637,7 +637,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 label: const Text("Comments",
                     style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0x1F02F502),
+                  backgroundColor: const Color(0x95154D07),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),

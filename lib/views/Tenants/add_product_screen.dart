@@ -88,9 +88,9 @@ class AddProductPageState extends State<AddProductPage> {
 
       try {
         var response = await request.send();
-        
+
         if (response.statusCode == 201) {
-           if (!mounted) return;
+          if (!mounted) return;
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -114,17 +114,17 @@ class AddProductPageState extends State<AddProductPage> {
               ),
             ),
           );
-           
+
           await Future.delayed(const Duration(seconds: 4));
-           if (!mounted) return;
+          if (!mounted) return;
           Navigator.pop(context);
           Navigator.pop(context);
         } else {
-           if (!mounted) return;
+          if (!mounted) return;
           showCustomSnackBar(context, "Failed to add product");
         }
       } catch (e) {
-         if (!mounted) return;
+        if (!mounted) return;
         showCustomSnackBar(context, "Error: $e");
       }
     }
@@ -137,8 +137,7 @@ class AddProductPageState extends State<AddProductPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator()) // ✅ Show loading indicator
+            ? const Center(child: CircularProgressIndicator())
             : Form(
                 key: _formKey,
                 child: ListView(

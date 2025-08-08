@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_snackbar.dart';
+import 'package:homi_2/models/amenities.dart';
 import 'package:homi_2/models/get_house.dart';
+import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 class EditHouseDetailsPage extends StatefulWidget {
@@ -26,6 +28,9 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
   late TextEditingController descriptionController;
   late TextEditingController bankNameController;
   late TextEditingController accountNumberController;
+  // List<Amenities> amenities = [];
+  // List<Amenities> selectedAmenities = [];
+  // late Future<List<Amenities>> futureAmenities;
 
   // Track selected amenities
   late Set<int> selectedAmenities;
@@ -53,6 +58,7 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
     accountNumberController =
         TextEditingController(text: widget.house.accountNumber ?? '');
 
+    // ignore: unnecessary_null_comparison
     selectedAmenities = widget.house.amenities != null
         ? Set<int>.from(widget.house.amenities)
         : <int>{};
@@ -148,7 +154,6 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
             onPressed: toggleEdit,
             child: Text(
               isEditing ? 'Save' : 'Edit',
-              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -163,7 +168,7 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
             _buildField('Bank Name', bankNameController),
             _buildField('Account Number', accountNumberController),
             const SizedBox(height: 16),
-            _buildAmenitiesSection(),
+            // _buildAmenitiesSection(),
           ],
         ),
       ),
