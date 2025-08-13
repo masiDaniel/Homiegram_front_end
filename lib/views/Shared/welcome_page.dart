@@ -17,14 +17,16 @@ class WelcomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TypewriterAnimatedTextKit(
-              text: const ["Homigram"],
-              textStyle: GoogleFonts.aBeeZee(
-                  color: const Color(0xFF126E06),
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800),
-              speed: const Duration(milliseconds: 300),
-            ),
+            AnimatedTextKit(animatedTexts: [
+              TypewriterAnimatedText(
+                "Homigram",
+                textStyle: GoogleFonts.aBeeZee(
+                    color: const Color(0xFF126E06),
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800),
+                speed: const Duration(milliseconds: 300),
+              )
+            ]),
             const SizedBox(
               height: 50,
             ),

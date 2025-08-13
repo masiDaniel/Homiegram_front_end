@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:homi_2/components/blured)image.dart';
+import 'package:homi_2/components/blured_image.dart';
 import 'package:homi_2/models/get_house.dart';
 import 'package:homi_2/models/locations.dart';
 import 'package:homi_2/services/get_house_service.dart';
@@ -139,14 +139,14 @@ class _LandlordManagementState extends State<LandlordManagement> {
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.15),
-                        spreadRadius: 3,
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(0.15),
+                    //     spreadRadius: 3,
+                    //     blurRadius: 12,
+                    //     offset: const Offset(0, 6),
+                    //   ),
+                    // ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

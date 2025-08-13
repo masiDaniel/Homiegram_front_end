@@ -23,7 +23,7 @@ class AddHousePageState extends State<AddHousePage> {
   final _formKey = GlobalKey<FormState>();
   String _houseName = '';
   String _rentAmount = '';
-  int _location = 0;
+  // int _location = 0;
 
   String _description = '';
   final String _bankName = '';

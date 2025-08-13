@@ -16,7 +16,6 @@ class UserListPage extends StatefulWidget {
 class _UserListPageState extends State<UserListPage> {
   List users = [];
 
-  // have this in shared prefrences.
   List<Map<String, dynamic>> recentChats = [];
   bool showSearchResults = false;
 
@@ -31,9 +30,7 @@ class _UserListPageState extends State<UserListPage> {
         users = jsonDecode(res.body);
         showSearchResults = true;
       });
-    } else {
-      print("Failed to load users: ${res.body}");
-    }
+    } else {}
   }
 
   Future<String?> getOrCreateRoom(Map user) async {
@@ -63,7 +60,6 @@ class _UserListPageState extends State<UserListPage> {
 
       return roomName;
     } else {
-      print("Failed to create room: ${res.body}");
       return null;
     }
   }

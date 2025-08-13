@@ -65,8 +65,10 @@ class _HomePageState extends State<CustomBottomNavigartion> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop, // prevent back navigation accross all tabs
+    return PopScope(
+      onPopInvokedWithResult: (_, __) {
+        _onWillPop();
+      },
       child: Scaffold(
         body: _pages.elementAt(_selectedIndex), // Ensure the index is valid
         bottomNavigationBar: BottomNavigationBar(

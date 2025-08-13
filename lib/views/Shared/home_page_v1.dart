@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:homi_2/chat%20feature/user_list_page.dart';
+import 'package:homi_2/chat%20feature/DB/chat_db_helper.dart';
+// import 'package:homi_2/chat%20feature/user_list_page.dart';
 import 'package:homi_2/models/ads.dart';
 import 'package:homi_2/models/chat.dart';
 import 'package:homi_2/services/fetch_ads_service.dart';
-import 'package:homi_2/services/fetch_chatS_messages_service.dart';
+import 'package:homi_2/services/fetch_chat_messages_service.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/ad_details_page.dart';
@@ -23,25 +24,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final bool isConditionMet = true;
   late Future<List<ChatRoom>> chatRoomsFuture;
-
+  late Future<List<ChatRoom>> chatRoomsFutureFromDB;
   String selectedFilter = 'All';
-
-  List<ChatRoom> _getFilteredChats(List<ChatRoom> chats) {
-    if (selectedFilter == 'unRead') {
-      return chats;
-    } else if (selectedFilter == 'Groups') {
-      return chats.where((chat) => chat.isGroup).toList();
-    } else {
-      return chats;
-    }
-  }
-
-  // void _markChatAsRead(int index) {
-  //   setState(() {
-  //     chats[index].markAsRead();
-  //   });
-  // }
-
   late Future<List<Ad>> futureAds;
   VideoPlayerController? _videoController;
   late PageController _pageController;
@@ -51,22 +35,40 @@ class _HomePageState extends State<HomePage> {
   late List<Ad> ads;
   String? authToken;
   String? currentUserEmail;
+
   @override
   void initState() {
     super.initState();
     _loadAuthToken();
     chatRoomsFuture = fetchChatRooms();
+    chatRoomsFutureFromDB = DatabaseHelper().getChatRoomsWithMessages();
+    ();
 
     futureAds = fetchAds();
     _pageController = PageController(initialPage: 0);
     _startAutoScroll();
   }
 
+  // List<ChatRoom> _getFilteredChats(List<ChatRoom> chats) {
+  //   if (selectedFilter == 'unRead') {
+  //     return chats;
+  //   } else if (selectedFilter == 'Groups') {
+  //     return chats.where((chat) => chat.isGroup).toList();
+  //   } else {
+  //     return chats;
+  //   }
+  // }
+
+  // void _markChatAsRead(int index) {
+  //   setState(() {
+  //     chats[index].markAsRead();
+  //   });
+  // }
+
   List<ChatRoom> filterChats(List<ChatRoom> chats, String filter) {
     if (filter == 'All') return chats;
     // if (filter == 'unRead') return chats.where((c) => !c.isRead).toList();
     if (filter == 'Groups') return chats.where((c) => c.isGroup).toList();
-    // if (filter == 'Stories') return chats.where((c) => c.hasStory).toList();
     return chats;
   }
 
@@ -135,20 +137,154 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Homigram.",
-                        style: TextStyle(
-                            color: Color(0xFF105A01),
-                            fontSize: 40,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
+                Column(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: isConditionMet
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 2),
+                                  child: Text("Homi Chat",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF105A01))),
+                                ),
+                                SizedBox(
+                                  height: 48,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    children: [
+                                      buildFilterChip(
+                                          "All", selectedFilter == 'All',
+                                          (val) {
+                                        setState(() =>
+                                            selectedFilter = val ? 'All' : '');
+                                      }),
+                                      // buildFilterChip(
+                                      //     "Groups", selectedFilter == 'Groups',
+                                      //     (val) {
+                                      //   setState(() => selectedFilter =
+                                      //       val ? 'Groups' : '');
+                                      // }),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: FutureBuilder<List<ChatRoom>>(
+                                      future: chatRoomsFutureFromDB,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return const Center(
+                                              child: Text(
+                                                  'Failed to load chats.'));
+                                        } else if (!snapshot.hasData ||
+                                            snapshot.data!.isEmpty) {
+                                          return const Center(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.chat_bubble_outline,
+                                                    size: 60,
+                                                    color: Color(0xFF026B13)),
+                                                SizedBox(height: 10),
+                                                Text(
+                                                  'No Chats Available',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF026B13),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+
+                                        // Filter chats based on selectedFilter if needed
+                                        final chatRooms = snapshot.data!;
+                                        final filtered = filterChats(
+                                            chatRooms, selectedFilter);
+
+                                        return ListView.separated(
+                                          key: ValueKey(selectedFilter),
+                                          itemCount: filtered.length,
+                                          separatorBuilder: (_, __) =>
+                                              const SizedBox(height: 2),
+                                          itemBuilder: (context, index) {
+                                            final chat = filtered[index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ChatPage(
+                                                      chat: chat,
+                                                      token: authToken!,
+                                                      userEmail:
+                                                          currentUserEmail!,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: ChatCard(chat: chat),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Center(
+                              key: ValueKey('comingSoon'),
+                              child: Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.upcoming,
+                                        size: 80, color: Color(0xFF026B13)),
+                                    SizedBox(height: 20),
+                                    Text(
+                                      'Chat Feature Unavailable',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Coming Soon!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 5,
@@ -311,155 +447,6 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
-                Column(
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      child: isConditionMet
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 2),
-                                  child: Text("Homi Chat",
-                                      style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF105A01))),
-                                ),
-                                SizedBox(
-                                  height: 48,
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    children: [
-                                      buildFilterChip(
-                                          "All", selectedFilter == 'All',
-                                          (val) {
-                                        setState(() =>
-                                            selectedFilter = val ? 'All' : '');
-                                      }),
-                                      // buildFilterChip(
-                                      //     "Groups", selectedFilter == 'Groups',
-                                      //     (val) {
-                                      //   setState(() => selectedFilter =
-                                      //       val ? 'Groups' : '');
-                                      // }),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: FutureBuilder<List<ChatRoom>>(
-                                      future: chatRoomsFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                              child: Text(
-                                                  'Failed to load chats.'));
-                                        } else if (!snapshot.hasData ||
-                                            snapshot.data!.isEmpty) {
-                                          return const Center(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(Icons.chat_bubble_outline,
-                                                    size: 60,
-                                                    color: Color(0xFF026B13)),
-                                                SizedBox(height: 10),
-                                                Text(
-                                                  'No Chats Available',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF026B13),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }
-
-                                        // Filter chats based on selectedFilter if needed
-                                        final chatRooms = snapshot.data!;
-                                        final filtered = filterChats(
-                                            chatRooms, selectedFilter);
-
-                                        return ListView.separated(
-                                          key: ValueKey(selectedFilter),
-                                          itemCount: filtered.length,
-                                          separatorBuilder: (_, __) =>
-                                              const SizedBox(height: 2),
-                                          itemBuilder: (context, index) {
-                                            final chat = filtered[index];
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ChatPage(
-                                                      chat: chat,
-                                                      token: authToken!,
-                                                      userEmail:
-                                                          currentUserEmail!,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: ChatCard(chat: chat),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : const Center(
-                              key: ValueKey('comingSoon'),
-                              child: Padding(
-                                padding: EdgeInsets.all(40.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.upcoming,
-                                        size: 80, color: Color(0xFF026B13)),
-                                    SizedBox(height: 20),
-                                    Text(
-                                      'Chat Feature Unavailable',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Coming Soon!',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),

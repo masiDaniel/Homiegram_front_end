@@ -22,25 +22,16 @@ Future<List<ChatRoom>> fetchChatRooms() async {
     final List<dynamic> data = json.decode(response.body);
     final chatRooms = data.map((item) => ChatRoom.fromJson(item)).toList();
 
-    // Save fetched chat rooms to SQLite
     final dbHelper = DatabaseHelper();
+
     for (var room in chatRooms) {
-      await dbHelper.insertOrUpdateChatroom({
-        'id': room.id,
-        'name': room.name,
-        'label': room.label,
-        'participants': json.encode(room.participants),
-        'last_message': room.lastMessage != null
-            ? json.encode(room.lastMessage!.toJson())
-            : null,
-        'is_group': room.isGroup ? 1 : 0,
-        'updated_at': room.updatedAt.toIso8601String(),
-      });
-    }
-    List<ChatRoom> rooms = await dbHelper.getChatRooms();
-    for (var room in rooms) {
-      print(
-          'ChatRoom id: ${room.id}, name: ${room.name}, updatedAt: ${room.updatedAt}');
+      // Save chatroom
+      await dbHelper.insertOrUpdateChatroom(room);
+
+      // Save messages
+      for (var msg in room.messages) {
+        await dbHelper.insertOrUpdateMessage(msg, room.id);
+      }
     }
     return chatRooms;
   } else {

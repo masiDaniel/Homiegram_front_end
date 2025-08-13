@@ -41,28 +41,32 @@ class _CartScreenState extends State<CartScreen> {
     try {
       Cart? newCart = await cartService.createCart(userId);
       if (newCart != null) {
+        if (!mounted) return;
+
         showCustomSnackBar(context, "cart created succesfully!");
         setState(() {
           userCartFuture = Future.value(newCart);
         });
       }
+      if (!mounted) return;
+
       showCustomSnackBar(context, "Creation failed!");
     } catch (e) {
       debugPrint("Error creating cart: $e");
     }
   }
 
-  Future<void> _addItemsToCart(List<int> productIds) async {
-    final cart = await userCartFuture;
-    if (cart == null) return;
+  // Future<void> _addItemsToCart(List<int> productIds) async {
+  //   final cart = await userCartFuture;
+  //   if (cart == null) return;
 
-    bool success = await cartService.addToCart(cart.id, productIds);
-    if (success) {
-      setState(() {
-        userCartFuture = _loadCart(); // Refresh the cart
-      });
-    }
-  }
+  //   bool success = await cartService.addToCart(cart.id, productIds);
+  //   if (success) {
+  //     setState(() {
+  //       userCartFuture = _loadCart(); // Refresh the cart
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

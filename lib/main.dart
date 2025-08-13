@@ -28,6 +28,8 @@ void main() async {
 
 ///
 /// TODO: Have an internet test on launch, and how to keep it accurate
+///
+/// TODO: Have a check on how i handle images, too many requests.
 
 Future<String> getInitialRoute() async {
   final prefs = await SharedPreferences.getInstance();

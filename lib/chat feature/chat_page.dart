@@ -64,13 +64,11 @@ class _ChatPageState extends State<ChatPage> {
 
     if (res.statusCode == 200) {
       final data = jsonDecode(utf8.decode(res.bodyBytes));
-      print("this is the data {$data}");
+
       setState(() {
         messages = data.reversed.toList();
       });
-    } else {
-      print("Failed to fetch messages: ${res.body}");
-    }
+    } else {}
   }
 
   void sendMessage() {
@@ -123,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.5),
                           blurRadius: 4,
                           offset: const Offset(2, 2),
                         ),

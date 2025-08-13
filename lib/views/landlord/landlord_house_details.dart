@@ -656,6 +656,34 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
               );
             },
           ),
+          SpeedDialChild(
+            child: Icon(
+              isCaretakerAssigned
+                  ? Icons.person_remove // icon when caretaker assigned
+                  : Icons.person_add, // icon when caretaker not assigned
+              color: Colors.white,
+            ),
+            backgroundColor: isCaretakerAssigned
+                ? const Color.fromARGB(255, 124, 15, 5) // red-ish for remove
+                : const Color(0xFF013803), // green-ish for assign
+            label:
+                isCaretakerAssigned ? 'Remove Caretaker' : 'Assign Caretaker',
+            onTap: () async {
+              if (isCaretakerAssigned) {
+                _removeCaretaker();
+              } else {
+                GerUsers? picked = await showCaretakerDialog(context, users);
+                if (picked != null) {
+                  setState(() {
+                    selectedUser = picked;
+                    caretakerController.text =
+                        "${picked.firstName} (${picked.email})";
+                  });
+                }
+                _assignCaretaker();
+              }
+            },
+          ),
         ],
       ),
     );
@@ -732,7 +760,12 @@ class _HouseDetailsPageState extends State<HouseDetailsPage> {
                                         Text("No matching caretakers found."),
                                   ),
                           )
-                        : const SizedBox.shrink(),
+                        : const Center(
+                            child: Text(
+                              "Start typing to search for caretakers.",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
                   ],
                 ),
               ),

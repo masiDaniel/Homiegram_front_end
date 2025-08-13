@@ -25,7 +25,6 @@ Future<List<GetHouse>> fetchHouses() async {
 
     if (response.statusCode == 200) {
       final List<dynamic> housesData = json.decode(response.body);
-      print("this is the data: $housesData");
 
       final List<GetHouse> houses =
           housesData.map((json) => GetHouse.fromJSon(json)).toList();

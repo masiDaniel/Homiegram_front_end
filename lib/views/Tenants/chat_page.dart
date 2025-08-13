@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:homi_2/chat%20feature/DB/chat_db_helper.dart';
 import 'package:homi_2/models/chat.dart';
+import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
-import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+// import 'package:intl/intl.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
@@ -39,16 +42,84 @@ class _ChatPageState extends State<ChatPage> {
     // Listen for incoming messages
     channel.stream.listen((data) {
       final decoded = jsonDecode(data);
+
+      final newMessage = Message(
+        id: decoded['id'],
+        sender: decoded['sender'],
+        content: decoded['message'],
+        timestamp: DateTime.parse(decoded['timestamp']),
+        chatroomId: widget.chat.id,
+      );
+
       setState(() {
-        messages.add(Message(
-          sender: decoded['sender'],
-          content: decoded['message'],
-          timestamp: DateTime.parse(decoded['timestamp']),
-          chatroomId: widget.chat.id,
-        ));
+        messages.add(newMessage);
       });
+      // setState(() {
+      //   messages.add(Message(
+      //     id: decoded['id'],
+      //     sender: decoded['sender'],
+      //     content: decoded['message'],
+      //     timestamp: DateTime.parse(decoded['timestamp']),
+      //     chatroomId: widget.chat.id,
+      //   ));
+      // });
+      DatabaseHelper().insertOrUpdateMessage(newMessage, widget.chat.id);
     });
     messages = widget.chat.messages;
+
+    fetchNewMessages();
+  }
+
+  Future<void> fetchInitialMessages() async {
+    String? authToken;
+    authToken = await UserPreferences.getAuthToken();
+    final url = "$devUrl/chat/messages/${widget.chat.name}";
+    final response = await http.get(Uri.parse(url), headers: {
+      "Authorization": "Token $authToken",
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      final fetchedMessages = data.map((m) => Message.fromJson(m)).toList();
+
+      for (var msg in fetchedMessages) {
+        await DatabaseHelper().insertOrUpdateMessage(msg, widget.chat.id);
+      }
+
+      setState(() {
+        messages = fetchedMessages;
+      });
+    }
+  }
+
+  Future<void> fetchNewMessages() async {
+    String? authToken;
+    authToken = await UserPreferences.getAuthToken();
+    if (messages.isEmpty) {
+      return fetchInitialMessages();
+    }
+
+    int lastId = messages.last.id!;
+    final url = "$devUrl/chat/messages/${widget.chat.name}?after_id=$lastId";
+
+    final response = await http.get(Uri.parse(url), headers: {
+      "Authorization": "Token $authToken",
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      if (data.isNotEmpty) {
+        final newMessages = data.map((m) => Message.fromJson(m)).toList();
+
+        for (var msg in newMessages) {
+          await DatabaseHelper().insertOrUpdateMessage(msg, widget.chat.id);
+        }
+
+        setState(() {
+          messages.addAll(newMessages);
+        });
+      }
+    }
   }
 
   @override
@@ -77,16 +148,52 @@ class _ChatPageState extends State<ChatPage> {
         isDark ? const Color(0xFF4F9E4F) : const Color(0xFFDCF8C6);
     final bubbleColorOther =
         isDark ? const Color(0xFF33373D) : const Color(0xFFF0F0F0);
-    final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFEDEDED);
+    final bgColor = isDark
+        ? const Color(0xFF121212)
+        : const Color.fromARGB(255, 255, 255, 255);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.chat.isGroup
-              ? widget.chat.name
-              : (widget.chat.label ?? "Private Chat"),
+        elevation: 2,
+        backgroundColor: isDark ? Colors.grey[900] : const Color(0xFF105A01),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: isDark ? Colors.black : const Color(0xFF105A01),
+        title: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                widget.chat.name[0].toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.grey[900] : const Color(0xFF105A01),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                widget.chat.isGroup
+                    ? widget.chat.name
+                    : (widget.chat.label ?? "Private Chat"),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () {},
+          ),
+        ],
       ),
       backgroundColor: bgColor,
       body: Column(
@@ -122,13 +229,6 @@ class _ChatPageState extends State<ChatPage> {
                             ? const Radius.circular(4)
                             : const Radius.circular(16),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: isMe
@@ -150,7 +250,7 @@ class _ChatPageState extends State<ChatPage> {
                               .format(context),
                           style: TextStyle(
                             fontSize: 11,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            color: isDark ? Colors.grey[300] : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -217,84 +317,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-
-
-
-//  children: [
-//           Expanded(
-//             child: ListView.builder(
-//               itemCount: messages.length,
-//               itemBuilder: (context, index) {
-//                 final msg = messages[index];
-//                 final isMe = msg.sender == widget.userEmail;
-
-//                 return Padding(
-//                   padding:
-//                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-//                   child: Row(
-//                     mainAxisAlignment:
-//                         isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-//                     children: [
-//                       Container(
-//                         constraints: BoxConstraints(
-//                             maxWidth: MediaQuery.of(context).size.width * 0.7),
-//                         padding: const EdgeInsets.all(10),
-//                         decoration: BoxDecoration(
-//                           color: isMe ? Colors.blue[100] : Colors.grey[300],
-//                           borderRadius: BorderRadius.circular(12),
-//                         ),
-//                         child: Column(
-//                           crossAxisAlignment: isMe
-//                               ? CrossAxisAlignment.end
-//                               : CrossAxisAlignment.start,
-//                           children: [
-//                             Text(
-//                               msg.sender,
-//                               style: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.grey[700],
-//                               ),
-//                             ),
-//                             const SizedBox(height: 4),
-//                             Text(msg.content),
-//                             const SizedBox(height: 4),
-//                             Text(
-//                               TimeOfDay.fromDateTime(msg.timestamp)
-//                                   .format(context),
-//                               style: const TextStyle(
-//                                   fontSize: 10, color: Colors.black54),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//           const Divider(height: 1),
-//           Padding(
-//             padding: const EdgeInsets.all(8),
-//             child: Row(
-//               children: [
-//                 Expanded(
-//                   child: TextField(
-//                     controller: _controller,
-//                     onTap: () {},
-//                     decoration: InputDecoration(
-//                       hintText: 'Type a message',
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(10),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 IconButton(
-//                   icon: const Icon(Icons.send),
-//                   onPressed: _sendMessage,
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],

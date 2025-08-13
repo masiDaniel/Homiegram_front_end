@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:homi_2/components/my_snackbar.dart';
-import 'package:homi_2/models/amenities.dart';
+// import 'package:homi_2/models/amenities.dart';
+// import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/models/get_house.dart';
-import 'package:homi_2/services/get_amenities.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 
 class EditHouseDetailsPage extends StatefulWidget {
@@ -53,10 +53,9 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
         TextEditingController(text: widget.house.rentAmount.toString());
     descriptionController =
         TextEditingController(text: widget.house.description);
-    bankNameController =
-        TextEditingController(text: widget.house.bankName ?? '');
+    bankNameController = TextEditingController(text: widget.house.bankName);
     accountNumberController =
-        TextEditingController(text: widget.house.accountNumber ?? '');
+        TextEditingController(text: widget.house.accountNumber);
 
     // ignore: unnecessary_null_comparison
     selectedAmenities = widget.house.amenities != null
@@ -108,35 +107,35 @@ class _EditHouseDetailsPageState extends State<EditHouseDetailsPage> {
           );
   }
 
-  Widget _buildAmenitiesSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Amenities',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          ...allAmenities.entries.map((entry) {
-            return CheckboxListTile(
-              title: Text(entry.value),
-              value: selectedAmenities.contains(entry.key),
-              onChanged: isEditing
-                  ? (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedAmenities.add(entry.key);
-                        } else {
-                          selectedAmenities.remove(entry.key);
-                        }
-                      });
-                    }
-                  : null,
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
+  // Widget _buildAmenitiesSection() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text('Amenities',
+  //             style: TextStyle(fontWeight: FontWeight.bold)),
+  //         ...allAmenities.entries.map((entry) {
+  //           return CheckboxListTile(
+  //             title: Text(entry.value),
+  //             value: selectedAmenities.contains(entry.key),
+  //             onChanged: isEditing
+  //                 ? (bool? value) {
+  //                     setState(() {
+  //                       if (value == true) {
+  //                         selectedAmenities.add(entry.key);
+  //                       } else {
+  //                         selectedAmenities.remove(entry.key);
+  //                       }
+  //                     });
+  //                   }
+  //                 : null,
+  //           );
+  //         }).toList(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

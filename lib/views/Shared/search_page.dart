@@ -10,6 +10,7 @@ import 'package:homi_2/services/get_locations.dart';
 import 'package:homi_2/services/user_data.dart';
 import 'package:homi_2/services/user_sigin_service.dart';
 import 'package:homi_2/views/Shared/bookmark_page.dart';
+import 'package:homi_2/views/Shared/filter_houses.dart';
 import 'package:homi_2/views/Shared/house_details_screen.dart';
 import 'package:lottie/lottie.dart';
 
@@ -29,6 +30,12 @@ class _SearchPageState extends State<SearchPage> {
   bool isLoadingAmenities = true;
   int? userId;
   late Future<List<Locations>> futureLocations;
+
+  String searchQuery = ""; // for search text
+  Locations? selectedLocation; // currently selected location
+  List<Amenities> selectedAmenities = []; // currently selected amenities
+  int? minRent; // min rent filter
+  int? maxRent;
 
   @override
   void initState() {
@@ -87,6 +94,55 @@ class _SearchPageState extends State<SearchPage> {
     return '${location.area}, ${location.town}, ${location.county}';
   }
 
+  void applyFilters() {
+    setState(() {
+      final safeSearchQuery = searchQuery?.toLowerCase() ?? "";
+
+      displayedHouses = allHouses.where((house) {
+        // Search filter
+        final matchesSearch =
+            house.name.toLowerCase().contains(safeSearchQuery);
+
+        // Location filter
+        final matchesLocation = selectedLocation == null ||
+            house.locationDetail == selectedLocation!.locationId;
+
+        // Amenities filter
+        final matchesAmenities = selectedAmenities.isEmpty ||
+            selectedAmenities.every((a) => house.amenities.contains(a.name));
+
+        // Rent filter (string -> int safely)
+        final rentValue = int.tryParse(house.rentAmount) ?? 0;
+        final safeMinRent = minRent ?? 0;
+        final safeMaxRent = maxRent ?? 1000000;
+        final matchesRent =
+            rentValue >= safeMinRent && rentValue <= safeMaxRent;
+
+        return matchesSearch &&
+            matchesLocation &&
+            matchesAmenities &&
+            matchesRent;
+      }).toList();
+    });
+  }
+
+  void _onApplyFilters(Map<String, dynamic> filters) {
+    setState(() {
+      selectedLocation =
+          filters["location"] is Locations ? filters["location"] : null;
+      // selectedAmenities = filters["amenities"] != null
+      //     ? (filters["amenities"] as List)
+      //         .map((e) => e as Amenities)
+      //         .toSet()
+      //         .toList() // <- convert back to list
+      //     : <Amenities>[];
+      // minRent = filters["min_rent"] ?? 0;
+      // maxRent = filters["max_rent"] ?? 1000000;
+    });
+
+    applyFilters();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +168,19 @@ class _SearchPageState extends State<SearchPage> {
           ),
           scrolledUnderElevation: 0,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list, color: Color(0xFF126E06)),
+              onPressed: () async {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (_) => FilterSheet(
+                    locations: locations,
+                    amenities: amenities,
+                    onApply: _onApplyFilters, // pass the callback
+                  ),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(
                 Icons.bookmark_added,

@@ -63,14 +63,14 @@ class PostHouseService {
     }
     String? token = await UserPreferences.getAuthToken();
     try {
-      print("=== FORM DATA DEBUG START ===");
-      for (var field in formData.fields) {
-        print("${field.key}: ${field.value}");
-      }
-      for (var file in formData.files) {
-        print("${file.key}: ${file.value.filename}");
-      }
-      print("=== FORM DATA DEBUG END ===");
+      // print("=== FORM DATA DEBUG START ===");
+      // for (var field in formData.fields) {
+      //   print("${field.key}: ${field.value}");
+      // }
+      // for (var file in formData.files) {
+      //   print("${file.key}: ${file.value.filename}");
+      // }
+      // print("=== FORM DATA DEBUG END ===");
 
       final response = await dio.post(
         '$devUrl/houses/gethouses/',

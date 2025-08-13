@@ -145,70 +145,14 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                             children: [
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadiusGeometry.all(
-                                      Radius.circular(12),
-                                    ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  fixedSize: const Size(
-                                    140,
-                                    40,
-                                  ),
-                                  backgroundBuilder: (context, states, child) =>
-                                      Container(
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF126E06),
-                                    ),
-                                    child: Center(
-                                      child: child,
-                                    ),
-                                  ),
+                                  fixedSize: const Size(140, 40),
+                                  backgroundColor: const Color(0xFF126E06),
                                 ),
                                 onPressed: () {
-                                  PostBookmark.removeBookmark(
-                                          houseId: house.houseId)
-                                      .then((_) {
-                                    log("Bookmark removed successfully.");
-
-                                    if (mounted) {
-                                      setState(() {
-                                        _bookmarkedHousesFuture =
-                                            fetchBookmarkedHouses();
-                                      });
-
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title:
-                                                const Text('Bookmark Removed'),
-                                            content: const Text(
-                                                'This house has been removed from your bookmarks.'),
-                                            actions: [
-                                              TextButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        WidgetStateProperty.all<
-                                                                Color>(
-                                                            const Color(
-                                                                0xFF186E1B))),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text(
-                                                  'OK',
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    }
-                                  }).catchError((error) {
-                                    log("Error occurred while removing bookmark: $error");
-                                  });
+                                  _handleRemoveBookmark(context, house.houseId);
                                 },
                                 child: const Text(
                                   "Bookmarked",
@@ -217,7 +161,7 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
                               ),
                             ],
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -229,6 +173,50 @@ class BookmarkedHousesPageState extends State<BookmarkedHousesPage> {
           }
         },
       ),
+    );
+  }
+
+  Future<void> _handleRemoveBookmark(BuildContext context, int houseId) async {
+    try {
+      await PostBookmark.removeBookmark(houseId: houseId);
+      log("Bookmark removed successfully.");
+
+      if (!mounted) return;
+      setState(() {
+        _bookmarkedHousesFuture = fetchBookmarkedHouses();
+      });
+
+      if (!mounted) return;
+      _showBookmarkRemovedDialog(context);
+    } catch (error, stackTrace) {
+      log("Error occurred while removing bookmark: $error");
+      log(stackTrace.toString());
+    }
+  }
+
+  void _showBookmarkRemovedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Bookmark Removed'),
+          content: const Text(
+            'This house has been removed from your bookmarks.',
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF186E1B),
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

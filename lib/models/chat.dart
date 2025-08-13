@@ -41,7 +41,7 @@ class ChatRoom {
   final String name;
   final String? label;
   final List<int> participants;
-  final List<Message> messages;
+  late final List<Message> messages;
   final Message? lastMessage;
   final bool isGroup;
   final DateTime updatedAt;

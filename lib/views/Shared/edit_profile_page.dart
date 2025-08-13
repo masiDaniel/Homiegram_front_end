@@ -77,6 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     };
     await updateUserInfo(updatedData);
     await UserPreferences.savePartialUserData(updatedData);
+    if (!mounted) return;
 
     showCustomSnackBar(context, 'Profile updated!');
   }

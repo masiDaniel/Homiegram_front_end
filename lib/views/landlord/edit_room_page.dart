@@ -88,13 +88,20 @@ class _EditRoomPageState extends State<EditRoomPage> {
         final updatedJson = json.decode(responseBody);
 
         final updatedRoom = GetRooms.fromJSon(updatedJson);
-
+        if (!mounted) return;
         Navigator.pop(context, updatedRoom);
-      } else {
-        print("Upload failed: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Error: $e");
+      } else {}
+    } catch (e, stackTrace) {
+      debugPrint("Error saving room details: $e");
+      debugPrintStack(stackTrace: stackTrace);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to save room details. Please try again."),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

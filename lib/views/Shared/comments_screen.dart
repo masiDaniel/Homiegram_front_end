@@ -175,10 +175,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       _submitComment(commentController);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(18, 110, 6, 1),
+                      backgroundColor: const Color(0x95154D07),
                       foregroundColor: Colors.white,
-                      shadowColor: const Color.fromARGB(255, 30, 185, 30),
-                      elevation: 5,
                     ),
                     child: const Text('Post Comment'),
                   ),
@@ -342,23 +340,16 @@ class _CommentListState extends State<CommentList> {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 67, 134, 59),
+          color: const Color(0x95154D07),
           border: Border.all(color: const Color(0xFF126E06), width: 1.0),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            )
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(comment.comment,
                 style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                     color: Colors.white)),
             const SizedBox(height: 8),

@@ -26,7 +26,8 @@ class RoomDetailsPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Room Details
-            Text("Room Name: ${room.roomName}", style: TextStyle(fontSize: 16)),
+            Text("Room Name: ${room.roomName}",
+                style: const TextStyle(fontSize: 16)),
             Text("Bedrooms: ${room.noOfBedrooms}"),
             Text("Size: ${room.sizeInSqMeters} sq. meters"),
             Text("Rent: ${room.rentAmount}"),

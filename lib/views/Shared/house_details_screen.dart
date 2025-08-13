@@ -212,23 +212,16 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
                 colors: [Color(0xFF062E00), Color(0xFF4CAF50)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
           ),
           title: Column(
@@ -243,11 +236,10 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
+              const Text(
                 "Homigram verified",
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withOpacity(0.9),
                 ),
               ),
             ],
@@ -304,9 +296,7 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                   height: _currentPage == index ? 12 : 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentPage == index
-                        ? Colors.green
-                        : Colors.grey.withOpacity(0.5),
+                    color: _currentPage == index ? Colors.green : Colors.grey,
                   ),
                 ),
               ),
@@ -482,6 +472,8 @@ class _HouseDetailsScreenState extends State<SpecificHouseDetailsScreen> {
                       setState(() {
                         isBookmarked = false;
                       });
+
+                      if (!mounted) return;
 
                       showDialog(
                         context: context,
@@ -765,16 +757,9 @@ class _CommentListState extends State<CommentList> {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 67, 134, 59),
+          color: const Color(0x95154D07),
           border: Border.all(color: const Color(0xFF126E06), width: 1.0),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            )
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
